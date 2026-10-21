@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="acid" data-family="vivid" data-style="cyber" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>乒乓球 · 拾趣</title>
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .wrap { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: clamp(90px,10vw,130px) clamp(16px,4vw,28px) 60px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  h1 { font-family: var(--font-display); font-size: clamp(28px,4.4vw,54px); font-weight: var(--display-w); letter-spacing: -.03em; text-transform: var(--display-case); }
+  h1 em { font-style: normal; color: var(--a1); }
+  .hud { display: flex; gap: 18px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; color: var(--fg-faint); }
+  .hud b { display: block; margin-top: 4px; font-size: 24px; color: var(--fg); letter-spacing: 0; }
+
+  .stage { position: relative; border: 1px solid var(--line-strong); border-radius: 2px; overflow: hidden; background: #06060a; }
+  canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; touch-action: none; }
+
+  .overlay {
+    position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+    background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(6px);
+    transition: opacity .3s, visibility .3s;
+  }
+  .overlay.hide { opacity: 0; visibility: hidden; }
+  .overlay h2 { font-family: var(--font-display); font-size: clamp(22px,3.4vw,38px); margin-bottom: 8px; }
+  .overlay p { color: var(--fg-dim); font-size: 13px; line-height: 1.9; margin-bottom: 16px; }
+
+  .btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .g-btn {
+    padding: 10px 18px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line-strong); color: var(--fg); font-size: 12.5px;
+    background: transparent; transition: border-color .2s, color .2s, background-color .2s;
+  }
+  .g-btn:hover { border-color: var(--a1); color: var(--a1-t); }
+  .g-btn.primary { background: var(--a1); color: var(--on-accent); border-color: var(--a1); }
+
+  .foot { margin-top: 14px; display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .14em; color: var(--fg-faint); }
+  .dew { color: var(--a1-t); }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="mesh"><span class="blob b1"></span><span class="blob b2"></span></div>
+  <div class="motif"><div class="m-grid"></div><div class="m-glow"></div></div>
+  <div class="vignette"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="回到主页">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">酸性</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="theme-panel" id="themePanel" aria-hidden="true">
+  <div class="tp-head"><span>换一种光</span><em>T 开关</em></div>
+  <div class="tp-tabs" role="tablist">
+    <button class="tp-tab is-on" type="button" data-tab="color">颜色 <b id="famNow">霓彩</b></button>
+    <button class="tp-tab" type="button" data-tab="style">风格 <b id="styleNow">赛博</b></button>
+  </div>
+  <div class="tp-pane" id="paneColor"><div class="fam-list" id="famList"></div><p class="fam-blurb" id="famBlurb"></p><div class="sw-grid" id="swList"></div></div>
+  <div class="tp-pane" id="paneStyle" hidden><div class="st-grid" id="styleList"></div><p class="tp-tip">字体、圆角、质感。</p></div>
+  <div class="tp-foot" id="tpFoot">5 个色系 · 60 种颜色 · 10 种风格</div>
+</div>
+
+<main class="wrap">
+  <div class="head">
+    <h1>接住<em>，别掉</em></h1>
+    <div class="hud">
+      <span>得分<b id="score">0</b></span>
+      <span>最高<b id="best">0</b></span>
+      <span>命<b id="lives">3</b></span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="overlay" id="ov">
+      <div>
+        <h2>乒乓</h2>
+        <p>鼠标 / 手指拖动挡板。每接一球快一点，掉三次就结束。<br />每 5 分给 1 滴露水。</p>
+        <div class="btns"><button class="g-btn primary" id="startBtn" type="button">开始</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>露水 <b class="dew" id="dew">0</b></span>
+    <span>← 回画册 · 去一盆花 →</span>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script src="js/arcade.js"></script>
+<script>
+(function () {
+  'use strict';
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const ov = document.getElementById('ov');
+  const scoreEl = document.getElementById('score');
+  const bestEl = document.getElementById('best');
+  const livesEl = document.getElementById('lives');
+  const dewEl = document.getElementById('dew');
+
+  let W = 0, H = 0, dpr = 1;
+  let running = false, over = false;
+  let score = 0, lives = 3;
+  let paddle = { x: 0, w: 120, h: 12, y: 0 };
+  let ball = { x: 0, y: 0, vx: 0, vy: 0, r: 8 };
+  let last = 0, raf = 0;
+
+  function fit() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const r = cv.getBoundingClientRect();
+    W = r.width; H = r.height;
+    cv.width = Math.floor(W * dpr);
+    cv.height = Math.floor(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paddle.y = H - 28;
+    paddle.w = Math.max(80, Math.min(160, W * 0.16));
+    if (!running) { paddle.x = W / 2 - paddle.w / 2; ball.x = W / 2; ball.y = H * 0.5; }
+  }
+
+  function resetBall(dir) {
+    ball.x = W / 2;
+    ball.y = H * 0.55;
+    const speed = 5.2 + score * 0.06;
+    const a = (Math.random() * 0.6 + 0.3) * Math.PI;
+    ball.vx = Math.cos(a) * speed * (Math.random() < .5 ? 1 : -1);
+    ball.vy = -Math.abs(Math.sin(a) * speed);
+  }
+
+  function start() {
+    score = 0; lives = 3; over = false; running = true;
+    paddle.x = W / 2 - paddle.w / 2;
+    resetBall();
+    scoreEl.textContent = '0';
+    livesEl.textContent = '3';
+    bestEl.textContent = Arcade.best('pong');
+    ov.classList.add('hide');
+    cancelAnimationFrame(raf);
+    last = performance.now();
+    loop(last);
+  }
+
+  function end() {
+    running = false; over = true;
+    cancelAnimationFrame(raf);
+    const isBest = Arcade.setBest('pong', score);
+    const dew = Math.floor(score / 5);
+    if (dew) Arcade.add(dew);
+    dewEl.textContent = Arcade.coins();
+    bestEl.textContent = Arcade.best('pong');
+
+    ov.classList.remove('hide');
+    ov.innerHTML =
+      '<div><h2>' + (isBest ? '新纪录' : '掉了') + '</h2>' +
+      '<p>这一局 ' + score + ' 分' + (isBest ? '，写进最高分了。' : '。最高还是 ' + Arcade.best('pong') + '。') +
+      '<br />露水 +' + dew + '</p>' +
+      '<div class="btns">' +
+      '<button class="g-btn primary" type="button" id="againBtn">再来一局</button>' +
+      '<button class="g-btn" type="button" id="certBtn">要一张证书</button>' +
+      '</div></div>';
+    document.getElementById('againBtn').addEventListener('click', start);
+    document.getElementById('certBtn').addEventListener('click', function () {
+      Arcade.certificate({
+        title: '乒乓球',
+        lines: ['得分 ' + score + ' 分', '最高分 ' + Arcade.best('pong') + ' 分']
+      });
+    });
+  }
+
+  function loop(t) {
+    const dt = Math.min(2.2, (t - last) / 16.67);
+    last = t;
+    if (running) step(dt);
+    draw();
+    if (running) raf = requestAnimationFrame(loop);
+  }
+
+  function step(dt) {
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
+
+    if (ball.x < ball.r) { ball.x = ball.r; ball.vx = Math.abs(ball.vx); }
+    if (ball.x > W - ball.r) { ball.x = W - ball.r; ball.vx = -Math.abs(ball.vx); }
+    if (ball.y < ball.r) { ball.y = ball.r; ball.vy = Math.abs(ball.vy); }
+
+    // 接住
+    if (ball.vy > 0 &&
+        ball.y + ball.r >= paddle.y &&
+        ball.y + ball.r <= paddle.y + paddle.h + 8 &&
+        ball.x >= paddle.x - 6 && ball.x <= paddle.x + paddle.w + 6) {
+      ball.y = paddle.y - ball.r;
+      ball.vy = -Math.abs(ball.vy);
+      const hit = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+      ball.vx += hit * 2.4;
+      ball.vx = Math.max(-10, Math.min(10, ball.vx));
+      score++;
+      scoreEl.textContent = score;
+      // 每 5 分给一滴露水
+      if (score % 5 === 0) { Arcade.add(1); dewEl.textContent = Arcade.coins(); }
+    }
+
+    if (ball.y > H + 30) {
+      lives--;
+      livesEl.textContent = lives;
+      if (lives <= 0) { end(); return; }
+      resetBall();
+    }
+  }
+
+  function draw() {
+    const p = Arcade.palette();
+    ctx.clearRect(0, 0, W, H);
+
+    // 网格
+    ctx.strokeStyle = p.a1;
+    ctx.globalAlpha = 0.07;
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+
+    // 球
+    ctx.fillStyle = p.a3;
+    ctx.shadowColor = p.a3;
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // 挡板
+    const grad = ctx.createLinearGradient(paddle.x, 0, paddle.x + paddle.w, 0);
+    grad.addColorStop(0, p.a1);
+    grad.addColorStop(1, p.a2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+  }
+
+  let drag = false;
+  function moveTo(clientX) {
+    const r = cv.getBoundingClientRect();
+    const x = clientX - r.left;
+    paddle.x = Math.max(0, Math.min(W - paddle.w, x - paddle.w / 2));
+  }
+  cv.addEventListener('pointermove', function (e) { if (running) moveTo(e.clientX); });
+  cv.addEventListener('pointerdown', function (e) { if (running) { drag = true; moveTo(e.clientX); } });
+  window.addEventListener('pointerup', function () { drag = false; });
+  window.addEventListener('resize', fit);
+  window.addEventListener('keydown', function (e) {
+    if (!running) return;
+    if (e.key === 'ArrowLeft') paddle.x = Math.max(0, paddle.x - 28);
+    if (e.key === 'ArrowRight') paddle.x = Math.min(W - paddle.w, paddle.x + 28);
+  });
+
+  document.getElementById('startBtn').addEventListener('click', function () { start(); });
+
+  fit();
+  bestEl.textContent = Arcade.best('pong');
+  dewEl.textContent = Arcade.coins();
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="xuan" data-family="oriental" data-style="print" data-mode="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>字体实验室 · 拾趣</title>
+<meta name="color-scheme" content="light dark" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .lab { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(90px,10vw,130px) clamp(16px,4vw,32px) 70px; }
+  .lab h1 { font-family: var(--font-display); font-size: clamp(28px,4.4vw,52px); font-weight: var(--display-w); letter-spacing: -.02em; margin-bottom: 8px; }
+  .lab h1 em { font-style: normal; color: var(--a1); }
+  .lab .sub { font-size: 13px; color: var(--fg-dim); line-height: 1.9; margin-bottom: 22px; }
+
+  .controls { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+  .controls input[type=text] {
+    flex: 1 1 320px; min-width: 200px; padding: 12px 14px; border-radius: 6px;
+    border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--fg) 4%, transparent);
+    color: var(--fg); font-size: 15px; font-family: var(--font-song); outline: none;
+  }
+  .controls input[type=text]:focus { border-color: var(--a1); }
+  .controls label { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .16em; color: var(--fg-faint); display: flex; align-items: center; gap: 8px; }
+  .controls input[type=range] { accent-color: var(--a1); width: 130px; }
+
+  .row {
+    display: grid; grid-template-columns: 88px 1fr; gap: 18px; align-items: baseline;
+    padding: 16px 0; border-top: 1px solid var(--line);
+  }
+  .row .n { font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; color: var(--fg-faint); }
+  .row .n b { display: block; font-size: 10px; color: var(--fg-dim); margin-top: 4px; letter-spacing: .08em; }
+  .row .t { line-height: 1.15; word-break: break-word; }
+
+  .f-min { font-family: var(--font-sans); }
+  .f-song { font-family: var(--font-song); }
+  .f-cine { font-family: var(--font-serif); font-style: italic; }
+  .f-mono { font-family: var(--font-mono); letter-spacing: -.02em; }
+  .f-cute { font-family: var(--font-cute); }
+  .f-brush { font-family: var(--font-brush); }
+  .f-hand { font-family: var(--font-hand); }
+  .f-black { font-family: var(--font-black); }
+  .f-oval { font-family: var(--font-sans); font-weight: 300; letter-spacing: .16em; }
+  .f-lat { font-family: var(--font-sans); text-transform: uppercase; letter-spacing: -.02em; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="motif"><div class="m-halftone"></div></div>
+  <div class="vignette"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">宣纸</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="lab">
+  <h1>字体<em>实验室</em></h1>
+  <p class="sub">打几个字，看十种字体并排。站里那十种风格，就是这十种字。</p>
+
+  <div class="controls">
+    <input id="txt" type="text" value="范连璟 换了人间" spellcheck="false" maxlength="40" />
+    <label>字号 <input id="size" type="range" min="28" max="96" value="54" /></label>
+  </div>
+
+  <div id="rows"></div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script>
+(function () {
+  'use strict';
+  const FACES = [
+    ['01', '极简 · 无衬线', 'f-min'],
+    ['02', '印刷 · 宋体', 'f-song'],
+    ['03', '电影 · 意大利体', 'f-cine'],
+    ['04', '赛博 · 等宽', 'f-mono'],
+    ['05', '柔和 · 卡通', 'f-cute'],
+    ['06', '书法 · 毛笔', 'f-brush'],
+    ['07', '手写 · 钢笔', 'f-hand'],
+    ['08', '海报 · 粗黑', 'f-black'],
+    ['09', '深海 · 细体宽距', 'f-oval'],
+    ['10', '拉丁 · 大写', 'f-lat']
+  ];
+  const rows = document.getElementById('rows');
+  const txt = document.getElementById('txt');
+  const size = document.getElementById('size');
+
+  rows.innerHTML = FACES.map(function (f) {
+    return '<div class="row"><span class="n">' + f[0] + '<b>' + f[1] + '</b></span>' +
+      '<span class="t ' + f[2] + '">' + txt.value + '</span></div>';
+  }).join('');
+
+  function paint() {
+    Array.prototype.forEach.call(rows.querySelectorAll('.t'), function (el) {
+      el.textContent = txt.value || '（打点字）';
+      el.style.fontSize = size.value + 'px';
+    });
+  }
+  txt.addEventListener('input', paint);
+  size.addEventListener('input', paint);
+  paint();
+})();
+</script>
+</body>
+</html>

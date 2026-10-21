@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="midnight" data-family="nocturne" data-style="minimal" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>画册 · 范连璟</title>
+<meta name="description" content="范连璟的画册：极光、浪、水墨、苏联海报，还有一间深夜的房间。画会跟着色系变。" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<link rel="stylesheet" href="css/scene.css" />
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="mesh">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
+  </div>
+  <div class="motif">
+    <svg class="m-waves" viewBox="0 0 1440 900" preserveAspectRatio="none">
+      <path class="w1" d="M0,620 C240,560 420,700 720,650 C1020,600 1200,700 1440,640" />
+      <path class="w2" d="M0,700 C260,640 460,780 760,720 C1060,660 1240,770 1440,710" />
+      <path class="w3" d="M0,780 C280,720 500,840 800,790 C1100,740 1280,820 1440,780" />
+    </svg>
+    <div class="m-grid"></div>
+    <div class="m-halftone"></div>
+    <div class="m-halo h1"></div>
+    <div class="m-halo h2"></div>
+    <div class="m-glow"></div>
+  </div>
+  <div class="vignette"></div>
+</div>
+<canvas class="fog-canvas" id="fog" aria-hidden="true"></canvas>
+<canvas class="dust-canvas" id="dust" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="scroll-progress" id="progress" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="回到主页">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航">
+    <a href="index.html#about"><i>01</i>我</a>
+    <a href="index.html#record"><i>02</i>履历</a>
+    <a href="atlas.html"><i>03</i>画册</a>
+    <a href="works.html">拾趣</a>
+    <a href="index.html#contact"><i>04</i>联系</a>
+    <a href="doodle.html">幼稚园</a>
+    <a href="garden.html">一盆花</a>
+  </nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">午夜</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置" aria-expanded="false" aria-controls="themePanel">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="theme-panel" id="themePanel" role="dialog" aria-modal="false" aria-label="外观设置" aria-hidden="true">
+  <div class="tp-head"><span>换一种光</span><em>T 开关</em></div>
+  <div class="tp-tabs" role="tablist">
+    <button class="tp-tab is-on" type="button" role="tab" data-tab="color" aria-selected="true">颜色 <b id="famNow">暗夜</b></button>
+    <button class="tp-tab" type="button" role="tab" data-tab="style" aria-selected="false">风格 <b id="styleNow">极简</b></button>
+  </div>
+  <div class="tp-pane" id="paneColor">
+    <div class="fam-list" id="famList"></div>
+    <p class="fam-blurb" id="famBlurb"></p>
+    <div class="sw-grid" id="swList"></div>
+  </div>
+  <div class="tp-pane" id="paneStyle" hidden>
+    <div class="st-grid" id="styleList"></div>
+    <p class="tp-tip">字体、圆角、质感。颜色变了，画册里每一幅画的颜色也跟着变。</p>
+  </div>
+  <div class="tp-foot" id="tpFoot">5 个色系 · 60 种颜色 · 10 种风格</div>
+</div>
+
+<main id="main">
+  <section class="atlas-hero">
+    <div class="scene scene--soft" data-scene aria-hidden="true">
+      <div class="scene-photo"><img alt="" decoding="async" /></div>
+      <div class="scene-fog"></div>
+      <div class="scene-ridge"></div>
+      <div class="scene-shade"></div>
+    </div>
+    <p class="kicker" data-reveal>画册 · ATLAS</p>
+    <h1 data-reveal style="--i:1">我把喜欢的，<em>都画在这儿。</em></h1>
+    <p class="atlas-sub" data-reveal style="--i:2">
+      九幅真画，全部来自大都会博物馆的开放版权藏品。换一个色系，灯光跟着换，画还是那幅画。
+      永远和这一页是一伙的。
+    </p>
+  </section>
+
+  <section class="stage-wrap">
+    <div class="book" id="book">
+      <div class="page page-l">
+        <div class="page-inner" id="pageL"></div>
+        <span class="page-no" id="noL">01</span>
+      </div>
+      <div class="page page-r">
+        <div class="page-inner" id="pageR"></div>
+        <span class="page-no" id="noR">02</span>
+      </div>
+
+      <div class="leaf" id="leafF" aria-hidden="true">
+        <div class="face front" id="leafFFront"></div>
+        <div class="face back" id="leafFBack"></div>
+      </div>
+      <div class="leaf leaf-b" id="leafB" aria-hidden="true">
+        <div class="face front" id="leafBFront"></div>
+        <div class="face back" id="leafBBack"></div>
+      </div>
+
+      <span class="book-spine" aria-hidden="true"></span>
+
+      <button class="book-nav prev" id="prevBtn" type="button" aria-label="上一页">←</button>
+      <button class="book-nav next" id="nextBtn" type="button" aria-label="下一页">→</button>
+    </div>
+    <div class="book-foot">
+      <span class="stage-hint">← → 翻页 · 点书页也能翻 · 按 1–9 直接跳</span>
+      <span class="stage-count" id="stageCount">01 / 06</span>
+    </div>
+  </section>
+
+  <section class="section" id="all">
+    <header class="section-head" data-reveal>
+      <p class="kicker" id="allKicker">全部 · 06 幅</p>
+      <h2 class="section-title">一张一张<em>看过去</em></h2>
+      <p class="section-note">后面还会长出来：静物、人体速写、版画，还有你以后给我的照片。</p>
+    </header>
+    <div class="plate-grid" id="plateGrid"></div>
+  </section>
+
+  <section class="section" id="photos">
+    <header class="section-head" data-reveal>
+      <p class="kicker">照片 · 待放</p>
+      <h2 class="section-title">这面墙，<em>等你的照片</em></h2>
+      <p class="section-note">你说你有好几千张。等你给我，我就把它们放进这个墙里，可以随机看，也可以按风格翻。</p>
+    </header>
+    <div class="photo-wall" id="photoWall"></div>
+  </section>
+
+  <footer class="footer">
+    <span>© 2026 范连璟 · 画册</span>
+    <span class="f-c"><a class="door-link" href="room.html">房间</a> <a href="index.html">← 回到主页</a></span>
+  </footer>
+</main>
+
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+
+<script src="js/scenes.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/art.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script src="js/interact.js"></script>
+<script src="js/atlas.js"></script>
+</body>
+</html>

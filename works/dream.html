@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>梦境日记 · 画廊</title>
+<style>
+:root{--bg:#0b1020;--card:#151b33;--ink:#e8ecff;--mut:#93a0c8;--acc:#8ab4ff;--ok:#5ddc9a;--warn:#ffb454}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1b2447,#0b1020 60%);color:var(--ink);
+ font-family:system-ui,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 80px}
+header h1{margin:0 0 6px;font-size:26px}
+header .sub{color:var(--mut);font-size:13px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.stat{background:var(--card);border:1px solid #2a3358;border-radius:12px;padding:8px 14px;font-size:13px}
+.stat b{color:var(--acc)}
+.toolbar{display:flex;gap:10px;margin:14px 0 22px;flex-wrap:wrap}
+input[type=search]{flex:1;min-width:220px;background:#0f1530;color:var(--ink);border:1px solid #2a3358;
+ border-radius:10px;padding:10px 14px;font-size:14px;outline:none}
+input[type=search]:focus{border-color:var(--acc)}
+.card{background:var(--card);border:1px solid #2a3358;border-radius:16px;padding:20px 22px;margin:16px 0;
+ box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.card h2{margin:0 0 4px;font-size:19px}
+.meta{color:var(--mut);font-size:12px;margin-bottom:12px}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#22305c;color:#bcd0ff;margin-right:6px}
+.badge.local{background:#3a2f12;color:#ffd699}
+.badge.degraded{background:#4a1f1f;color:#ffb3b3}
+details{margin:10px 0}
+summary{cursor:pointer;color:var(--acc);font-size:13px}
+h3{font-size:14px;margin:16px 0 6px;color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#1d2748;border:1px solid #2f3d6b;border-radius:999px;padding:3px 10px;font-size:12px}
+.chip.neg{border-color:#6b2f3d;background:#3a1b25}
+.chip.pos{border-color:#2f6b45;background:#16321f}
+.emo{display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0}
+.track{flex:0 0 140px;height:8px;background:#0f1530;border-radius:6px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#5ddc9a,#8ab4ff)}
+pre{background:#0d1226;border:1px solid #2a3358;border-radius:10px;padding:10px 12px;overflow-x:auto;
+ font-size:12.5px;white-space:pre-wrap;word-break:break-word}
+.copy{background:#22305c;color:#dbe4ff;border:1px solid #3a4a80;border-radius:8px;padding:4px 10px;
+ font-size:12px;cursor:pointer;margin-left:8px}
+.copy:hover{border-color:var(--acc);color:#fff}
+blockquote{margin:6px 0;padding:8px 14px;border-left:3px solid #3a4a80;background:#111834;border-radius:0 10px 10px 0;color:#cdd7f5}
+ul{margin:6px 0 6px 18px}
+.foot{color:var(--mut);font-size:12px;text-align:center;margin-top:40px}
+code{background:#0d1226;padding:1px 5px;border-radius:4px;font-size:12px}
+</style></head><body><div class="wrap">
+<header><h1>🌙 梦境日记 · 画廊</h1>
+<div class="sub">共 <b>6</b> 篇记录 ｜ 最常出现的意象：门、房子、水、长辈、家、考试、被追、学校</div></header>
+<div class="stats">
+<div class="stat">显示中：<b id="cnt">6</b></div>
+<div class="stat">总计：<b>6</b></div>
+</div>
+<div class="toolbar"><input type="search" id="q" placeholder="搜索梦的内容、意象、情绪、标签……"></div>
+<div class="card" data-text="老房子里的水 老房子里的水
+我梦见回到老家的房子，走廊特别长，灯是一盏一盏亮起来的。我在找一把钥匙，怎么都找不到，
+水从门缝底下漫进来，越涨越高。我很着急，喊奶奶，她坐在门口没说话，只是看着我笑。
+后来我干脆不找了，推开一扇本来锁着的门，外面竟然是大海，我飞了起来，飞过海面，风很暖。 这个梦的核心意象是 门、房子、水，情绪主色是焦虑，整体偏向「边界」这一主题。 边界 自我 情绪 传承 归属 门 房子 水 长辈 家 焦虑 示例">
+<h2>老房子里的水</h2>
+<div class="meta"><span class="badge">id d-20260921-102409</span> <span class="badge">2026-09-21</span> <span class="badge local">🧮 本地引擎</span> <span class="badge">#示例</span></div>
+<p>这个梦的核心意象是 门、房子、水，情绪主色是焦虑，整体偏向「边界」这一主题。</p>
+<details><summary>📝 梦境原文（转写）</summary>
+<blockquote>老房子里的水
+我梦见回到老家的房子，走廊特别长，灯是一盏一盏亮起来的。我在找一把钥匙，怎么都找不到，
+水从门缝底下漫进来，越涨越高。我很着急，喊奶奶，她坐在门口没说话，只是看着我笑。
+后来我干脆不找了，推开一扇本来锁着的门，外面竟然是大海，我飞了起来，飞过海面，风很暖。</blockquote></details>
+<h3>🧩 象征</h3><div class="chips">
+<span class="chip" title="门与钥匙对应机会、边界与「允许自己进入」的心理许可。">门 · 边界</span>
+<span class="chip" title="房子常被视为「自我」的结构：不同的房间对应你不同的心理区域。">房子 · 自我</span>
+<span class="chip" title="水通常对应情绪与潜意识的水位：水位越高，未处理的感受越多。">水 · 情绪</span>
+<span class="chip pos" title="长辈意象常代表家族传承、被照顾的记忆，或你内心那个「照顾者」的部分。">长辈 · 传承</span>
+<span class="chip" title="回到旧居常是寻找安全感，也可能是在处理未和解的亲情议题。">家 · 归属</span>
+</div>
+<h3>💗 情绪线索</h3>
+<div class="emo"><span style="min-width:64px">焦虑</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<h3>🎯 主题</h3><div class="chips"><span class="chip">边界</span><span class="chip">自我</span><span class="chip">情绪</span><span class="chip">传承</span><span class="chip">归属</span></div>
+<h3>✍️ 续写</h3>
+<blockquote>你还在梦里。四周还是门，边界的气息一直跟着你。胸口那股焦虑没有散，反而更清楚了。你试着往前走了一步，你注意到房子也在场，它没有敌意，只是安静地占着这个空间的另一头。周围的声音慢慢低下去，只剩下你自己的呼吸。你没有醒，也不再害怕——你只是突然很想知道：有哪扇门，是你其实可以推开却没推的？ 画面在这里停住，像一页还没翻完的书。</blockquote>
+<h3>🎨 插画提示词</h3>
+<div><b>主视觉｜门</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>a tall antique door ajar with light spilling out, a vast house with rooms of different eras, restless, unstable, tilted angles, surreal dreamlike atmosphere, acid green and grey palette, volumetric light, cinematic wide shot, 35mm, highly detailed</pre>
+<div class="meta">style: <code>dreamlike surrealism, cinematic, atmospheric</code> ｜ negative: <code>text, watermark, logo, extra limbs, deformed hands, lowres</code></div>
+<div><b>细节特写｜房子</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>extreme close-up detail of a vast house with rooms of different eras, restless, unstable, tilted angles, shallow depth of field, dreamy bokeh, acid green and grey palette, soft grain, painterly</pre>
+<div class="meta">style: <code>macro photography, dreamy, film grain</code> ｜ negative: <code>text, watermark, clutter, oversaturated, lowres</code></div>
+<h3>❓ 反思问题</h3><ul><li>有哪扇门，是你其实可以推开却没推的？</li><li>你梦里最在意的那个房间，现实里对应什么？</li><li>最近有没有什么情绪，像水位一样在慢慢上涨？</li><li>如果这个梦是一封信，它希望你读完后的第一件事是什么？</li></ul>
+<h3>🫂 温柔解读</h3>
+<p>门与钥匙对应机会、边界与「允许自己进入」的心理许可。 房子常被视为「自我」的结构：不同的房间对应你不同的心理区域。 贯穿的主题是：边界、自我、情绪、传承、归属。情绪上，焦虑是主色（强度 0.61），这通常是最先值得照顾的部分。意象整体偏正向，更接近「准备好了、可以往前」的信号。</p>
+<div class="meta">清醒度 0.15 ｜ 无明显线索（未见醒来或睡沉的描述） ｜ 2026-09-21T10:24:09</div>
+</div>
+<div class="card" data-text="被追到考场 被追到考场
+梦里我一直在跑，后面有人追我，看不清脸。跑到一栋楼里，发现是考场，监考老师说我已经迟到很久了，
+卷子上的题一个都不会。我低头发现自己没穿衣服，特别尴尬。教室里所有人都看着我，我特别害怕。
+然后醒了，心还在跳，醒了好几次，睡得很不好。 这个梦的核心意象是 考试、被追、学校，情绪主色是好奇，整体偏向「评价焦虑」这一主题。 评价焦虑 回避 规则 暴露焦虑 未知 考试 被追 学校 裸体 黑暗 好奇 恐惧 羞耻 示例">
+<h2>被追到考场</h2>
+<div class="meta"><span class="badge">id d-20260921-102409-2</span> <span class="badge">2026-09-21</span> <span class="badge local">🧮 本地引擎</span> <span class="badge">#示例</span></div>
+<p>这个梦的核心意象是 考试、被追、学校，情绪主色是好奇，整体偏向「评价焦虑」这一主题。</p>
+<details><summary>📝 梦境原文（转写）</summary>
+<blockquote>被追到考场
+梦里我一直在跑，后面有人追我，看不清脸。跑到一栋楼里，发现是考场，监考老师说我已经迟到很久了，
+卷子上的题一个都不会。我低头发现自己没穿衣服，特别尴尬。教室里所有人都看着我，我特别害怕。
+然后醒了，心还在跳，醒了好几次，睡得很不好。</blockquote></details>
+<h3>🧩 象征</h3><div class="chips">
+<span class="chip neg" title="考试梦往往不是关于知识，而是关于「被评价」的焦虑。">考试 · 评价焦虑</span>
+<span class="chip neg" title="被追逐是典型的回避信号：有件事你一直在往前跑，而不是回头看它。">被追 · 回避</span>
+<span class="chip" title="学校是规则的原始场景，容易回放「我必须表现好」的旧脚本。">学校 · 规则</span>
+<span class="chip neg" title="在公共场合裸露是典型的暴露焦虑——怕真实的自己被看穿。">裸体 · 暴露焦虑</span>
+<span class="chip" title="黑暗意味着信息不足，而不是危险本身——它在提醒你「还不知道」。">黑暗 · 未知</span>
+</div>
+<h3>💗 情绪线索</h3>
+<div class="emo"><span style="min-width:64px">好奇</span><span class="track"><span class="fill" style="width:77%"></span></span><span>77%</span></div>
+<div class="emo"><span style="min-width:64px">恐惧</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<div class="emo"><span style="min-width:64px">羞耻</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<h3>🎯 主题</h3><div class="chips"><span class="chip">评价焦虑</span><span class="chip">回避</span><span class="chip">规则</span><span class="chip">暴露焦虑</span><span class="chip">未知</span></div>
+<h3>✍️ 续写</h3>
+<blockquote>你还在梦里。四周还是考试，评价焦虑的气息一直跟着你。胸口那股好奇没有散，反而更清楚了。你试着往前走了一步，你注意到被追也在场，它没有敌意，只是安静地占着这个空间的另一头。周围的声音慢慢低下去，只剩下你自己的呼吸。你没有醒，也不再害怕——你只是突然很想知道：你最近在谁面前，感觉自己正在被评分？ 画面在这里停住，像一页还没翻完的书。</blockquote>
+<h3>🎨 插画提示词</h3>
+<div><b>主视觉｜考试</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>an empty exam hall with ticking clocks, a shadowy pursuer in a long corridor, motion blur, curious, portal-like framing, inviting depth, surreal dreamlike atmosphere, emerald and amber palette, volumetric light, cinematic wide shot, 35mm, highly detailed</pre>
+<div class="meta">style: <code>dreamlike surrealism, cinematic, atmospheric</code> ｜ negative: <code>text, watermark, logo, extra limbs, deformed hands, lowres</code></div>
+<div><b>细节特写｜被追</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>extreme close-up detail of a shadowy pursuer in a long corridor, motion blur, curious, portal-like framing, inviting depth, shallow depth of field, dreamy bokeh, emerald and amber palette, soft grain, painterly</pre>
+<div class="meta">style: <code>macro photography, dreamy, film grain</code> ｜ negative: <code>text, watermark, clutter, oversaturated, lowres</code></div>
+<h3>❓ 反思问题</h3><ul><li>你最近在谁面前，感觉自己正在被评分？</li><li>你在躲的那件事，如果停下来面对，最坏会怎样？</li><li>哪条旧规则，你还在默默遵守？</li><li>如果这个梦是一封信，它希望你读完后的第一件事是什么？</li></ul>
+<h3>🫂 温柔解读</h3>
+<p>考试梦往往不是关于知识，而是关于「被评价」的焦虑。 被追逐是典型的回避信号：有件事你一直在往前跑，而不是回头看它。 贯穿的主题是：评价焦虑、回避、规则、暴露焦虑、未知。情绪上，好奇是主色（强度 0.77），这通常是最先值得照顾的部分。意象整体偏紧绷，更像是身体在提醒你：有件事该被处理了，而不是被忍耐。</p>
+<div class="meta">清醒度 0.15 ｜ 浅睡易醒（梦里多次中断） ｜ 2026-09-21T10:24:09</div>
+</div>
+<div class="card" data-text="海边的光 海边的光
+我站在海边，天很黑，只有远处有光。有一条蛇从沙子里钻出来，我居然不害怕，它慢慢爬走了。
+我低头看沙滩，有一条老旧的电话线，我拿起来打不通，一直没信号。后来海浪变得很平静，
+我知道自己在做梦，就试着让它下起小雨，真的下了。醒来觉得挺安心的，一觉睡到天亮。 这个梦的核心意象是 海、电话、光，情绪主色是平静，整体偏向「潜意识」这一主题。 潜意识 沟通受阻 启示 转化 平静 海 电话 光 蛇 平静 恐惧 示例">
+<h2>海边的光</h2>
+<div class="meta"><span class="badge">id d-20260921-102409-3</span> <span class="badge">2026-09-21</span> <span class="badge local">🧮 本地引擎</span> <span class="badge">#示例</span></div>
+<p>这个梦的核心意象是 海、电话、光，情绪主色是平静，整体偏向「潜意识」这一主题。</p>
+<details><summary>📝 梦境原文（转写）</summary>
+<blockquote>海边的光
+我站在海边，天很黑，只有远处有光。有一条蛇从沙子里钻出来，我居然不害怕，它慢慢爬走了。
+我低头看沙滩，有一条老旧的电话线，我拿起来打不通，一直没信号。后来海浪变得很平静，
+我知道自己在做梦，就试着让它下起小雨，真的下了。醒来觉得挺安心的，一觉睡到天亮。</blockquote></details>
+<h3>🧩 象征</h3><div class="chips">
+<span class="chip" title="海是更大尺度的潜意识：辽阔、诱惑，也可能吞没。">海 · 潜意识</span>
+<span class="chip neg" title="联络失败指向沟通受阻：想被听见，但通道断了。">电话 · 沟通受阻</span>
+<span class="chip pos" title="光象征启示与希望，常出现在情绪转折点的前后。">光 · 启示</span>
+<span class="chip" title="蛇是双面的：既是威胁与恐惧，也是蜕皮与转化的象征。">蛇 · 转化</span>
+</div>
+<h3>💗 情绪线索</h3>
+<div class="emo"><span style="min-width:64px">平静</span><span class="track"><span class="fill" style="width:77%"></span></span><span>77%</span></div>
+<div class="emo"><span style="min-width:64px">恐惧</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<h3>🎯 主题</h3><div class="chips"><span class="chip">潜意识</span><span class="chip">沟通受阻</span><span class="chip">启示</span><span class="chip">转化</span><span class="chip">平静</span></div>
+<h3>✍️ 续写</h3>
+<blockquote>你还在梦里。四周还是海，潜意识的气息一直跟着你。胸口那股平静没有散，反而更清楚了。你试着往前走了一步，你注意到电话也在场，它没有敌意，只是安静地占着这个空间的另一头。周围的声音慢慢低下去，只剩下你自己的呼吸。你没有醒，也不再害怕——你只是突然很想知道：面对这么大的未知，你想先带上什么？ 画面在这里停住，像一页还没翻完的书。</blockquote>
+<h3>🎨 插画提示词</h3>
+<div><b>主视觉｜海</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>an endless sea under a towering sky, an old telephone off the hook, static light, serene, soft light, gentle curves, surreal dreamlike atmosphere, warm cream and sage palette, volumetric light, cinematic wide shot, 35mm, highly detailed</pre>
+<div class="meta">style: <code>dreamlike surrealism, cinematic, atmospheric</code> ｜ negative: <code>text, watermark, logo, extra limbs, deformed hands, lowres</code></div>
+<div><b>细节特写｜电话</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>extreme close-up detail of an old telephone off the hook, static light, serene, soft light, gentle curves, shallow depth of field, dreamy bokeh, warm cream and sage palette, soft grain, painterly</pre>
+<div class="meta">style: <code>macro photography, dreamy, film grain</code> ｜ negative: <code>text, watermark, clutter, oversaturated, lowres</code></div>
+<h3>❓ 反思问题</h3><ul><li>面对这么大的未知，你想先带上什么？</li><li>有句话，你希望谁先听见？</li><li>最近有哪个瞬间，让你突然「看清」了什么？</li><li>如果这个梦是一封信，它希望你读完后的第一件事是什么？</li></ul>
+<h3>🫂 温柔解读</h3>
+<p>海是更大尺度的潜意识：辽阔、诱惑，也可能吞没。 联络失败指向沟通受阻：想被听见，但通道断了。 贯穿的主题是：潜意识、沟通受阻、启示、转化、平静。情绪上，平静是主色（强度 0.77），这通常是最先值得照顾的部分。正负意象大致平衡，梦更像是在做一次整理，而不是发出警报。</p>
+<div class="meta">清醒度 0.5 ｜ 睡得较沉（梦境连贯） ｜ 2026-09-21T10:24:09</div>
+</div>
+<div class="card" data-text="老房子里的水 老房子里的水
+我梦见回到老家的房子，走廊特别长，灯是一盏一盏亮起来的。我在找一把钥匙，怎么都找不到，
+水从门缝底下漫进来，越涨越高。我很着急，喊奶奶，她坐在门口没说话，只是看着我笑。
+后来我干脆不找了，推开一扇本来锁着的门，外面竟然是大海，我飞了起来，飞过海面，风很暖。 这个梦的核心意象是 门、房子、水，情绪主色是焦虑，整体偏向「边界」这一主题。 边界 自我 情绪 传承 归属 门 房子 水 长辈 家 焦虑 示例">
+<h2>老房子里的水</h2>
+<div class="meta"><span class="badge">id d-20260921-091025</span> <span class="badge">2026-09-21</span> <span class="badge local">🧮 本地引擎</span> <span class="badge">#示例</span></div>
+<p>这个梦的核心意象是 门、房子、水，情绪主色是焦虑，整体偏向「边界」这一主题。</p>
+<details><summary>📝 梦境原文（转写）</summary>
+<blockquote>老房子里的水
+我梦见回到老家的房子，走廊特别长，灯是一盏一盏亮起来的。我在找一把钥匙，怎么都找不到，
+水从门缝底下漫进来，越涨越高。我很着急，喊奶奶，她坐在门口没说话，只是看着我笑。
+后来我干脆不找了，推开一扇本来锁着的门，外面竟然是大海，我飞了起来，飞过海面，风很暖。</blockquote></details>
+<h3>🧩 象征</h3><div class="chips">
+<span class="chip" title="门与钥匙对应机会、边界与「允许自己进入」的心理许可。">门 · 边界</span>
+<span class="chip" title="房子常被视为「自我」的结构：不同的房间对应你不同的心理区域。">房子 · 自我</span>
+<span class="chip" title="水通常对应情绪与潜意识的水位：水位越高，未处理的感受越多。">水 · 情绪</span>
+<span class="chip pos" title="长辈意象常代表家族传承、被照顾的记忆，或你内心那个「照顾者」的部分。">长辈 · 传承</span>
+<span class="chip" title="回到旧居常是寻找安全感，也可能是在处理未和解的亲情议题。">家 · 归属</span>
+</div>
+<h3>💗 情绪线索</h3>
+<div class="emo"><span style="min-width:64px">焦虑</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<h3>🎯 主题</h3><div class="chips"><span class="chip">边界</span><span class="chip">自我</span><span class="chip">情绪</span><span class="chip">传承</span><span class="chip">归属</span></div>
+<h3>✍️ 续写</h3>
+<blockquote>你还在梦里。四周还是门，边界的气息一直跟着你。胸口那股焦虑没有散，反而更清楚了。你试着往前走了一步，你注意到房子也在场，它没有敌意，只是安静地占着这个空间的另一头。周围的声音慢慢低下去，只剩下你自己的呼吸。你没有醒，也不再害怕——你只是突然很想知道：有哪扇门，是你其实可以推开却没推的？ 画面在这里停住，像一页还没翻完的书。</blockquote>
+<h3>🎨 插画提示词</h3>
+<div><b>主视觉｜门</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>a tall antique door ajar with light spilling out, a vast house with rooms of different eras, restless, unstable, tilted angles, surreal dreamlike atmosphere, acid green and grey palette, volumetric light, cinematic wide shot, 35mm, highly detailed</pre>
+<div class="meta">style: <code>dreamlike surrealism, cinematic, atmospheric</code> ｜ negative: <code>text, watermark, logo, extra limbs, deformed hands, lowres</code></div>
+<div><b>细节特写｜房子</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>extreme close-up detail of a vast house with rooms of different eras, restless, unstable, tilted angles, shallow depth of field, dreamy bokeh, acid green and grey palette, soft grain, painterly</pre>
+<div class="meta">style: <code>macro photography, dreamy, film grain</code> ｜ negative: <code>text, watermark, clutter, oversaturated, lowres</code></div>
+<h3>❓ 反思问题</h3><ul><li>有哪扇门，是你其实可以推开却没推的？</li><li>你梦里最在意的那个房间，现实里对应什么？</li><li>最近有没有什么情绪，像水位一样在慢慢上涨？</li><li>如果这个梦是一封信，它希望你读完后的第一件事是什么？</li></ul>
+<h3>🫂 温柔解读</h3>
+<p>门与钥匙对应机会、边界与「允许自己进入」的心理许可。 房子常被视为「自我」的结构：不同的房间对应你不同的心理区域。 贯穿的主题是：边界、自我、情绪、传承、归属。情绪上，焦虑是主色（强度 0.61），这通常是最先值得照顾的部分。意象整体偏正向，更接近「准备好了、可以往前」的信号。</p>
+<div class="meta">清醒度 0.15 ｜ 无明显线索（未见醒来或睡沉的描述） ｜ 2026-09-21T09:10:25</div>
+</div>
+<div class="card" data-text="被追到考场 被追到考场
+梦里我一直在跑，后面有人追我，看不清脸。跑到一栋楼里，发现是考场，监考老师说我已经迟到很久了，
+卷子上的题一个都不会。我低头发现自己没穿衣服，特别尴尬。教室里所有人都看着我，我特别害怕。
+然后醒了，心还在跳，醒了好几次，睡得很不好。 这个梦的核心意象是 考试、被追、学校，情绪主色是好奇，整体偏向「评价焦虑」这一主题。 评价焦虑 回避 规则 暴露焦虑 未知 考试 被追 学校 裸体 黑暗 好奇 恐惧 羞耻 示例">
+<h2>被追到考场</h2>
+<div class="meta"><span class="badge">id d-20260921-091025-2</span> <span class="badge">2026-09-21</span> <span class="badge local">🧮 本地引擎</span> <span class="badge">#示例</span></div>
+<p>这个梦的核心意象是 考试、被追、学校，情绪主色是好奇，整体偏向「评价焦虑」这一主题。</p>
+<details><summary>📝 梦境原文（转写）</summary>
+<blockquote>被追到考场
+梦里我一直在跑，后面有人追我，看不清脸。跑到一栋楼里，发现是考场，监考老师说我已经迟到很久了，
+卷子上的题一个都不会。我低头发现自己没穿衣服，特别尴尬。教室里所有人都看着我，我特别害怕。
+然后醒了，心还在跳，醒了好几次，睡得很不好。</blockquote></details>
+<h3>🧩 象征</h3><div class="chips">
+<span class="chip neg" title="考试梦往往不是关于知识，而是关于「被评价」的焦虑。">考试 · 评价焦虑</span>
+<span class="chip neg" title="被追逐是典型的回避信号：有件事你一直在往前跑，而不是回头看它。">被追 · 回避</span>
+<span class="chip" title="学校是规则的原始场景，容易回放「我必须表现好」的旧脚本。">学校 · 规则</span>
+<span class="chip neg" title="在公共场合裸露是典型的暴露焦虑——怕真实的自己被看穿。">裸体 · 暴露焦虑</span>
+<span class="chip" title="黑暗意味着信息不足，而不是危险本身——它在提醒你「还不知道」。">黑暗 · 未知</span>
+</div>
+<h3>💗 情绪线索</h3>
+<div class="emo"><span style="min-width:64px">好奇</span><span class="track"><span class="fill" style="width:77%"></span></span><span>77%</span></div>
+<div class="emo"><span style="min-width:64px">恐惧</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<div class="emo"><span style="min-width:64px">羞耻</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<h3>🎯 主题</h3><div class="chips"><span class="chip">评价焦虑</span><span class="chip">回避</span><span class="chip">规则</span><span class="chip">暴露焦虑</span><span class="chip">未知</span></div>
+<h3>✍️ 续写</h3>
+<blockquote>你还在梦里。四周还是考试，评价焦虑的气息一直跟着你。胸口那股好奇没有散，反而更清楚了。你试着往前走了一步，你注意到被追也在场，它没有敌意，只是安静地占着这个空间的另一头。周围的声音慢慢低下去，只剩下你自己的呼吸。你没有醒，也不再害怕——你只是突然很想知道：你最近在谁面前，感觉自己正在被评分？ 画面在这里停住，像一页还没翻完的书。</blockquote>
+<h3>🎨 插画提示词</h3>
+<div><b>主视觉｜考试</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>an empty exam hall with ticking clocks, a shadowy pursuer in a long corridor, motion blur, curious, portal-like framing, inviting depth, surreal dreamlike atmosphere, emerald and amber palette, volumetric light, cinematic wide shot, 35mm, highly detailed</pre>
+<div class="meta">style: <code>dreamlike surrealism, cinematic, atmospheric</code> ｜ negative: <code>text, watermark, logo, extra limbs, deformed hands, lowres</code></div>
+<div><b>细节特写｜被追</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>extreme close-up detail of a shadowy pursuer in a long corridor, motion blur, curious, portal-like framing, inviting depth, shallow depth of field, dreamy bokeh, emerald and amber palette, soft grain, painterly</pre>
+<div class="meta">style: <code>macro photography, dreamy, film grain</code> ｜ negative: <code>text, watermark, clutter, oversaturated, lowres</code></div>
+<h3>❓ 反思问题</h3><ul><li>你最近在谁面前，感觉自己正在被评分？</li><li>你在躲的那件事，如果停下来面对，最坏会怎样？</li><li>哪条旧规则，你还在默默遵守？</li><li>如果这个梦是一封信，它希望你读完后的第一件事是什么？</li></ul>
+<h3>🫂 温柔解读</h3>
+<p>考试梦往往不是关于知识，而是关于「被评价」的焦虑。 被追逐是典型的回避信号：有件事你一直在往前跑，而不是回头看它。 贯穿的主题是：评价焦虑、回避、规则、暴露焦虑、未知。情绪上，好奇是主色（强度 0.77），这通常是最先值得照顾的部分。意象整体偏紧绷，更像是身体在提醒你：有件事该被处理了，而不是被忍耐。</p>
+<div class="meta">清醒度 0.15 ｜ 浅睡易醒（梦里多次中断） ｜ 2026-09-21T09:10:25</div>
+</div>
+<div class="card" data-text="海边的光 海边的光
+我站在海边，天很黑，只有远处有光。有一条蛇从沙子里钻出来，我居然不害怕，它慢慢爬走了。
+我低头看沙滩，有一条老旧的电话线，我拿起来打不通，一直没信号。后来海浪变得很平静，
+我知道自己在做梦，就试着让它下起小雨，真的下了。醒来觉得挺安心的，一觉睡到天亮。 这个梦的核心意象是 海、电话、光，情绪主色是平静，整体偏向「潜意识」这一主题。 潜意识 沟通受阻 启示 转化 平静 海 电话 光 蛇 平静 恐惧 示例">
+<h2>海边的光</h2>
+<div class="meta"><span class="badge">id d-20260921-091025-3</span> <span class="badge">2026-09-21</span> <span class="badge local">🧮 本地引擎</span> <span class="badge">#示例</span></div>
+<p>这个梦的核心意象是 海、电话、光，情绪主色是平静，整体偏向「潜意识」这一主题。</p>
+<details><summary>📝 梦境原文（转写）</summary>
+<blockquote>海边的光
+我站在海边，天很黑，只有远处有光。有一条蛇从沙子里钻出来，我居然不害怕，它慢慢爬走了。
+我低头看沙滩，有一条老旧的电话线，我拿起来打不通，一直没信号。后来海浪变得很平静，
+我知道自己在做梦，就试着让它下起小雨，真的下了。醒来觉得挺安心的，一觉睡到天亮。</blockquote></details>
+<h3>🧩 象征</h3><div class="chips">
+<span class="chip" title="海是更大尺度的潜意识：辽阔、诱惑，也可能吞没。">海 · 潜意识</span>
+<span class="chip neg" title="联络失败指向沟通受阻：想被听见，但通道断了。">电话 · 沟通受阻</span>
+<span class="chip pos" title="光象征启示与希望，常出现在情绪转折点的前后。">光 · 启示</span>
+<span class="chip" title="蛇是双面的：既是威胁与恐惧，也是蜕皮与转化的象征。">蛇 · 转化</span>
+</div>
+<h3>💗 情绪线索</h3>
+<div class="emo"><span style="min-width:64px">平静</span><span class="track"><span class="fill" style="width:77%"></span></span><span>77%</span></div>
+<div class="emo"><span style="min-width:64px">恐惧</span><span class="track"><span class="fill" style="width:61%"></span></span><span>61%</span></div>
+<h3>🎯 主题</h3><div class="chips"><span class="chip">潜意识</span><span class="chip">沟通受阻</span><span class="chip">启示</span><span class="chip">转化</span><span class="chip">平静</span></div>
+<h3>✍️ 续写</h3>
+<blockquote>你还在梦里。四周还是海，潜意识的气息一直跟着你。胸口那股平静没有散，反而更清楚了。你试着往前走了一步，你注意到电话也在场，它没有敌意，只是安静地占着这个空间的另一头。周围的声音慢慢低下去，只剩下你自己的呼吸。你没有醒，也不再害怕——你只是突然很想知道：面对这么大的未知，你想先带上什么？ 画面在这里停住，像一页还没翻完的书。</blockquote>
+<h3>🎨 插画提示词</h3>
+<div><b>主视觉｜海</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>an endless sea under a towering sky, an old telephone off the hook, static light, serene, soft light, gentle curves, surreal dreamlike atmosphere, warm cream and sage palette, volumetric light, cinematic wide shot, 35mm, highly detailed</pre>
+<div class="meta">style: <code>dreamlike surrealism, cinematic, atmospheric</code> ｜ negative: <code>text, watermark, logo, extra limbs, deformed hands, lowres</code></div>
+<div><b>细节特写｜电话</b><button class="copy" onclick="djCopy(this)">复制</button></div>
+<pre>extreme close-up detail of an old telephone off the hook, static light, serene, soft light, gentle curves, shallow depth of field, dreamy bokeh, warm cream and sage palette, soft grain, painterly</pre>
+<div class="meta">style: <code>macro photography, dreamy, film grain</code> ｜ negative: <code>text, watermark, clutter, oversaturated, lowres</code></div>
+<h3>❓ 反思问题</h3><ul><li>面对这么大的未知，你想先带上什么？</li><li>有句话，你希望谁先听见？</li><li>最近有哪个瞬间，让你突然「看清」了什么？</li><li>如果这个梦是一封信，它希望你读完后的第一件事是什么？</li></ul>
+<h3>🫂 温柔解读</h3>
+<p>海是更大尺度的潜意识：辽阔、诱惑，也可能吞没。 联络失败指向沟通受阻：想被听见，但通道断了。 贯穿的主题是：潜意识、沟通受阻、启示、转化、平静。情绪上，平静是主色（强度 0.77），这通常是最先值得照顾的部分。正负意象大致平衡，梦更像是在做一次整理，而不是发出警报。</p>
+<div class="meta">清醒度 0.5 ｜ 睡得较沉（梦境连贯） ｜ 2026-09-21T09:10:25</div>
+</div>
+<div class="foot">由 dreamjar 生成 · 用于自我探索，不构成医学或心理诊断</div>
+</div>
+<script>
+function djFilter(){
+  var q = (document.getElementById('q').value || '').trim().toLowerCase();
+  var cards = document.querySelectorAll('.card');
+  var shown = 0;
+  cards.forEach(function(c){
+    var hit = !q || (c.dataset.text || '').indexOf(q) >= 0;
+    c.style.display = hit ? '' : 'none';
+    if (hit) shown++;
+  });
+  document.getElementById('cnt').textContent = shown;
+}
+function djCopy(btn){
+  var pre = btn.parentNode.querySelector('pre');
+  var text = pre ? pre.textContent : '';
+  var done = function(){ var old = btn.textContent; btn.textContent = '已复制';
+    setTimeout(function(){ btn.textContent = old; }, 1200); };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ djFallback(text, done); });
+  } else { djFallback(text, done); }
+}
+function djFallback(text, done){
+  var ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var q = document.getElementById('q');
+  if (q) q.addEventListener('input', djFilter);
+  djFilter();
+});
+</script>
+</body></html>

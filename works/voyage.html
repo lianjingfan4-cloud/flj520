@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1580 · 远航博物学者 —— 文字解谜冒险</title>
+<style>
+  /* ============================================================
+     1580 · 远航博物学者 —— 泛黄羊皮纸风格样式（纯 DOM，无 Canvas）
+     背景采用"少量共享背景"：以下 CSS 分层背景（木舱/甲板/货舱）被多个场景复用。
+     ============================================================ */
+  :root{
+    --paper:#e9d9b8; --paper-2:#dfcba0; --paper-edge:#c9b283;
+    --ink:#3b2a16; --ink-soft:#6b5638; --grey:#8a7554;
+    --seal:#8f2e2e; --seal-2:#6f2020;
+    --wood-a:#5a4326; --wood-b:#3f2d18;
+    --deck-a:#9c7d4f; --deck-b:#7c6137;
+    --risk:#a2482b; --trap:#9b1f2f; --item:#7a5a2f; --reveal:#7c5a2c; --final:#4a3a20;
+    --bg-dark:#131009;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; min-height:100%; }
+  body{
+    font-family:"Songti SC","SimSun","STSong","Georgia","Times New Roman",serif;
+    background:#1a140d; color:var(--ink);
+    display:flex; justify-content:center; padding:18px 10px;
+  }
+
+  /* 场景背景层：多场景共用少量背景图（CSS 分层材质） */
+  .stage{
+    position:relative; width:min(680px,100%); min-height:640px; border-radius:16px;
+    padding:26px 22px 30px; color:var(--ink); overflow:hidden;
+    box-shadow:inset 0 0 120px rgba(0,0,0,.55), 0 24px 60px rgba(0,0,0,.6);
+  }
+  /* 共享背景材质：木质舱室（起居舱 + 船长室复用） */
+  .bg-wood{
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,226,170,.18), transparent 60%),
+      repeating-linear-gradient(98deg,
+        var(--wood-b) 0 46px, #4c3822 46px 92px, var(--wood-a) 92px 138px);
+  }
+  /* 共享背景材质：甲板木道（甲板专用） */
+  .bg-deck{
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(255,230,180,.25), transparent 55%),
+      repeating-linear-gradient(0deg,
+        var(--deck-b) 0 30px, #6d5530 30px 58px, var(--deck-a) 58px 88px);
+  }
+  /* 共享背景材质：昏黄货舱（医务室 + 货舱复用） */
+  .bg-hold{
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(120,80,30,.25), transparent 60%),
+      repeating-linear-gradient(93deg,
+        #2f2313 0 60px, #241a0d 60px 120px, #3a2b16 120px 180px);
+  }
+  /* 顶部暗角 + 颗粒质感覆盖（所有场景共用） */
+  .stage::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.34), rgba(0,0,0,0) 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.5)),
+      repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 5px);
+    mix-blend-mode:multiply;
+  }
+  .stage > *{ position:relative; z-index:1; }
+
+  /* 羊皮纸主面板 */
+  .parchment{
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,250,235,.5), transparent 55%),
+      radial-gradient(circle at 90% 95%, rgba(150,110,50,.25), transparent 55%),
+      linear-gradient(160deg, var(--paper), var(--paper-2));
+    border:1px solid var(--paper-edge);
+    box-shadow:inset 0 0 60px rgba(120,85,30,.25), 0 8px 22px rgba(0,0,0,.35);
+    border-radius:12px; padding:20px 22px;
+  }
+  .parchment.edged{ outline:3px double rgba(130,95,45,.4); outline-offset:-8px; }
+
+  header{ text-align:center; margin-bottom:6px; }
+  header h1{ margin:0; font-size:24px; letter-spacing:2px; }
+  header .subtitle{ color:var(--ink-soft); font-size:12.5px; margin-top:3px; letter-spacing:1px; }
+  .divider{ display:flex; align-items:center; gap:8px; margin:10px 0; color:var(--grey); font-size:14px; }
+  .divider::before,.divider::after{ content:""; flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--grey)); }
+  .divider::after{ background:linear-gradient(90deg,var(--grey),transparent); }
+
+  /* 状态栏：回合感 用 舰名/日期 与 道具、怀疑度 */
+  .hud{ display:flex; flex-wrap:wrap; gap:10px; align-items:stretch; }
+  .inventory{ flex:1 1 240px; }
+  .inventory-title{ font-size:12px; font-weight:800; color:var(--ink-soft); letter-spacing:1px; margin-bottom:6px; }
+  .item-slots{ display:flex; gap:8px; min-height:44px; }
+  .item-slot{
+    width:44px; height:44px; border-radius:8px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font-size:24px;
+    background:linear-gradient(180deg,#f4e6c4,#e0cda0); border:1px solid var(--paper-edge);
+    box-shadow:inset 0 -3px 6px rgba(120,85,30,.25); transition:transform .1s;
+  }
+  .item-slot:hover{ transform:translateY(-3px); }
+  .item-slot.empty{ background:transparent; border:1px dashed rgba(120,95,45,.4); cursor:default; box-shadow:none; }
+  .item-slot.small{ font-size:22px; }
+
+  .suspicion{ flex:1 1 200px; min-width:180px; }
+  .suspicion-title{ font-size:12px; font-weight:800; color:var(--ink-soft); letter-spacing:1px; margin-bottom:6px; }
+  .susp-bar{ height:12px; border-radius:7px; background:rgba(150,120,60,.3); overflow:hidden; border:1px solid rgba(120,95,45,.35); }
+  .susp-fill{ height:100%; width:0%; border-radius:7px; background:linear-gradient(90deg,#c99a3a,#a2482b,#9b1f2f); transition:width .35s ease; }
+  .susp-note{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; min-height:15px; }
+
+  /* 场景描述 */
+  .scene-description{
+    background:rgba(255,250,235,.5); border:1px solid rgba(120,95,45,.3);
+    border-radius:10px; padding:14px 16px; margin:12px 0; font-size:15px; line-height:1.85;
+    box-shadow:inset 0 0 24px rgba(120,85,30,.12); white-space:pre-wrap;
+  }
+
+  /* 行动按钮 */
+  .options{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .opt{
+    display:block; width:100%; text-align:left; cursor:pointer; font-family:inherit;
+    font-size:14.5px; padding:12px 14px; border-radius:9px; border:1px solid rgba(120,95,45,.4);
+    background:linear-gradient(180deg,#f4e6c4,#e6d2a2); color:var(--ink);
+    box-shadow:0 2px 0 rgba(90,65,30,.35); transition:transform .08s, box-shadow .08s;
+  }
+  .opt:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 4px 8px rgba(90,65,30,.3); }
+  .opt:active:not(:disabled){ transform:translateY(1px); box-shadow:0 1px 0 rgba(90,65,30,.35); }
+  .opt:disabled{ cursor:not-allowed; filter:saturate(.4) brightness(.94); }
+  .opt .opt-icon{ margin-right:6px; }
+  .opt .opt-sub{ display:block; font-size:11.5px; color:var(--ink-soft); margin-top:3px; }
+  /* 类型着色 */
+  .opt.risk{ border-color:var(--risk); color:#7d3210; }
+  .opt.trap{ border-color:var(--trap); color:#7d1c28; font-weight:800; }
+  .opt.item{ border-color:var(--item); }
+  .opt.reveal{ border-color:var(--reveal); background:linear-gradient(180deg,#f3dfb0,#e4c486); font-weight:800; }
+  .opt.final{ border-color:var(--final); background:linear-gradient(180deg,#f0e0bb,#e2c684); font-weight:800; }
+  .opt.help{ border-color:#6f8f5a; color:#3c5a2c; }
+
+  /* 剧情日志 */
+  .log-title{ font-size:12px; font-weight:800; color:var(--ink-soft); letter-spacing:1px; margin:14px 0 6px; }
+  .log{
+    height:150px; overflow-y:auto; border-radius:9px; padding:9px 12px;
+    background:rgba(30,22,10,.92); border:1px solid #4a3a20; display:flex; flex-direction:column; gap:6px;
+  }
+  .log-line{ font-size:12.5px; line-height:1.5; color:#e8d8b4; }
+  .log-line.hl{ color:#f6e6b6; font-weight:700; }
+  .log-line.danger{ color:#ffb0a8; }
+  .log-line.good{ color:#b8e6a8; }
+  .log-line .t{ color:#9c8a63; margin-right:6px; }
+
+  /* 工具栏 */
+  .toolbar{ display:flex; gap:10px; margin-top:16px; }
+  .btn{
+    flex:1; cursor:pointer; font-family:inherit; font-size:13.5px; font-weight:700; padding:10px 8px;
+    border:none; border-radius:8px; color:#f6e6c0;
+    background:linear-gradient(180deg,var(--seal),var(--seal-2));
+    box-shadow:0 3px 0 #4c1414; transition:transform .08s;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn:active{ transform:translateY(2px); box-shadow:0 1px 0 #4c1414; }
+  .btn.alt{ background:linear-gradient(180deg,#7a5a2f,#5d4223); box-shadow:0 3px 0 #3a2a12; }
+
+  /* 结局浮层 */
+  .overlay{
+    position:absolute; inset:0; z-index:20; border-radius:16px;
+    display:flex; align-items:center; justify-content:center; background:rgba(10,7,3,.82); padding:24px;
+  }
+  .overlay.hidden{ display:none; }
+  .result{
+    max-width:92%; background:linear-gradient(160deg,var(--paper),var(--paper-2));
+    border:2px solid var(--paper-edge); border-radius:12px; padding:26px 28px; text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,.6), inset 0 0 40px rgba(120,85,30,.25);
+  }
+  .result .seal{ font-size:44px; line-height:1; }
+  .result h2{ margin:10px 0 6px; font-size:22px; letter-spacing:1px; }
+  .result .type{ font-size:12px; font-weight:800; letter-spacing:2px; color:var(--seal); margin-bottom:10px; }
+  .result p{ margin:0 auto 10px; max-width:420px; font-size:14px; line-height:1.8; color:var(--ink); }
+  .result .btn{ flex:none; padding:10px 26px; }
+
+  .footer{ text-align:center; font-size:11px; color:var(--ink-soft); margin-top:12px; }
+  /* 帮助提示（道具说明） */
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:#2b2010; color:#f1e2bd; font-size:13px; padding:12px 18px; border-radius:10px;
+    max-width:min(560px,92vw); box-shadow:0 10px 30px rgba(0,0,0,.5); opacity:0; transition:opacity .3s, transform .3s;
+    pointer-events:none; line-height:1.6; white-space:pre-wrap;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="stage bg-wood" id="stage">
+  <div class="parchment edged">
+
+    <header>
+      <h1>🛶 1580 · 远航博物学者</h1>
+      <div class="subtitle">圣马尔科号 · 一艘藏着秘密的商船</div>
+    </header>
+
+    <div class="divider">❖</div>
+
+    <!-- 状态栏：道具 + 怀疑度 -->
+    <div class="hud">
+      <div class="inventory">
+        <div class="inventory-title">🧳 随身道具（点击查看）</div>
+        <div class="item-slots" id="itemSlots"></div>
+      </div>
+      <div class="suspicion">
+        <div class="suspicion-title">👁️ 水手们的怀疑</div>
+        <div class="susp-bar"><div class="susp-fill" id="suspFill"></div></div>
+        <div class="susp-note" id="suspNote"></div>
+      </div>
+    </div>
+
+    <!-- 场景标题 + 描述 -->
+    <div class="scene-description" id="sceneText"></div>
+
+    <!-- 行动按钮 -->
+    <div class="options" id="options"></div>
+
+    <!-- 剧情日志 -->
+    <div class="log-title">📜 冒险日志</div>
+    <div class="log" id="log"></div>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+      <button class="btn" id="btnSave">📀 存档</button>
+      <button class="btn" id="btnLoad">📂 读档</button>
+      <button class="btn alt" id="btnNew">🔄 重新开始</button>
+    </div>
+
+    <div class="footer">组合四件道具揭开走私真相 · 小心毒药与关押 · 纯 DOM 实现</div>
+  </div>
+
+  <!-- 结局浮层 -->
+  <div class="overlay hidden" id="overlay">
+    <div class="result">
+      <div class="seal" id="resultSeal">🏆</div>
+      <h2 id="resultTitle"></h2>
+      <div class="type" id="resultType"></div>
+      <p id="resultDesc"></p>
+      <button class="btn" id="btnResultNew">🔄 再来一次</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* =============================================================================
+ *  1580 · 远航博物学者 —— 游戏逻辑（全文件唯一一段脚本）
+ *  结构：引擎(纯逻辑，不碰 DOM，便于 Node/vm 自测) + UI(boot 操作 DOM)。
+ *  状态保存在 state 对象；存档/读档用序列化/反序列化。
+ * ============================================================================= */
+
+var GAME = (function(){
+  "use strict";
+
+  /* -------------------------------------------------------------
+   * ① 参数与数据配置（集中在此，便于修改）
+   * ------------------------------------------------------------- */
+  var CONFIG = {
+    SAVE_KEY:"nv_1580_save",      // localStorage 存档键
+    SUSPICION_MAX:100,            // 怀疑度上限（满则被关押致死）
+
+    // 道具：name 名称, icon 图标, desc 点击后提示
+    ITEMS: {
+      chart: { name:"海图",        icon:"🗺️", desc:"羊皮海图。图角用红笔标着一座无名海湾，岸边画着一个“X”——那不是天然港湾，更像一个约好的接头地点。" },
+      log:   { name:"航海日志",    icon:"📓", desc:"航海日志。字迹简略，却与船长对你的说法对不上——“风暴改道”的那天，其实风平浪静。" },
+      ledger:{ name:"账本",        icon:"📒", desc:"账本。载货吨位的差额，恰好等于你白天在货舱闻到的那股异常重量。" },
+      potion:{ name:"药瓶",        icon:"🧪", desc:"药瓶。气味刺鼻，不是草药，更像浓烈的毒液。船医看到它时眼神闪躲。" }
+    }
+  };
+
+  // 怀疑度累加与分段文案
+  var RISK = { chart:25, log:25, ledger:25, potion:20, pry:25, press:60 };
+
+  /* -------------------------------------------------------------
+   * ② 工具函数
+   * ------------------------------------------------------------- */
+  function clamp(v, min, max){ v = Number(v); if (isNaN(v)) v = 0; return Math.max(min, Math.min(max, v)); }
+
+  function newGame(){
+    return {
+      scene:"cabin",                 // 当前场景 id
+      inventory:[],                  // 道具 id 数组
+      suspicion:0,                   // 怀疑度 0~100
+      helpCount:0,                   // 配合干活次数（用于递减收益）
+      flags:{ foundContraband:false, revealed:false },  // 进度标记
+      log:[],                        // 冒险日志（历史文本）
+      ending:null                    // 结局 id（null=进行中）
+    };
+  }
+  function has(state, id){ return state.inventory.indexOf(id) >= 0; }
+  function pick(state, id){ if (!has(state, id)) state.inventory.push(id); }
+  function addSuspicion(state, amt){
+    state.suspicion = clamp(state.suspicion + amt, 0, CONFIG.SUSPICION_MAX);
+    if (state.suspicion >= CONFIG.SUSPICION_MAX && !state.ending){
+      state.ending = "bad-jail";   // 满怀疑 → 被水手关押致死
+    }
+  }
+  // 配合干活：收益递减，且不至于无限归零
+  function helpReduction(state){
+    var r = Math.max(10, 30 - state.helpCount * 8);   // 30,22,14,10,10,…
+    state.helpCount += 1;
+    state.suspicion = clamp(state.suspicion - r, 0, CONFIG.SUSPICION_MAX);
+    return r;
+  }
+  function endStory(state, id){ state.ending = id; }
+  function isEnded(state){ return !!state.ending; }
+
+  /* -------------------------------------------------------------
+   * ③ 场景文案（含动态提示）
+   * ------------------------------------------------------------- */
+  function sceneText(state){
+    var s = state.scene;
+    if (s === "cabin"){
+      return "灰绿色的海面在舷窗外起伏。你是随船博物馆派来的博物学者，刚把这间狭小的起居舱安顿好。" +
+             "开港不过数日，你却发现水手们看你的眼神总有些躲闪——而船长递来的载货清单，和船舱里那股说不清的“重量”对不上。\n\n" +
+             "你把标本箱搁在一旁，决定先弄清这艘船究竟在运什么。";
+    }
+    if (s === "deck"){
+      var t = "海风裹着盐味。水手们正合力搬运木箱，低语着交换眼色；疤脸船长立在舵轮旁，远远看着海平线。\n\n你可以观察、试探，或借活计掩人耳目。";
+      if (state.flags.foundContraband) t += "\n（你心里揣着货舱里那批“不存在的货物”。）";
+      return t;
+    }
+    if (s === "quarters"){
+      return "船长室。乌木书桌、搁满卷宗的海图桌，角落里一只箱子散发着淡淡蜡味。此刻舱里无人——是个机会，但每一刻都可能有人推门进来。\n\n你压着呼吸，扫描着三样东西：海图、航海日志、账本。";
+    }
+    if (s === "sickbay"){
+      return "医务室。药味、干草与一点铁锈气混在一起，连灯光都昏黄。船医坐在铺着旧毯的床边，手边一只药瓶。\n\n墙上挂着一块木牌：上一位“病逝”的船员的名字。你总觉得不那么简单。";
+    }
+    if (s === "hold"){
+      var h = "货舱又深又潮。成排的木箱与酒桶叠到舱顶，灯笼投下摇晃的影子。有几只箱子封口很新，与你看到的清单不太一样。\n\n你蹲下来，指腹蹭过一只木箱的棱角。";
+      if (state.flags.foundContraband) h += "\n（你已经撬开过一只暗箱；里面不是“补给”。）";
+      return h;
+    }
+    if (s === "reveal"){
+      return "你把【海图】【航海日志】【账本】【药瓶】在倒扣的货箱上铺开：\n" +
+             "• 海图上的无名海湾，画着一个“X”——接头的记号。\n" +
+             "• 航海日志里那次“风暴改道”，其实风平浪静——路线被偷偷改过。\n" +
+             "• 账本的吨位差额，恰好对上一批不在清单上的货物。\n" +
+             "• 药瓶不是药，是淬了乌头碱的毒液——船长用来“让知情者闭嘴”。\n\n" +
+             "走私、改道、灭口……真相已经在你手里。现在，你打算怎么收场？";
+    }
+    return "";
+  }
+
+  /* -------------------------------------------------------------
+   * ④ 选项（依据场景与状态返回可选行动）
+   * ------------------------------------------------------------- */
+  function makeOpt(id, label, extra){
+    var o = Object.assign({ id:id, label:label }, extra || {});
+    return o;
+  }
+  function options(state){
+    var s = state.scene, list = [];
+    if (s === "cabin"){
+      list.push(makeOpt("cabin-bed",   "🛏️ 查看床铺与随身行李", { cls:"info" }));
+      list.push(makeOpt("cabin-window","🌊 透过舷窗眺望海面", { cls:"info" }));
+      list.push(makeOpt("goto-deck",   "🚪 走上甲板", { cls:"goto" }));
+      list.push(makeOpt("goto-hold",   "🪜 下到货舱", { cls:"goto" }));
+    } else if (s === "deck"){
+      list.push(makeOpt("deck-watch","👀 观察水手搬货", { cls:"info" }));
+      list.push(makeOpt("deck-talk", "🗣️ 与船长攀谈", { cls:"info" }));
+      list.push(makeOpt("deck-help", "🧤 和水手一起干活，装作记录", { cls:"help", sub:"降低怀疑度（效力递减）" }));
+      list.push(makeOpt("deck-press","🔥 直接质问船长“走私”", { cls:"risk", sub:"危险：暴涨怀疑度" }));
+      list.push(makeOpt("goto-quarters","🚪 趁人不备溜进船长室", { cls:"goto" }));
+      list.push(makeOpt("goto-sickbay",  "🚪 去医务室", { cls:"goto" }));
+      list.push(makeOpt("goto-hold",     "🪜 下到货舱", { cls:"goto" }));
+      list.push(makeOpt("goto-cabin",    "🚪 回起居舱", { cls:"goto" }));
+    } else if (s === "quarters"){
+      if (!has(state, "chart")) list.push(makeOpt("q-chart",  "🗺️ 偷看海图桌", { cls:"risk", sub:"+" + RISK.chart + " 怀疑" }));
+      if (!has(state, "log"))   list.push(makeOpt("q-log",    "📓 翻看航海日志", { cls:"risk", sub:"+" + RISK.log + " 怀疑" }));
+      if (!has(state, "ledger"))list.push(makeOpt("q-ledger", "📒 查看账本", { cls:"risk", sub:"+" + RISK.ledger + " 怀疑" }));
+      list.push(makeOpt("leave-deck", "🚪 悄悄退出船长室", { cls:"goto" }));
+    } else if (s === "sickbay"){
+      if (!has(state, "potion")) list.push(makeOpt("s-potion", "🧪 取走药柜里的药瓶", { cls:"risk", sub:"+" + RISK.potion + " 怀疑" }));
+      list.push(makeOpt("s-taste", "👅 打开药瓶，尝一点查验成分", { cls:"trap", sub:"⚠ 貌似安全的陷阱" }));
+      list.push(makeOpt("s-chat",  "🗣️ 与船医攀谈", { cls:"info" }));
+      list.push(makeOpt("s-drink", "🍶 接过船医递来的“提神药水”喝下", { cls:"trap", sub:"⚠ 貌似善意的陷阱" }));
+      list.push(makeOpt("leave-deck", "🚪 离开医务室", { cls:"goto" }));
+    } else if (s === "hold"){
+      list.push(makeOpt("h-inspect", "🔍 检查货箱上的标签", { cls:"info" }));
+      if (!state.flags.foundContraband)
+        list.push(makeOpt("h-pry", "🪓 撬开一只可疑木箱", { cls:"risk", sub:"+" + RISK.pry + " 怀疑" }));
+      else
+        list.push(makeOpt("h-depth", "🕳️ 检查那批“不存在”的货物", { cls:"info" }));
+
+      // 组合解谜选项：需要四件道具 + 已发现私货
+      var missing = [];
+      ["chart","log","ledger","potion"].forEach(function(it){ if (!has(state, it)) missing.push(CONFIG.ITEMS[it].name); });
+      if (!state.flags.foundContraband) missing.push("私货（货舱）");
+      var canReveal = missing.length === 0;
+      var reveal = makeOpt("h-reveal", "🔮 把日志、账本、海图、药瓶摊在桌上，拼出真相", {
+        cls:"reveal", sub: canReveal ? "组合四件道具——揭露走私" : ("尚缺：" + missing.join("、"))
+      });
+      reveal.disabled = !canReveal;
+      list.push(reveal);
+      list.push(makeOpt("goto-deck", "🚪 回甲板", { cls:"goto" }));
+      list.push(makeOpt("goto-cabin","🚪 回起居舱", { cls:"goto" }));
+    } else if (s === "reveal"){
+      list.push(makeOpt("final-expose",  "📣 当众揭发走私", { cls:"final", sub:"在甲板上摊出证据" }));
+      list.push(makeOpt("final-report",  "🤝 把证据悄悄交给可靠的水手长", { cls:"final", sub:"低调脱身" }));
+      list.push(makeOpt("final-bribe",   "💰 要挟船长，换取封口费", { cls:"final", sub:"保命，但良心不保" }));
+      list.push(makeOpt("final-confront","⚔️ 独自与船长当面对质", { cls:"trap", sub:"⚠ 危险：寡不敌众" }));
+    }
+    return list;
+  }
+
+  /* -------------------------------------------------------------
+   * ⑤ 执行一次选择（核心逻辑）。返回本行提示文本数组。
+   * ------------------------------------------------------------- */
+  function choose(state, id){
+    if (state.ending){ state.log.push("（冒险已结束，请重新开始）"); return; }
+    if (!options(state).some(function(o){ return o.id === id && !o.disabled; })){
+      state.log.push("此刻你什么也做不了。"); return;
+    }
+    var out = [];   // 本步产生的事件文本
+    var S = state;
+
+    switch(id){
+      /* ---------- 起居舱 ---------- */
+      case "cabin-bed":
+        out.push("你在被褥下翻出自己抄录的标本笔记——夹着一张空白的稿纸。你提笔写下：要查清这条船，得先有文字记录：日志、账本、海图。");
+        break;
+      case "cabin-window":
+        out.push("舷窗外的海岸线绕着一座凸出的黑色礁山。若按标准航线，此刻早该转头驶向大洋……可船头却始终对着那片礁山。");
+        break;
+
+      /* ---------- 甲板 ---------- */
+      case "goto-deck":   S.scene = "deck"; break;
+      case "goto-cabin":  S.scene = "cabin"; break;
+      case "goto-sickbay":S.scene = "sickbay"; break;
+      case "deck-watch":
+        out.push("水手们压低声音说话，见你靠近就散开。一只木箱边角画着歪斜的记号，你记起——船医的药柜里有同样的气味。");
+        break;
+      case "deck-talk":
+        addSuspicion(S, 10);
+        out.push("船长咧嘴笑笑：“三年前的风暴，让我们绕到一座无名的湾。”你追问湾名，他眯起眼：“你一个采集树叶子的人，问这个做什么？”（怀疑 +10）");
+        break;
+      case "deck-help": {
+        var r = helpReduction(S);
+        out.push("你挽起袖子，和水手一起搬了半天的货，还煞有介事地在本子上画“物种记录”。船长瞥来一眼，没再盯着你。（怀疑 -" + r + "）");
+        break;
+      }
+      case "deck-press":
+        addSuspicion(S, RISK.press);
+        out.push("你当场喝问船长是否在走私。空气一下安静，水手们停下手中的活。船长笑得很淡：“年轻人，船上的事，别乱猜。”（怀疑 +" + RISK.press + "）");
+        break;
+
+      /* ---------- 船长室 ---------- */
+      case "goto-quarters": S.scene = "quarters"; break;
+      case "q-chart":
+        pick(S, "chart"); addSuspicion(S, RISK.chart);
+        out.push("你展开海图——图角一座无名海湾，岸边赫然画着一个“X”，旁边只标注了三个字：沉锚湾。（获得【海图】，怀疑 +" + RISK.chart + "）");
+        break;
+      case "q-log":
+        pick(S, "log"); addSuspicion(S, RISK.log);
+        out.push("航海日志里，所谓“风暴改道”那天的记录只有一行：风向西南，海面如镜。与船长的说法毫不相符。（获得【航海日志】，怀疑 +" + RISK.log + "）");
+        break;
+      case "q-ledger":
+        pick(S, "ledger"); addSuspicion(S, RISK.ledger);
+        out.push("账本上载货吨位的合计，比你在货舱闻到的那股“额外重量”恰好差出一批货——到底装了什么，没有记录。（获得【账本】，怀疑 +" + RISK.ledger + "）");
+        break;
+
+      /* ---------- 医务室 ---------- */
+      case "leave-deck": S.scene = "deck"; break;
+      case "s-potion":
+        pick(S, "potion"); addSuspicion(S, RISK.potion);
+        out.push("你从药柜深处取出一只药瓶，气味刺得你皱眉——这不是草药，是浓烈的毒液。你把它贴身收好。（获得【药瓶】，怀疑 +" + RISK.potion + "）");
+        break;
+      case "s-taste":
+        endStory(S, "bad-poison");
+        out.push("你拧开瓶塞，只沾了一点到舌尖——舌根瞬间麻痹，视线开始发黑。那不是药，是淬了乌头碱的毒液……你为你的好奇付出了性命。（💀 中毒身亡）");
+        break;
+      case "s-chat":
+        out.push("船医一边磨着药，一边含含糊糊：“上一位兄弟，就是’病’在靠岸前一夜……你问这个做什么？”他手一颤，把一只药瓶往身后藏。");
+        break;
+      case "s-drink":
+        endStory(S, "bad-poison");
+        out.push("船医笑着递来一杯冒热气的“提神药水”，看着你喝完。没多久，你的手脚开始不听使唤。“对不住，”他低声说，“船长说你问得太多了。” （💀 中毒身亡）");
+        break;
+
+      /* ---------- 货舱 ---------- */
+      case "goto-hold": S.scene = "hold"; break;
+      case "h-inspect":
+        out.push("标签写着“补给”，可箱子轻得反常。你数了数，这样“轻”的箱子不止一只——和清单上的重量对不上。");
+        break;
+      case "h-pry":
+        addSuspicion(S, RISK.pry); S.flags.foundContraband = true;
+        out.push("撬开的木箱下方藏着夹层：一袋袋沉甸甸的银锭，印着陌生的官印，绝不是“补给”。走私——确凿了。（怀疑 +" + RISK.pry + "）");
+        break;
+      case "h-depth":
+        out.push("你摸了摸暗格的边缘，顺着海图上“X”的方位，把东西对了一遍。船长嘴里那场“风暴”，和这里的银锭，是一件事。");
+        break;
+      case "h-reveal":
+        S.flags.revealed = true; S.scene = "reveal";
+        out.push("你用油布封好四件物证，在货箱上把它们一一对应——海图里“发红的 X”、日志里颠倒的航线、账本里消失的吨位、药瓶里淬毒的乌头……走私、改道、灭口，全部通上了。你直起身，朝船舱楼梯走去。（🔮 真相已现）");
+        break;
+
+      /* ---------- 结局层 ---------- */
+      case "final-expose":
+        endStory(S, "win-justice");
+        out.push("甲板上，你把四件物证一字排开。船员们围拢过来，水手长的脸色沉下来。船长铁青着脸，却无从抵赖——走私、改道、灭口，人证物证具在。官府的水兵片刻后便能登船。你赢了。（🏆 正义裁决）");
+        break;
+      case "final-report":
+        endStory(S, "win-escape");
+        out.push("你把证据封进油布，塞给那位老水手长。三天后船靠岸，官差早守在码头。你两手空空走下舷梯，全须全尾，做你逍遥的博物学者。（🏆 全身而退）");
+        break;
+      case "final-bribe":
+        endStory(S, "bribe");
+        out.push("你把证据推到船长面前。他眯起眼，推过来一只沉甸甸的钱袋，让你“专心研究花草”。你活了下来，走私仍在继续——只是夜里，你再也睡不安稳。（⚖️ 同流合污）");
+        break;
+      case "final-confront":
+        endStory(S, "bad-confront");
+        out.push("你端着证据当面对质，底气十足。船长没有辩驳，只轻轻一挥手。两个壮实的水手扭住你的双臂，把你拖进底舱，从外面钉死了舱门。没有水，没有食物，直到你听见船板的声音彻底安静下来……（💀 被制服关押）");
+        break;
+    }
+
+    // 把本步文本写入日志
+    out.forEach(function(t){ S.log.push(t); });
+
+    // 若怀疑度已满且尚未进入其他结局，强制关押结局
+    if (isEnded(S) === false && S.suspicion >= CONFIG.SUSPICION_MAX){
+      endStory(S, "bad-jail");
+      S.log.push("（你的可疑举动早被水手一五一十禀报。船长冷冷下令，几个水手把你捆住，塞进一间空货舱，铁门从外面落锁。没有水，没有食物，也没有救援——你死在了无人知晓的黑暗里。💀 被关押致死）");
+    }
+  }
+
+  /* -------------------------------------------------------------
+   * ⑥ 存档 / 读档（序列化与反序列化）
+   * ------------------------------------------------------------- */
+  function serialize(state){ return JSON.stringify(state); }
+  function deserialize(str){
+    try { var o = JSON.parse(str); return o && typeof o === "object" ? o : null; }
+    catch(e){ return null; }
+  }
+
+  return {
+    CONFIG: CONFIG, newGame: newGame, sceneText: sceneText, options: options,
+    choose: choose, serialize: serialize, deserialize: deserialize, isEnded: isEnded, has: has
+  };
+})();
+
+/* =============================================================================
+ *  UI 层：仅在此层操作 DOM。自测（Node/vm 无 document）不会执行 boot()。
+ * ============================================================================= */
+function boot(){
+  var state = GAME.newGame();
+
+  var stage      = document.getElementById("stage");
+  var sceneText  = document.getElementById("sceneText");
+  var optionsBox = document.getElementById("options");
+  var itemSlots  = document.getElementById("itemSlots");
+  var suspFill   = document.getElementById("suspFill");
+  var suspNote   = document.getElementById("suspNote");
+  var logBox     = document.getElementById("log");
+  var overlay    = document.getElementById("overlay");
+  var toast      = document.getElementById("toast");
+
+  // 场景 → 可复用的共享背景 class
+  var SCENE_BG = { cabin:"bg-wood", quarters:"bg-wood", deck:"bg-deck", sickbay:"bg-hold", hold:"bg-hold", reveal:"bg-wood" };
+
+  // ---- 渲染道具栏 ----
+  function renderItems(){
+    itemSlots.innerHTML = "";
+    Object.keys(GAME.CONFIG.ITEMS).forEach(function(id){
+      var div = document.createElement("div");
+      div.className = "item-slot";
+      if (GAME.has(state, id)){
+        div.textContent = GAME.CONFIG.ITEMS[id].icon;
+        div.title = GAME.CONFIG.ITEMS[id].name;
+        div.addEventListener("click", function(){ showToast(GAME.CONFIG.ITEMS[id].icon + " " + GAME.CONFIG.ITEMS[id].name + "\n\n" + GAME.CONFIG.ITEMS[id].desc); });
+      } else {
+        div.textContent = "✦";
+        div.classList.add("empty");
+      }
+      itemSlots.appendChild(div);
+    });
+  }
+
+  // ---- 渲染怀疑度 ----
+  function renderSuspicion(){
+    var v = state.suspicion;
+    suspFill.style.width = v + "%";
+    if (v >= 90) suspNote.textContent = "水手们的目光已经粘在你身上……";
+    else if (v >= 60) suspNote.textContent = "有人开始留意你的一举一动了。";
+    else if (v >= 30) suspNote.textContent = "你还算不惹眼，但别太冒险。";
+    else suspNote.textContent = "没人特别在意你。";
+  }
+
+  // ---- 渲染情节描述 ----
+  function renderText(){
+    stage.className = "stage " + (SCENE_BG[state.scene] || "bg-wood");
+    sceneText.textContent = GAME.sceneText(state);
+  }
+
+  // ---- 渲染选项按钮 ----
+  function renderOptions(){
+    optionsBox.innerHTML = "";
+    GAME.options(state).forEach(function(o){
+      var b = document.createElement("button");
+      b.className = "opt" + (o.cls ? " " + o.cls : "");
+      b.innerHTML = '<span class="opt-icon">' + o.label.split(" ")[0] + '</span>' + o.label.replace(/^[^\s]+\s/, "") +
+                    (o.sub ? '<span class="opt-sub">' + o.sub + "</span>" : "");
+      if (o.disabled){ b.disabled = true; }
+      else b.addEventListener("click", function(){ onChoice(o.id, o.label); });
+      optionsBox.appendChild(b);
+    });
+  }
+
+  // ---- 渲染剧情日志 ----
+  function renderLog(){
+    logBox.innerHTML = "";
+    state.log.forEach(function(line, i){
+      var div = document.createElement("div");
+      div.className = "log-line" + (line.indexOf("🎉") >= 0 || line.indexOf("🏆") >= 0 ? " good"
+                      : (line.indexOf("💀") >= 0 || line.indexOf("危险") >= 0 ? " danger"
+                      : (line.indexOf("🔮") >= 0 ? " hl" : "")));
+      div.innerHTML = '<span class="t">' + (i + 1) + '.</span>' + line;
+      logBox.appendChild(div);
+    });
+    logBox.scrollTop = logBox.scrollHeight;
+  }
+
+  // ---- 结局浮层 ----
+  function renderEnding(){
+    if (!GAME.isEnded(state)){ overlay.classList.add("hidden"); return; }
+    var ENDINGS = {
+      "win-justice": { seal:"🏆", title:"正义裁决", type:"圆满结局", cls:"good",
+        desc:"你揭开了圣马尔科号的走私真相，也为那批被噤声的人讨回了公道。船靠岸时，你第一次觉得海风是干净的。" },
+      "win-escape":  { seal:"🏆", title:"全身而退", type:"圆满结局", cls:"good",
+        desc:"你把证据递到该递的人手里，然后像无事发生一样走下舷梯。博物学者的行囊里，多了一段能记一辈子的故事。" },
+      "bribe":       { seal:"⚖️", title:"同流合污", type:"灰色结局", cls:"neutral",
+        desc:"你用证据换了一袋银币和一条命。走私仍在继续，而你再也睡不安稳——有些秘密，收了钱也照样压着你。" },
+      "bad-poison":  { seal:"💀", title:"中毒身亡", type:"坏结局", cls:"bad",
+        desc:"那口药水不是提神，是毒。你为了一点好奇，把命留在了这艘说谎的船上。" },
+      "bad-jail":    { seal:"💀", title:"被关押致死", type:"坏结局", cls:"bad",
+        desc:"你的动作惊动了水手，被关进钉死的货舱。没有水，没有食物，也没有人来——你死在了无人知晓的黑暗里。" },
+      "bad-confront":{ seal:"💀", title:"被制服关押", type:"坏结局", cls:"bad",
+        desc:"你孤身与船长对质，寡不敌众。那条最隐秘的路，恰恰通向你的终点。" }
+    };
+    var e = ENDINGS[state.ending] || ENDINGS["bad-jail"];
+    document.getElementById("resultSeal").textContent = e.seal;
+    var title = document.getElementById("resultTitle");
+    title.textContent = e.title; title.style.color = e.cls === "good" ? "#3c5a2c" : (e.cls === "bad" ? "#7d1c28" : "#8a6d3b");
+    document.getElementById("resultType").textContent = e.type;
+    document.getElementById("resultDesc").textContent = e.desc;
+    overlay.classList.remove("hidden");
+  }
+
+  // ---- 汇总渲染 ----
+  function render(){
+    renderItems(); renderSuspicion(); renderText(); renderOptions(); renderLog(); renderEnding();
+  }
+
+  // ---- 选择行动 ----
+  function onChoice(id, label){
+    GAME.choose(state, id);
+    render();
+  }
+
+  // ---- Toast（道具说明）----
+  var toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 3200);
+  }
+
+  // ---- 存档 ----
+  function save(){
+    try{
+      localStorage.setItem(GAME.CONFIG.SAVE_KEY, GAME.serialize(state));
+      showToast("📀 已存档");
+    }catch(e){ showToast("⚠️ 无法写入浏览器存档（本地存储被禁用）"); }
+  }
+  // ---- 读档 ----
+  function load(){
+    try{
+      var str = localStorage.getItem(GAME.CONFIG.SAVE_KEY);
+      if (!str){ showToast("没有找到存档。"); return; }
+      var obj = GAME.deserialize(str);
+      if (!obj){ showToast("存档已损坏，无法读取。"); return; }
+      state = obj;          // 用存档覆盖当前状态
+      render();
+      showToast("📂 已读档");
+    }catch(e){ showToast("⚠️ 无法读取存档（本地存储被禁用）"); }
+  }
+  // ---- 重新开始 ----
+  function newRound(){
+    state = GAME.newGame();
+    render();
+    showToast("🔄 新的冒险开始了");
+  }
+
+  document.getElementById("btnSave").addEventListener("click", save);
+  document.getElementById("btnLoad").addEventListener("click", load);
+  document.getElementById("btnNew").addEventListener("click", newRound);
+  document.getElementById("btnResultNew").addEventListener("click", newRound);
+
+  // ---- 开场 + 首次渲染 ----
+  state.log.push("🛶 1580 年，圣马尔科号离开里斯本港。你，随船博物学者，在舱里整理标本时，总觉得这艘船另有秘密。");
+  render();
+}
+
+/* 自测（Node/vm 无 document）时不启动 UI，只保留引擎逻辑 */
+if (typeof document !== "undefined" && document.querySelector){ boot(); }
+</script>
+</body>
+</html>

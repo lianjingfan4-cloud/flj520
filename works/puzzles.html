@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>推理谜题 · 答题闯关</title>
+<style>
+  :root{ --bg:#0f172a; --card:#ffffff; --ink:#1e293b; --muted:#64748b;
+         --brand:#6366f1; --ok:#10b981; --bad:#ef4444; --line:#e2e8f0; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+       background:linear-gradient(135deg,#0f172a,#1e3a8a 60%,#2563eb);min-height:100vh;color:var(--ink)}
+  .wrap{max-width:980px;margin:0 auto;padding:24px 18px 60px}
+  header.top{color:#fff;text-align:center;padding:18px 0 8px}
+  header.top h1{margin:0;font-size:26px;letter-spacing:1px}
+  header.top p{margin:6px 0 0;opacity:.85;font-size:14px}
+  .filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 22px}
+  .filters select,.filters button{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);
+       border-radius:999px;padding:8px 16px;font-size:14px;cursor:pointer}
+  .filters select option{color:#1e293b}
+  .scorebar{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:14px;
+       color:#fff;max-width:640px;margin:0 auto 20px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+  .scorebar .num{font-size:22px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px}
+  .card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);
+       padding:20px 22px;display:flex;flex-direction:column;gap:12px;border-top:5px solid var(--brand)}
+  .card.easy{border-top-color:#10b981}.card.medium{border-top-color:#f59e0b}.card.hard{border-top-color:#ef4444}
+  .badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .badge{font-size:12px;padding:3px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:600}
+  .card h2{margin:0;font-size:19px}
+  .q{font-weight:700;font-size:16px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .content p{margin:4px 0;line-height:1.7;color:var(--ink)}
+  .content ul{margin:4px 0;padding-left:22px;line-height:1.7}
+  .content code{background:#f1f5f9;border-radius:5px;padding:0 5px;color:#0f172a}
+  .choices{display:flex;flex-wrap:wrap;gap:8px}
+  .choice{border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;cursor:pointer;background:#fff;
+       transition:.12s;font-size:14px}
+  .choice:hover{border-color:var(--brand)}
+  .choice.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .choice.right{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .choice.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+  input.text{border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:15px;width:100%;max-width:280px}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  button.act{border:none;border-radius:10px;padding:9px 16px;font-size:14px;cursor:pointer;font-weight:600;color:#fff}
+  .check{background:var(--brand)}
+  .reveal{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px;display:none}
+  .reveal .toggle{color:var(--brand);cursor:pointer;font-size:14px;font-weight:600}
+  .res{font-size:14px;font-weight:700}
+  .res.ok{color:var(--ok)}.res.no{color:var(--bad)}
+  .empty{color:#fff;text-align:center;padding:40px;font-size:16px}
+  footer{text-align:center;color:#cbd5e1;margin-top:30px;font-size:12px;opacity:.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>🧩 推理谜题 · 答题闯关</h1>
+    <p>自动生成 + 求解器校验唯一解 · 作答后点“检查”，再点“查看解析”看推理</p>
+  </header>
+
+  <div class="filters">
+    <select id="fDiff"><option value="all">难度：全部</option><option value="easy">简单</option>
+      <option value="medium">中等</option><option value="hard">困难</option></select>
+    <select id="fType"><option value="all">类型：全部</option></select>
+    <button onclick="resetAll()">重置全部</button>
+  </div>
+
+  <div class="scorebar">
+    <div>已答：<span class="num" id="answered">0</span>/<span id="total">0</span></div>
+    <div>答对：<span class="num" id="correct">0</span></div>
+    <div>正确率：<span class="num" id="rate">--</span></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">该筛选下没有题目。</div>
+
+  <footer>由 puzzlegen 生成 · 每题均已由求解器校验“存在唯一解”</footer>
+</div>
+
+<script>
+const DATA = [{"id":"knights-7627316a1f2e","type":"knights","type_name":"真话者与说谎者","title":"真话者与说谎者（5人）","difficulty":"medium","prompt_html":"<p>在一个小岛上住着五个人：E、D、F、C、B。</p>\n<p>每个人要么是永远说真话的“诚实者”，要么是永远说假话的“说谎者”。</p>\n<p>他们各自说了一句话：</p>\n<ul>\n<li>E 说：“如果(如果E和F同类，那么B和D不是同类是错误的)，那么D是诚实者”</li>\n<li>D 说：“F是诚实者是错误的”</li>\n<li>F 说：“B和C不是同类”</li>\n<li>C 说：“C是诚实者 或者 B和F同类”</li>\n<li>B 说：“C是诚实者”</li>\n</ul>\n<p>已知：一个人说的话为真，则他是诚实者；他说的话为假，则他是说谎者。</p>","question":"请问 F 属于哪一类？","answer":"说谎者","explanation_html":"<p>设每个人为诚实者(真)或说谎者(假)，逐一核对“陈述真值 == 本人类型”。经穷举校验，只有 1 种组合满足全部陈述，它就是：E：诚实者、D：诚实者、F：说谎者、C：诚实者、B：诚实者。</p>\n<p>核对如下：</p>\n<p>· E 说的是“如果(如果E和F同类，那么B和D不是同类是错误的)，那么D是诚实者”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· D 说的是“F是诚实者是错误的”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· F 说的是“B和C不是同类”，在该指派下这句话为假，与“说谎者”一致。</p>\n<p>· C 说的是“C是诚实者 或者 B和F同类”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· B 说的是“C是诚实者”，在该指派下这句话为真，与“诚实者”一致。</p>","options":["诚实者","说谎者"]},{"id":"suspects-66be2ea107e5","type":"suspects","type_name":"嫌疑人指认","title":"嫌疑人指认（5人，2句假话）","difficulty":"medium","prompt_html":"<p>一桩案件发生后，有五名嫌疑人：阿强、阿明、阿宝、阿杰、阿凯，其中只有一人是小偷。</p>\n<p>他们分别说了：</p>\n<ul>\n<li>阿强 说：“小偷在阿强、阿凯、阿杰之中”</li>\n<li>阿明 说：“(如果(小偷在阿明、阿强、阿宝、阿凯、阿杰之中)，那么阿杰不是小偷)是错误的”</li>\n<li>阿宝 说：“(如果((阿明不是小偷 或者 小偷不在阿明、阿杰、阿凯、阿强之中) 并且 小偷在阿凯、阿强之中是错误的)，那么小偷在阿明、阿杰之中)是错误的”</li>\n<li>阿杰 说：“((阿凯不是小偷 并且 (小偷在阿明、阿强、阿宝、阿杰、阿凯之中)) 并且 (阿杰是小偷 并且 小偷不在阿宝、阿杰、阿凯之中)) 并且 ((如果阿凯不是小偷，那么小偷在阿明、阿杰、阿凯、阿宝之中)是错误的)”</li>\n<li>阿凯 说：“小偷在阿明、阿凯之中 或者 ((小偷在阿明、阿强、阿杰、阿凯、阿宝之中) 或者 (小偷不在阿宝、阿明、阿凯、阿杰、阿强之中))”</li>\n</ul>\n<p>后来查明，这 5 句话中<strong>恰好有 2 句是假话</strong>。</p>","question":"请问谁才是小偷？","answer":"阿杰","explanation_html":"<p>先不管谁真谁假，只问“小偷是谁”能否让人物的话有确定的真假。把每种“谁是小偷”的假设代入，统计假话条数：</p>\n<p>· 假设小偷是 阿强：3 句假话</p>\n<p>· 假设小偷是 阿明：4 句假话</p>\n<p>· 假设小偷是 阿宝：3 句假话</p>\n<p>· 假设小偷是 阿杰：2 句假话  ← 符合</p>\n<p>· 假设小偷是 阿凯：3 句假话</p>\n<p>已知恰有 2 句假话，故只有“小偷是 阿杰”成立，其余假设都凑不出 2 句假话（已穷举验证唯一）。</p>","options":["阿强","阿明","阿宝","阿杰","阿凯"]},{"id":"ordering-e3e25976c469","type":"ordering","type_name":"位置排序","title":"位置排序（5人排队）","difficulty":"medium","prompt_html":"<p>有 五 个人排成一排：C、A、D、F、E。</p>\n<p>已知：</p>\n<ul>\n<li>F 排在第 3 位</li>\n<li>A 和 F 相邻</li>\n<li>E 排在第 1 位</li>\n<li>E 不排在 C 和 F 之间</li>\n<li>D 和 A 相邻</li>\n</ul>","question":"请问 A 排在第几位？","answer":"第4位","explanation_html":"<p>这是一个排列约束题。穷举 120 种排列，逐一验证上面所有线索，只有以下排序满足全部线索（已校验唯一）：</p>\n<p>&gt; E → C → F → A → D</p>\n<p>因此 A 排在第 4 位。</p>","options":["第1位","第2位","第3位","第4位","第5位"]},{"id":"logicgrid-9671a724f9c5","type":"logicgrid","type_name":"逻辑网格","title":"逻辑网格（4 位置 × 2 类别）","difficulty":"medium","prompt_html":"<p>有 四 个位置排成一列，依次为 1号, 2号, 3号, 4号。</p>\n<p>每个位置分别对应 2 个类别：姓名、运动。</p>\n<p>已知：</p>\n<ul>\n<li>跑步 的那个人，其姓名是 小E</li>\n<li>骑行 的运动在第 1 号</li>\n<li>骑行 的那个人，其姓名不是 小F</li>\n<li>篮球 的那个人，其姓名不是 小B</li>\n<li>篮球 的那个人，其姓名不是 小E</li>\n<li>骑行 和 篮球 相邻</li>\n<li>游泳 的运动在第 4 号</li>\n<li>游泳 的那个人，其姓名不是 小C</li>\n<li>小C 的姓名在第 2 号</li>\n</ul>\n<p>每个类别的取值恰好各用一次。</p>","question":"请问第 3 号的 运动 是什么？","answer":"跑步","explanation_html":"<p>这是一个多类别排列约束问题。用回溯+剪枝对每个类别的排列做穷举，并逐条校验线索；绝对锚点打破整体反转/平移对称后，恰好只有下面这一种排布满足全部线索（已用求解器验证唯一解）：</p>\n<p>| 位置 | 姓名 | 运动 |</p>\n<p>| --- | --- | --- |</p>\n<p>| 1号 | 小B | 骑行 |</p>\n<p>| 2号 | 小C | 篮球 |</p>\n<p>| 3号 | 小E | 跑步 |</p>\n<p>| 4号 | 小F | 游泳 |</p>\n<p>因此第 3 号的 运动 是 <strong>跑步</strong>。</p>","options":["篮球","骑行","跑步","游泳"]},{"id":"knights-0be16544a008","type":"knights","type_name":"真话者与说谎者","title":"真话者与说谎者（5人）","difficulty":"medium","prompt_html":"<p>在一个小岛上住着五个人：B、E、C、D、F。</p>\n<p>每个人要么是永远说真话的“诚实者”，要么是永远说假话的“说谎者”。</p>\n<p>他们各自说了一句话：</p>\n<ul>\n<li>B 说：“如果如果B和D同类，那么E是说谎者，那么B是说谎者”</li>\n<li>E 说：“D是说谎者是错误的”</li>\n<li>C 说：“F和D同类”</li>\n<li>D 说：“E和C不是同类”</li>\n<li>F 说：“D是说谎者”</li>\n</ul>\n<p>已知：一个人说的话为真，则他是诚实者；他说的话为假，则他是说谎者。</p>","question":"请问 D 属于哪一类？","answer":"诚实者","explanation_html":"<p>设每个人为诚实者(真)或说谎者(假)，逐一核对“陈述真值 == 本人类型”。经穷举校验，只有 1 种组合满足全部陈述，它就是：B：诚实者、E：诚实者、C：说谎者、D：诚实者、F：说谎者。</p>\n<p>核对如下：</p>\n<p>· B 说的是“如果如果B和D同类，那么E是说谎者，那么B是说谎者”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· E 说的是“D是说谎者是错误的”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· C 说的是“F和D同类”，在该指派下这句话为假，与“说谎者”一致。</p>\n<p>· D 说的是“E和C不是同类”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· F 说的是“D是说谎者”，在该指派下这句话为假，与“说谎者”一致。</p>","options":["诚实者","说谎者"]},{"id":"suspects-41cc6a3a8153","type":"suspects","type_name":"嫌疑人指认","title":"嫌疑人指认（5人，2句假话）","difficulty":"medium","prompt_html":"<p>一桩案件发生后，有五名嫌疑人：阿豪、阿凯、阿宝、阿强、阿杰，其中只有一人是小偷。</p>\n<p>他们分别说了：</p>\n<ul>\n<li>阿豪 说：“小偷在阿宝、阿豪、阿凯、阿强之中是错误的”</li>\n<li>阿凯 说：“阿凯是小偷”</li>\n<li>阿宝 说：“((小偷不在阿杰、阿宝、阿凯之中 并且 小偷在阿凯、阿强、阿宝之中) 或者 阿杰不是小偷)是错误的”</li>\n<li>阿强 说：“小偷不在阿凯、阿杰、阿宝、阿强之中是错误的”</li>\n<li>阿杰 说：“如果阿强是小偷 或者 阿豪是小偷，那么阿凯是小偷”</li>\n</ul>\n<p>后来查明，这 5 句话中<strong>恰好有 2 句是假话</strong>。</p>","question":"请问谁才是小偷？","answer":"阿凯","explanation_html":"<p>先不管谁真谁假，只问“小偷是谁”能否让人物的话有确定的真假。把每种“谁是小偷”的假设代入，统计假话条数：</p>\n<p>· 假设小偷是 阿豪：5 句假话</p>\n<p>· 假设小偷是 阿凯：2 句假话  ← 符合</p>\n<p>· 假设小偷是 阿宝：3 句假话</p>\n<p>· 假设小偷是 阿强：4 句假话</p>\n<p>· 假设小偷是 阿杰：1 句假话</p>\n<p>已知恰有 2 句假话，故只有“小偷是 阿凯”成立，其余假设都凑不出 2 句假话（已穷举验证唯一）。</p>","options":["阿豪","阿凯","阿宝","阿强","阿杰"]},{"id":"ordering-99b1a3ba01b2","type":"ordering","type_name":"位置排序","title":"位置排序（5人排队）","difficulty":"medium","prompt_html":"<p>有 五 个人排成一排：E、B、C、F、A。</p>\n<p>已知：</p>\n<ul>\n<li>A 紧挨在 C 的左边</li>\n<li>F 和 C 相邻</li>\n<li>C 排在第 3 位</li>\n<li>B 不排在 A 和 C 之间</li>\n<li>E 和 F 相邻</li>\n</ul>","question":"请问 E 排在第几位？","answer":"第5位","explanation_html":"<p>这是一个排列约束题。穷举 120 种排列，逐一验证上面所有线索，只有以下排序满足全部线索（已校验唯一）：</p>\n<p>&gt; B → A → C → F → E</p>\n<p>因此 E 排在第 5 位。</p>","options":["第1位","第2位","第3位","第4位","第5位"]},{"id":"logicgrid-056296662506","type":"logicgrid","type_name":"逻辑网格","title":"逻辑网格（4 位置 × 2 类别）","difficulty":"medium","prompt_html":"<p>有 四 个位置排成一列，依次为 1号, 2号, 3号, 4号。</p>\n<p>每个位置分别对应 2 个类别：姓名、颜色。</p>\n<p>已知：</p>\n<ul>\n<li>蓝色 和 绿色 相邻</li>\n<li>小E 紧挨在 小F 左边</li>\n<li>绿色 的那个人，其姓名不是 小B</li>\n<li>小E 的颜色是 蓝色</li>\n<li>绿色 和 红色 相邻</li>\n<li>黄色 的颜色在第 4 号</li>\n<li>蓝色 排在 红色 左边</li>\n<li>红色 的那个人，其姓名是 小A</li>\n</ul>\n<p>每个类别的取值恰好各用一次。</p>","question":"请问第 3 号的 颜色 是什么？","answer":"红色","explanation_html":"<p>这是一个多类别排列约束问题。用回溯+剪枝对每个类别的排列做穷举，并逐条校验线索；绝对锚点打破整体反转/平移对称后，恰好只有下面这一种排布满足全部线索（已用求解器验证唯一解）：</p>\n<p>| 位置 | 姓名 | 颜色 |</p>\n<p>| --- | --- | --- |</p>\n<p>| 1号 | 小E | 蓝色 |</p>\n<p>| 2号 | 小F | 绿色 |</p>\n<p>| 3号 | 小A | 红色 |</p>\n<p>| 4号 | 小B | 黄色 |</p>\n<p>因此第 3 号的 颜色 是 <strong>红色</strong>。</p>","options":["绿色","黄色","蓝色","红色"]},{"id":"knights-064f2f4c5814","type":"knights","type_name":"真话者与说谎者","title":"真话者与说谎者（5人）","difficulty":"medium","prompt_html":"<p>在一个小岛上住着五个人：D、B、A、F、E。</p>\n<p>每个人要么是永远说真话的“诚实者”，要么是永远说假话的“说谎者”。</p>\n<p>他们各自说了一句话：</p>\n<ul>\n<li>D 说：“D和E不是同类”</li>\n<li>B 说：“F和E同类”</li>\n<li>A 说：“B和A不是同类是错误的”</li>\n<li>F 说：“B和A同类”</li>\n<li>E 说：“D是说谎者是错误的是错误的”</li>\n</ul>\n<p>已知：一个人说的话为真，则他是诚实者；他说的话为假，则他是说谎者。</p>","question":"请问 B 属于哪一类？","answer":"诚实者","explanation_html":"<p>设每个人为诚实者(真)或说谎者(假)，逐一核对“陈述真值 == 本人类型”。经穷举校验，只有 1 种组合满足全部陈述，它就是：D：诚实者、B：诚实者、A：说谎者、F：说谎者、E：说谎者。</p>\n<p>核对如下：</p>\n<p>· D 说的是“D和E不是同类”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· B 说的是“F和E同类”，在该指派下这句话为真，与“诚实者”一致。</p>\n<p>· A 说的是“B和A不是同类是错误的”，在该指派下这句话为假，与“说谎者”一致。</p>\n<p>· F 说的是“B和A同类”，在该指派下这句话为假，与“说谎者”一致。</p>\n<p>· E 说的是“D是说谎者是错误的是错误的”，在该指派下这句话为假，与“说谎者”一致。</p>","options":["诚实者","说谎者"]},{"id":"suspects-f0f245c51726","type":"suspects","type_name":"嫌疑人指认","title":"嫌疑人指认（5人，2句假话）","difficulty":"medium","prompt_html":"<p>一桩案件发生后，有五名嫌疑人：阿凯、阿宝、阿杰、阿强、阿明，其中只有一人是小偷。</p>\n<p>他们分别说了：</p>\n<ul>\n<li>阿凯 说：“如果((阿明不是小偷 并且 小偷不在阿杰、阿明之中)是错误的)，那么(小偷在阿强、阿宝、阿杰之中 或者 小偷在阿明之中是错误的)”</li>\n<li>阿宝 说：“(小偷不在阿强之中是错误的 或者 (如果小偷不在阿凯之中，那么阿凯是小偷))是错误的”</li>\n<li>阿杰 说：“(如果(小偷在阿杰、阿强之中是错误的 并且 (小偷在阿杰、阿凯、阿明、阿强、阿宝之中))，那么阿凯是小偷是错误的)是错误的”</li>\n<li>阿强 说：“小偷在阿强之中是错误的”</li>\n<li>阿明 说：“阿强是小偷是错误的”</li>\n</ul>\n<p>后来查明，这 5 句话中<strong>恰好有 2 句是假话</strong>。</p>","question":"请问谁才是小偷？","answer":"阿明","explanation_html":"<p>先不管谁真谁假，只问“小偷是谁”能否让人物的话有确定的真假。把每种“谁是小偷”的假设代入，统计假话条数：</p>\n<p>· 假设小偷是 阿凯：1 句假话</p>\n<p>· 假设小偷是 阿宝：1 句假话</p>\n<p>· 假设小偷是 阿杰：1 句假话</p>\n<p>· 假设小偷是 阿强：4 句假话</p>\n<p>· 假设小偷是 阿明：2 句假话  ← 符合</p>\n<p>已知恰有 2 句假话，故只有“小偷是 阿明”成立，其余假设都凑不出 2 句假话（已穷举验证唯一）。</p>","options":["阿凯","阿宝","阿杰","阿强","阿明"]}];
+const SCORE = {easy:'简单', medium:'中等', hard:'困难'};
+const TYPE_NAMES = {};
+DATA.forEach(function(d){ if(!TYPE_NAMES[d.type]) TYPE_NAMES[d.type]=d.type_name; });
+
+let sel = {};      // idx -> 选中的选项
+let done = {};     // idx -> {ans, ok}
+
+function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function buildCard(d, i){
+  var card=document.createElement('div');
+  card.className='card '+d.difficulty;
+  card.dataset.type=d.type; card.dataset.diff=d.difficulty;
+  var html='';
+  html+='<div class="badges"><span class="badge">'+esc(d.type_name)+'</span><span class="badge">'+SCORE[d.difficulty]+'</span></div>';
+  html+='<h2>'+esc(d.title)+'</h2>';
+  html+='<div class="content">'+d.prompt_html+'</div>';
+  html+='<div class="q">❓ '+esc(d.question)+'</div>';
+  if(d.options){
+    html+='<div class="choices">'+d.options.map(function(o){
+      return '<div class="choice" data-v="'+esc(o)+'">'+esc(o)+'</div>';}).join('')+'</div>';
+  } else {
+    html+='<div class="row"><input class="text" placeholder="输入答案后回车或点检查">'+
+          '<button class="act check oneline">检查</button></div>';
+  }
+  html+='<div class="row"><button class="act check main">检查</button>'+
+        '<button class="act reveal-btn">查看解析</button>'+
+        '<span class="res"></span></div>';
+  html+='<div class="reveal"><span class="toggle">标准答案 ▼</span>'+
+        '<div class="ans-pop" style="display:none;margin-top:6px"></div></div>';
+  card.innerHTML=html;
+
+  var wrap=card.querySelector('.choices');
+  if(wrap){
+    wrap.querySelectorAll('.choice').forEach(function(el){
+      el.addEventListener('click',function(){
+        wrap.querySelectorAll('.choice').forEach(function(c){ c.classList.remove('sel'); });
+        el.classList.add('sel');
+        sel[i]=el.dataset.v;
+        setRes(card, '', '');
+      });
+    });
+  } else {
+    card.querySelector('.oneline').addEventListener('click', function(){ check(d, i, card); });
+    var inp=card.querySelector('input.text');
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ check(d,i,card); } });
+  }
+  card.querySelector('.main').addEventListener('click', function(){ check(d, i, card); });
+  card.querySelector('.reveal-btn').addEventListener('click', function(){
+    var rv=card.querySelector('.reveal'); rv.style.display='block';
+    rv.querySelector('.ans-pop').textContent=d.answer;
+  });
+  card.querySelector('.toggle').addEventListener('click', function(){
+    var fam=card.querySelector('.ans-pop');
+    fam.style.display = fam.style.display==='block' ? 'none' : 'block';
+  });
+  return card;
+}
+
+function setRes(card, text, cls){
+  var r=card.querySelector('.res');
+  r.textContent=text; r.className='res'+(cls?(' '+cls):'');
+}
+
+function check(d, i, card){
+  if(d.options){
+    if(!sel[i]){ setRes(card,'请先选择一个选项','no'); return; }
+    var ok = sel[i]===d.answer;
+    var wrap=card.querySelector('.choices');
+    wrap.querySelectorAll('.choice').forEach(function(c){
+      c.classList.remove('right','wrong');
+      if(c.dataset.v===d.answer) c.classList.add('right');
+      if(c.dataset.v===sel[i] && !ok) c.classList.add('wrong');
+    });
+    mark(i, sel[i], ok, card);
+  } else {
+    var v=(card.querySelector('input.text').value||'').trim();
+    if(!v){ setRes(card,'请输入答案','no'); return; }
+    mark(i, v, v.toLowerCase()===d.answer.toLowerCase().trim(), card);
+  }
+}
+
+function mark(i, ans, ok, card){
+  done[i]={ans:ans, ok:ok};
+  setRes(card, ok?'✓ 正确':'✗ 错误', ok?'ok':'no');
+  updateScore();
+}
+
+function updateScore(){
+  var keys=Object.keys(done); var correct=keys.filter(function(k){return done[k].ok;}).length;
+  document.getElementById('answered').textContent=keys.length;
+  document.getElementById('correct').textContent=correct;
+  document.getElementById('rate').textContent= keys.length? Math.round(correct/keys.length*100)+'%':'--';
+}
+
+function applyFilters(){
+  var fd=document.getElementById('fDiff').value, ft=document.getElementById('fType').value, shown=0;
+  document.querySelectorAll('.card').forEach(function(c){
+    var ok=(fd==='all'||c.dataset.diff===fd)&&(ft==='all'||c.dataset.type===ft);
+    c.style.display=ok?'':'none'; if(ok) shown++;
+  });
+  document.getElementById('empty').style.display=shown?'none':'block';
+}
+
+function resetAll(){
+  sel={}; done={};
+  DATA.forEach(function(d,i){
+    var card=document.getElementById('g'+i);
+    setRes(card,'','');
+    var rv=card.querySelector('.reveal'); rv.style.display='none';
+    card.querySelector('.ans-pop').style.display='none';
+    if(d.options){
+      card.querySelectorAll('.choice').forEach(function(c){ c.classList.remove('sel','right','wrong'); });
+    } else {
+      card.querySelector('input.text').value='';
+    }
+  });
+  updateScore();
+}
+
+// init
+Object.keys(TYPE_NAMES).forEach(function(t){
+  var o=document.createElement('option'); o.value=t; o.textContent='类型：'+TYPE_NAMES[t];
+  document.getElementById('fType').appendChild(o);
+});
+DATA.forEach(function(d,i){
+  var card=buildCard(d,i); card.id='g'+i; document.getElementById('grid').appendChild(card);
+});
+document.getElementById('total').textContent=DATA.length;
+document.getElementById('fDiff').addEventListener('change',applyFilters);
+document.getElementById('fType').addEventListener('change',applyFilters);
+updateScore();
+</script>
+</body>
+</html>

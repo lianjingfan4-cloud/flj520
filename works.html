@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="copper" data-family="nocturne" data-style="cinematic" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>拾趣 · 范连璟</title>
+<meta name="description" content="范连璟的拾趣：十一样自己写的小东西，和以寒砚清为笔名写的书。" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<link rel="stylesheet" href="css/scene.css" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .works-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px; margin-top: 22px;
+  }
+  .wk {
+    display: grid; gap: 9px; padding: 18px; border-radius: 4px; text-decoration: none;
+    border: 1px solid var(--card-line); background: color-mix(in srgb, var(--fg) 3%, transparent);
+    transition: border-color .3s var(--ease), transform .4s var(--ease-out), background-color .3s;
+  }
+  .wk:hover { border-color: var(--a1); transform: translateY(-3px); background: color-mix(in srgb, var(--fg) 6%, transparent); }
+  .wk .n { font-family: var(--font-mono); font-size: 9px; letter-spacing: .24em; color: var(--fg-faint); }
+  .wk h3 { font-family: var(--font-display); font-size: 19px; font-weight: var(--display-w); letter-spacing: -.01em; color: var(--fg); }
+  .wk p { font-size: 12px; line-height: 1.85; color: var(--fg-dim); }
+  .wk .go { font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; color: var(--a1-t); }
+
+  .book-card {
+    display: grid; grid-template-columns: 96px 1fr; gap: 22px; align-items: start;
+    padding: 24px; border: 1px solid var(--card-line); border-radius: 4px; margin-top: 20px;
+    text-decoration: none; color: inherit; transition: border-color .3s var(--ease);
+  }
+  .book-card:hover { border-color: var(--a3); }
+  .book-spine {
+    height: 150px; border-radius: 2px 6px 6px 2px;
+    background: linear-gradient(160deg, var(--a3), var(--a1));
+    box-shadow: inset -8px 0 14px -8px rgba(0,0,0,.6);
+    display: grid; place-items: center;
+    font-family: "Ma Shan Zheng", serif; font-size: 30px; color: var(--bg);
+  }
+  .book-card h3 { font-family: var(--font-display); font-size: 24px; margin-bottom: 6px; }
+  .book-card p { font-size: 12.5px; line-height: 1.95; color: var(--fg-dim); }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="mesh"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+  <div class="motif"><div class="m-grid"></div><div class="m-halftone"></div><div class="m-glow"></div></div>
+  <div class="vignette"></div>
+</div>
+<canvas class="dust-canvas" id="dust" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="scroll-progress" id="progress" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="回到主页">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">铜</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置" aria-expanded="false" aria-controls="themePanel">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="theme-panel" id="themePanel" role="dialog" aria-modal="false" aria-label="外观设置" aria-hidden="true">
+  <div class="tp-head"><span>换一种光</span><em>T 开关</em></div>
+  <div class="tp-tabs" role="tablist">
+    <button class="tp-tab is-on" type="button" role="tab" data-tab="color" aria-selected="true">颜色 <b id="famNow">暗夜</b></button>
+    <button class="tp-tab" type="button" role="tab" data-tab="style" aria-selected="false">风格 <b id="styleNow">电影</b></button>
+  </div>
+  <div class="tp-pane" id="paneColor">
+    <div class="fam-list" id="famList"></div>
+    <p class="fam-blurb" id="famBlurb"></p>
+    <div class="sw-grid" id="swList"></div>
+  </div>
+  <div class="tp-pane" id="paneStyle" hidden>
+    <div class="st-grid" id="styleList"></div>
+    <p class="tp-tip">字体、圆角、质感。颜色变了，页面里的画也跟着变。</p>
+  </div>
+  <div class="tp-foot" id="tpFoot">5 个色系 · 60 种颜色 · 10 种风格</div>
+</div>
+
+<main id="main">
+  <section class="atlas-hero">
+    <p class="kicker" data-reveal>拾趣 · ODDMENTS</p>
+    <h1 data-reveal style="--i:1">自己写的小东西，<em>摆在这儿。</em></h1>
+    <p class="atlas-sub" data-reveal style="--i:2">
+      不是作品集，是杂物间。一堆自己写的东西，加上十几本书。<br />
+      全部可以点开，全部是手写的 —— 没有模板。
+    </p>
+  </section>
+
+  <section class="section" style="padding-top: 8px">
+    <header class="section-head" data-reveal>
+      <p class="kicker">01 — HTML 作品</p>
+      <h2 class="section-title">这些<em>都能玩</em></h2>
+      <p class="section-note">每一个都是单个 HTML 文件，打开就能用，不联网也行。</p>
+    </header>
+
+    <div class="works-grid">
+      <a class="wk" href="works/nianlun.html">
+        <span class="n">NO.01</span>
+        <h3>人类文明年轮</h3>
+        <p>5016 个真实事件，绕成一圈。可以拖、可以切时代。</p>
+        <span class="go">打开 →</span>
+      </a>
+      <a class="wk" href="works/dante.html">
+        <span class="n">NO.02</span>
+        <h3>神曲 · 地狱篇</h3>
+        <p>但丁的九层地狱，一层层走下去，每一层都有判词。</p>
+        <span class="go">下去 →</span>
+      </a>
+      <a class="wk" href="works/voyage.html">
+        <span class="n">NO.03</span>
+        <h3>远航博物学者</h3>
+        <p>文字解谜。你在一艘船上，靠记录辨认看到的东西。</p>
+        <span class="go">起航 →</span>
+      </a>
+      <a class="wk" href="works/dream.html">
+        <span class="n">NO.04</span>
+        <h3>梦境日记解析器</h3>
+        <p>把一段梦写进去，它拆成情绪、场景和反复出现的意象。</p>
+        <span class="go">拆开 →</span>
+      </a>
+      <a class="wk" href="works/broken.html">
+        <span class="n">NO.05</span>
+        <h3>坏掉的世界</h3>
+        <p>元解谜：规则本身是坏的，你得先发现「哪里坏了」。</p>
+        <span class="go">进去 →</span>
+      </a>
+      <a class="wk" href="works/fogtown.html">
+        <span class="n">NO.06</span>
+        <h3>雾灯镇谜案</h3>
+        <p>侦探推理。五个人，三种说法，一条时间线。</p>
+        <span class="go">查案 →</span>
+      </a>
+      <a class="wk" href="works/survival.html">
+        <span class="n">NO.07</span>
+        <h3>荒野幸存者</h3>
+        <p>生存策略。每天只能做三件事，看你撑到第几天。</p>
+        <span class="go">活下去 →</span>
+      </a>
+      <a class="wk" href="works/puzzles.html">
+        <span class="n">NO.08</span>
+        <h3>逻辑谜题生成器</h3>
+        <p>无限出题。每次都是新的一组，答案自己验。</p>
+        <span class="go">出题 →</span>
+      </a>
+      <a class="wk" href="works/civsim.html">
+        <span class="n">NO.09</span>
+        <h3>文明模拟器</h3>
+        <p>26 组参数跑了 26 个文明，这是其中一次的完整回放。</p>
+        <span class="go">看回放 →</span>
+      </a>
+      <a class="wk" href="pong.html">
+        <span class="n">NO.10</span>
+        <h3>乒乓球</h3>
+        <p>挡板接球，越接越快。最高分会写在这儿。</p>
+        <span class="go">来一局 →</span>
+      </a>
+      <a class="wk" href="launch.html">
+        <span class="n">NO.11</span>
+        <h3>发射窗口</h3>
+        <p>调角度和推力，把卫星从蓝色那段弧里送进去。</p>
+        <span class="go">点火 →</span>
+      </a>
+      <a class="wk" href="type-lab.html">
+        <span class="n">NO.12</span>
+        <h3>字体实验室</h3>
+        <p>打几个字，十种字体并排。站里那十种风格就是这十种字。</p>
+        <span class="go">试试 →</span>
+      </a>    </div>
+  </section>
+
+  <section class="section" id="books">
+    <header class="section-head" data-reveal>
+      <p class="kicker">02 — 书</p>
+      <h2 class="section-title">笔名叫<em>寒砚清</em></h2>
+      <p class="section-note">写了十几本长篇，都在番茄小说上。</p>
+    </header>
+
+    <div class="book-author">
+      <p class="ba-k">笔名</p>
+      <h3>寒砚清</h3>
+      <p class="ba-bio">「文学最无用，但也会是你一无所有时最可依赖的力量。」</p>
+    </div>
+
+    <div class="book-grid">
+      <a class="bk" href="https://fanqienovel.com/page/7571861126401510462" target="_blank" rel="noopener"><span class="bk-n">01</span><h3>镜淵書</h3><p class="bk-m">1.8 万字 · 7 章 · 已完结</p><span class="bk-go">去读 →</span></a>
+      <div class="bk"><span class="bk-n">02</span><h3>铁砚录[上]</h3><p class="bk-m">铁砚录 · 上卷</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">03</span><h3>铁砚录[下]</h3><p class="bk-m">铁砚录 · 下卷</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">04</span><h3>匠心灵韵之中</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">05</span><h3>梅莉和小熊</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">06</span><h3>华百工纪</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">07</span><h3>卢恩之语</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">08</span><h3>时序之诗</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">09</span><h3>镜樊予少年的人生箴言</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">10</span><h3>铁砚灵</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">11</span><h3>星宿的纹章</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+      <div class="bk"><span class="bk-n">12</span><h3>观云者</h3><p class="bk-m">番茄小说 · 寒砚清</p><span class="bk-go pending">链接待补</span></div>
+    </div>
+
+    <p class="book-note">按你给的书名列的，重复的已经合并（卢恩之语 / 时序之诗 / 星宿的纹章 / 镜樊予 / 铁砚录 各算一本）。除《镜淵書》外还没拿到分享链 —— 发我一条，我就把「链接待补」换成真的「去读」。</p>
+
+  </section>
+
+  <footer class="footer">
+    <span>© 2026 范连璟 · 拾趣</span>
+    <span class="f-c"><a class="door-link" href="room.html">房间</a><a href="index.html">← 回到主页</a></span>
+  </footer>
+</main>
+
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+
+<script src="js/scenes.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script src="js/interact.js"></script>
+</body>
+</html>

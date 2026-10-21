@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="coral" data-family="pastel" data-style="soft" data-mode="light" data-night="off">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>幼稚园 · 范连璟</title>
+<meta name="description" content="范连璟的简笔画小世界。最不酷的一页，也是最像小时候的一页。" />
+<meta name="color-scheme" content="light dark" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<style>
+  /* ---- 这一页自己的纸和笔 ---- */
+  :root { --hand: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "Songti SC", serif; }
+
+  .paper-grid {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--a1) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--a1) 14%, transparent) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: radial-gradient(110% 90% at 50% 0%, #000 30%, transparent 85%);
+    -webkit-mask-image: radial-gradient(110% 90% at 50% 0%, #000 30%, transparent 85%);
+  }
+
+  .doodle-hero { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: clamp(110px, 13vw, 170px) clamp(20px, 4vw, 48px) 20px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(20px, 4vw, 50px); align-items: center; }
+  .doodle-hero h1 { font-family: var(--hand); font-size: clamp(38px, 7vw, 92px); line-height: 1.12; letter-spacing: .02em; }
+  .doodle-hero h1 em { font-style: normal; color: var(--a1-t); }
+  .doodle-hero p { font-family: var(--hand); font-size: clamp(15px, 1.5vw, 20px); line-height: 2; color: var(--fg-dim); margin-top: 18px; max-width: 30ch; }
+  .doodle-hero .dh-note { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: var(--fg-faint); margin-top: 22px; text-transform: uppercase; }
+  .dh-art { position: relative; }
+  .dh-art svg { width: 100%; height: auto; }
+
+  .doodle-grid { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 20px clamp(20px, 4vw, 48px) clamp(60px, 9vw, 120px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 22px); }
+  .doodle { background: color-mix(in srgb, var(--card) 80%, transparent); border: 2px solid var(--card-line); border-radius: 26px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform .35s var(--ease-out), border-color .35s var(--ease); }
+  .doodle:hover { transform: translateY(-5px) rotate(-1.5deg); border-color: var(--a1); }
+  .doodle svg { width: 100%; height: auto; }
+  .doodle b { font-family: var(--hand); font-size: 17px; font-weight: 400; color: var(--fg); }
+  .doodle span { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .16em; color: var(--fg-faint); text-transform: uppercase; }
+  .doodle.wig { animation: wig .6s var(--ease); }
+  @keyframes wig { 20% { transform: rotate(4deg) scale(1.04); } 45% { transform: rotate(-4deg) scale(1.05); } 70% { transform: rotate(2deg) scale(1.02); } 100% { transform: none; } }
+
+  .ink-line { stroke: var(--fg); stroke-width: 3.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .ink-thin { stroke: var(--fg); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .crayon-a1 { fill: var(--a1); opacity: .55; }
+  .crayon-a2 { fill: var(--a2); opacity: .5; }
+  .crayon-a3 { fill: var(--a3); opacity: .55; }
+
+  .doodle-foot { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px) 60px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; color: var(--fg-faint); }
+
+  @media (max-width: 900px) {
+    .doodle-hero { grid-template-columns: 1fr; }
+    .dh-art { order: -1; max-width: 340px; }
+    .doodle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<!-- 手抖滤镜：所有线都有一点歪，才像手画的 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="wob">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n" />
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="var(--fg)" stroke-width="1" opacity=".28" />
+    </pattern>
+  </defs>
+</svg>
+
+<div class="paper-grid" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="回到主页">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航">
+    <a href="index.html"><i>←</i>主页</a>
+    <a href="atlas.html"><i>03</i>画册</a>
+  </nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">珊瑚</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置" aria-expanded="false" aria-controls="themePanel">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="theme-panel" id="themePanel" role="dialog" aria-modal="false" aria-label="外观设置" aria-hidden="true">
+  <div class="tp-head"><span>换一种光</span><em>T 开关</em></div>
+  <div class="tp-tabs" role="tablist">
+    <button class="tp-tab is-on" type="button" role="tab" data-tab="color" aria-selected="true">颜色 <b id="famNow">淡彩</b></button>
+    <button class="tp-tab" type="button" role="tab" data-tab="style" aria-selected="false">风格 <b id="styleNow">柔和</b></button>
+  </div>
+  <div class="tp-pane" id="paneColor">
+    <div class="fam-list" id="famList"></div>
+    <p class="fam-blurb" id="famBlurb"></p>
+    <div class="sw-grid" id="swList"></div>
+  </div>
+  <div class="tp-pane" id="paneStyle" hidden>
+    <div class="st-grid" id="styleList"></div>
+    <p class="tp-tip">这一页默认是「淡彩 + 柔和」。你换成别的也不违和，只是不那么像幼儿园了。</p>
+  </div>
+  <div class="tp-foot" id="tpFoot">5 个色系 · 60 种颜色 · 10 种风格</div>
+</div>
+
+<main id="main">
+  <section class="doodle-hero">
+    <div>
+      <p class="dh-note">幼稚园 · DOODLE</p>
+      <h1>这是我最<br /><em>不酷</em>的一页。</h1>
+      <p>小时候画的东西都是歪的，但那时候我更敢画。<br />这一页留给我所有画歪的东西。</p>
+      <p class="dh-note">点一下，它们会抖</p>
+    </div>
+    <div class="dh-art" aria-hidden="true">
+      <svg viewBox="0 0 400 400" filter="url(#wob)">
+        <!-- 远山 -->
+        <path class="crayon-a2" d="M20,330 L96,236 L150,300 L196,250 L260,330 Z" />
+        <path class="ink-thin" d="M20,330 L96,236 L150,300 L196,250 L260,330" />
+        <!-- 太阳 -->
+        <circle class="crayon-a1" cx="312" cy="78" r="38" />
+        <circle class="ink-line" cx="312" cy="78" r="38" />
+        <g class="ink-thin">
+          <path d="M312,20 v12 M312,124 v12 M254,78 h-12 M370,78 h12 M270,36 l-9,-9 M354,120 l9,9 M354,36 l9,-9 M270,120 l-9,9" />
+        </g>
+        <!-- 星星 -->
+        <g class="ink-thin">
+          <path d="M84,70 l6,14 l15,1 l-11,10 l3,15 l-13,-8 l-13,8 l3,-15 l-11,-10 l15,-1 z" />
+          <path d="M186,52 l4,9 l10,1 l-7,6 l2,10 l-9,-5 l-9,5 l2,-10 l-7,-6 l10,-1 z" />
+        </g>
+        <!-- 纸飞机 + 航线 -->
+        <path class="ink-thin" stroke-dasharray="6 8" d="M196,196 q40,-46 86,-24" opacity=".7" />
+        <path class="crayon-a3" d="M286,172 l52,-28 l-22,26 l22,10 z" />
+        <path class="ink-line" d="M286,172 l52,-28 l-22,26 l22,10 z" />
+        <!-- 小孩：抬头、举手指着天上 -->
+        <circle class="crayon-a1" cx="148" cy="222" r="19" />
+        <circle class="ink-line" cx="148" cy="222" r="19" />
+        <path class="ink-line" d="M148,241 v50" />
+        <path class="ink-line" d="M148,291 l-20,44 M148,291 l20,44" />
+        <path class="ink-line" d="M148,256 l-30,16 M148,250 l32,-30" />
+        <path class="crayon-a2" d="M140,238 q-16,8 -6,16 l22,-4 z" />
+        <path class="ink-thin" d="M126,246 q10,6 22,2" />
+        <!-- 地面 -->
+        <path class="ink-line" d="M40,336 q180,-16 330,0" />
+        <g class="ink-thin" opacity=".8"><path d="M58,352 v-10 M74,354 v-14 M92,354 v-9" /></g>
+      </svg>
+    </div>
+  </section>
+
+  <section class="doodle-grid" aria-label="简笔画">
+    <button class="doodle" data-name="太阳" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <circle class="crayon-a1" cx="100" cy="100" r="46" />
+        <circle class="ink-line" cx="100" cy="100" r="46" />
+        <g class="ink-thin">
+          <path d="M100,34 v18 M100,148 v18 M34,100 h18 M148,100 h18 M52,52 l13,13 M135,135 l13,13 M148,52 l-13,13 M65,135 l-13,13" />
+          <path d="M82,92 q6,-8 12,0" /><path d="M108,92 q6,-8 12,0" /><path d="M86,116 q14,12 28,0" />
+        </g>
+      </svg>
+      <b>太阳</b><span>Sun</span>
+    </button>
+
+    <button class="doodle" data-name="房子" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="crayon-a2" d="M46,96 L100,48 L154,96 L154,164 L46,164 Z" />
+        <path class="ink-line" d="M46,96 L100,48 L154,96 L154,164 L46,164 Z" />
+        <rect class="crayon-a1" x="86" y="122" width="28" height="42" />
+        <rect class="ink-thin" x="86" y="122" width="28" height="42" />
+        <rect class="ink-thin" x="58" y="108" width="20" height="20" />
+        <rect class="ink-thin" x="122" y="108" width="20" height="20" />
+        <path class="ink-thin" d="M132,60 l0,-18 l10,0 l0,26" />
+      </svg>
+      <b>房子</b><span>House</span>
+    </button>
+
+    <button class="doodle" data-name="火箭" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="crayon-a1" d="M100,26 q26,30 26,74 v34 h-52 v-34 q0,-44 26,-74 z" />
+        <path class="ink-line" d="M100,26 q26,30 26,74 v34 h-52 v-34 q0,-44 26,-74 z" />
+        <circle class="ink-thin" cx="100" cy="82" r="13" />
+        <path class="crayon-a2" d="M74,120 l-20,28 l20,-6 z M126,120 l20,28 l-20,-6 z" />
+        <path class="ink-thin" d="M74,120 l-20,28 l20,-6 z M126,120 l20,28 l-20,-6 z" />
+        <path class="crayon-a3" d="M88,136 q12,34 12,44 q0,-10 12,-44 z" />
+        <path class="ink-thin" d="M88,136 q12,34 12,44 q0,-10 12,-44" />
+      </svg>
+      <b>火箭</b><span>Rocket</span>
+    </button>
+
+    <button class="doodle" data-name="山" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="crayon-a2" d="M18,164 L74,74 L110,132 L132,100 L186,164 Z" />
+        <path class="ink-line" d="M18,164 L74,74 L110,132 L132,100 L186,164" />
+        <path class="crayon-a3" d="M74,74 L60,98 L70,92 L78,102 L88,94 L74,74 z" />
+        <path class="ink-thin" d="M74,74 L60,98 L70,92 L78,102 L88,94 Z" />
+        <path class="ink-thin" d="M40,164 q80,-14 140,0" />
+        <circle class="crayon-a1" cx="160" cy="52" r="18" />
+        <circle class="ink-thin" cx="160" cy="52" r="18" />
+      </svg>
+      <b>山</b><span>Mountain</span>
+    </button>
+
+    <button class="doodle" data-name="猫" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="crayon-a1" d="M62,64 q10,-26 18,-2 q20,-10 40,0 q8,-24 18,2 q20,26 18,58 q-2,34 -56,34 q-54,0 -56,-34 q-2,-32 18,-58 z" />
+        <path class="ink-line" d="M62,64 q10,-26 18,-2 q20,-10 40,0 q8,-24 18,2 q20,26 18,58 q-2,34 -56,34 q-54,0 -56,-34 q-2,-32 18,-58 z" />
+        <g class="ink-thin">
+          <path d="M82,96 q3,-6 7,0" /><path d="M112,96 q3,-6 7,0" />
+          <path d="M96,112 q4,4 8,0" />
+          <path d="M74,112 h-24 M74,122 l-22,10 M126,112 h24 M126,122 l22,10" />
+        </g>
+      </svg>
+      <b>猫</b><span>Cat</span>
+    </button>
+
+    <button class="doodle" data-name="花" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="ink-thin" d="M100,182 v-84" />
+        <path class="crayon-a2" d="M100,140 q-30,-10 -34,14 q28,14 34,-14 z" />
+        <path class="ink-thin" d="M100,140 q-30,-10 -34,14 q28,14 34,-14 z" />
+        <g class="crayon-a1">
+          <circle cx="100" cy="58" r="18" /><circle cx="76" cy="80" r="18" /><circle cx="124" cy="80" r="18" />
+          <circle cx="86" cy="102" r="18" /><circle cx="114" cy="102" r="18" />
+        </g>
+        <g class="ink-thin">
+          <circle cx="100" cy="58" r="18" /><circle cx="76" cy="80" r="18" /><circle cx="124" cy="80" r="18" />
+          <circle cx="86" cy="102" r="18" /><circle cx="114" cy="102" r="18" />
+        </g>
+        <circle class="crayon-a3" cx="100" cy="80" r="13" />
+        <circle class="ink-line" cx="100" cy="80" r="13" />
+      </svg>
+      <b>花</b><span>Flower</span>
+    </button>
+
+    <button class="doodle" data-name="云和雨" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="crayon-a2" d="M48,108 q-6,-34 28,-34 q8,-26 38,-26 q30,0 34,28 q28,2 24,32 z" />
+        <path class="ink-line" d="M48,108 q-6,-34 28,-34 q8,-26 38,-26 q30,0 34,28 q28,2 24,32 z" />
+        <g class="ink-thin">
+          <path d="M66,124 l-6,22" /><path d="M90,124 l-6,22" /><path d="M114,124 l-6,22" /><path d="M138,124 l-6,22" />
+        </g>
+      </svg>
+      <b>云和雨</b><span>Rain</span>
+    </button>
+
+    <button class="doodle" data-name="星星" type="button">
+      <svg viewBox="0 0 200 200" filter="url(#wob)" aria-hidden="true">
+        <path class="crayon-a3" d="M100,30 l20,46 l50,4 l-38,34 l12,50 l-44,-28 l-44,28 l12,-50 l-38,-34 l50,-4 z" />
+        <path class="ink-line" d="M100,30 l20,46 l50,4 l-38,34 l12,50 l-44,-28 l-44,28 l12,-50 l-38,-34 l50,-4 z" />
+        <g class="ink-thin"><path d="M74,86 q4,-6 8,0" /><path d="M118,86 q4,-6 8,0" /><path d="M88,104 q12,10 24,0" /></g>
+      </svg>
+      <b>星星</b><span>Star</span>
+    </button>
+  </section>
+
+  <div class="doodle-foot">
+    <span>画歪了也没关系 —— 小时候没人管这个。</span>
+    <span><a class="door-link" href="room.html">房间</a> · <a href="atlas.html">← 去正经画册</a></span>
+  </div>
+</main>
+
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-dot"></span><span class="cursor-ring"></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script>
+  (function () {
+    var t = document.getElementById('toast');
+    function toast(msg) {
+      if (!t) return;
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._t); t._t = setTimeout(function () { t.classList.remove('show'); }, 1600);
+    }
+    document.querySelectorAll('.doodle').forEach(function (el) {
+      el.addEventListener('click', function () {
+        el.classList.remove('wig');
+        void el.offsetWidth;
+        el.classList.add('wig');
+        toast('「' + (el.dataset.name || '') + '」');
+      });
+    });
+  })();
+</script>
+</body>
+</html>

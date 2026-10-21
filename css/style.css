@@ -1,0 +1,261 @@
+/* ============================================================
+   style.css — 外观系统的「风格轴」 + 背景美术
+   ------------------------------------------------------------
+   颜色（60 种）由 js/look.js 以行内 CSS 变量注入；
+   这个文件只管：字体、字距、圆角、质感、按钮形状、背景图案。
+   十种风格，字体尽量拉开差距：无衬线 / 宋体 / 等宽 / 卡通 /
+   书法 / 手写 / 粗黑体 —— 一眼就能看出不是同一套。
+   ============================================================ */
+
+/* ---------- 基础变量（颜色是兜底值，会被 look.js 覆盖） ---------- */
+:root {
+  --font-sans: "Space Grotesk", "Microsoft YaHei UI", "PingFang SC", system-ui, -apple-system, sans-serif;
+  --font-serif: "Instrument Serif", "Noto Serif SC", "Songti SC", "Source Han Serif SC", "SimSun", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  --font-song: "Noto Serif SC", "Songti SC", "Source Han Serif SC", "SimSun", serif;
+  --font-cute: "ZCOOL KuaiLe", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+  --font-brush: "Ma Shan Zheng", "STKaiti", "KaiTi", serif;
+  --font-hand: "Zhi Mang Xing", "STKaiti", "KaiTi", cursive;
+  --font-black: "Archivo Black", "Microsoft YaHei UI", system-ui, sans-serif;
+  --font-body: var(--font-sans);
+
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --maxw: 1260px;
+
+  /* 兜底：极光 */
+  --bg: #05060f;
+  --bg-grad: radial-gradient(130% 110% at 50% -10%, #101744 0%, #05060f 58%);
+  --fg: #eaf2ff;
+  --fg-dim: rgba(234, 242, 255, .64);
+  --fg-faint: rgba(234, 242, 255, .34);
+  --line: rgba(234, 242, 255, .13);
+  --line-strong: rgba(234, 242, 255, .28);
+  --card: rgba(255, 255, 255, .05);
+  --card-line: rgba(234, 242, 255, .12);
+  --a1: #6ff3ff;
+  --a2: #a98bff;
+  --a3: #ff5fc8;
+  --a1-t: #b6f8ff;
+  --on-accent: #0b0b0e;
+  --glow: 0 0 90px -10px rgba(111, 243, 255, .45);
+  --nav-bg: rgba(5, 6, 15, .55);
+  --shadow: 0 30px 80px -40px rgba(0, 0, 0, .9);
+  --blend-mesh: screen;
+  --grain-blend: overlay;
+  --mesh-op: 1;
+
+  /* 风格兜底：极简 */
+  --radius: 24px;
+  --radius-sm: 14px;
+  --card-blur: 14px;
+  --btn-r: 999px;
+  --pill-r: 999px;
+  --font-display: var(--font-sans);
+  --display-w: 500;
+  --display-sp: -.035em;
+  --display-case: none;
+  --h1-scale: 1;
+  --body-w: 400;
+  --grain-op: .45;
+  --btn-primary-bg: linear-gradient(100deg, var(--a1), var(--a2) 55%, var(--a3));
+
+  --sun-color: var(--fg);
+}
+
+body, .card, .btn, .nav, .theme-panel, .work, .journey li, .socials a, .chips li {
+  transition: background-color .5s var(--ease), color .5s var(--ease),
+              border-color .5s var(--ease), box-shadow .5s var(--ease);
+}
+
+/* ============================================================
+   01 极简 MINIMAL —— 无衬线、干净、大留白
+   ============================================================ */
+html[data-style="minimal"] {
+  --font-display: var(--font-sans); --font-body: var(--font-sans);
+  --display-w: 500; --display-sp: -.035em; --display-case: none; --h1-scale: 1;
+  --radius: 24px; --radius-sm: 14px; --card-blur: 14px;
+  --btn-r: 999px; --pill-r: 999px; --grain-op: .45;
+}
+html[data-style="minimal"] .m-halo { opacity: .45; }
+html[data-style="minimal"] .m-glow { opacity: .85; }
+
+/* ============================================================
+   02 印刷 PRINT —— 全站宋体，纸、网点、硬边
+   ============================================================ */
+html[data-style="print"] {
+  --font-display: var(--font-song); --font-body: var(--font-song);
+  --display-w: 400; --display-sp: .02em; --display-case: none; --h1-scale: .92;
+  --radius: 2px; --radius-sm: 1px; --card-blur: 6px;
+  --btn-r: 2px; --pill-r: 0px; --grain-op: .9;
+  --btn-primary-bg: var(--a1);
+}
+html[data-style="print"] .m-halftone { opacity: .26; }
+html[data-style="print"] .m-grid { opacity: .05; }
+html[data-style="print"] .m-glow { opacity: .5; }
+html[data-style="print"] .hero-title .ln2 { letter-spacing: .02em; }
+
+/* ============================================================
+   03 电影 CINEMATIC —— 细宋体 + 意大利体，字距很开
+   ============================================================ */
+html[data-style="cinematic"] {
+  --font-display: var(--font-serif); --font-body: var(--font-song);
+  --display-w: 400; --display-sp: .06em; --display-case: none; --h1-scale: .9;
+  --radius: 12px; --radius-sm: 6px; --card-blur: 10px;
+  --btn-r: 6px; --pill-r: 999px; --grain-op: .8;
+}
+html[data-style="cinematic"] .m-glow { opacity: 1; }
+html[data-style="cinematic"] .m-halo { opacity: .18; }
+html[data-style="cinematic"] .m-waves { opacity: .08; }
+html[data-style="cinematic"] .section-title em { font-style: italic; }
+
+/* ============================================================
+   04 赛博 CYBER —— 等宽字、大写、零圆角、网格
+   ============================================================ */
+html[data-style="cyber"] {
+  --font-display: var(--font-mono); --font-body: var(--font-mono);
+  --display-w: 500; --display-sp: 0em; --display-case: uppercase; --h1-scale: .86;
+  --radius: 0px; --radius-sm: 0px; --card-blur: 6px;
+  --btn-r: 0px; --pill-r: 0px; --grain-op: .35;
+}
+html[data-style="cyber"] .m-grid { opacity: .5; }
+html[data-style="cyber"] .m-glow { opacity: .7; }
+html[data-style="cyber"] .m-halftone { opacity: .12; }
+html[data-style="cyber"] .ln3 em { font-family: var(--font-mono); font-style: normal; letter-spacing: .04em; font-size: .8em; color: var(--a1-t); }
+
+/* ============================================================
+   05 柔和 SOFT —— 卡通圆体、超大圆角、花雨
+   ============================================================ */
+html[data-style="soft"] {
+  --font-display: var(--font-cute); --font-body: var(--font-cute);
+  --display-w: 400; --display-sp: .04em; --display-case: none; --h1-scale: .92;
+  --radius: 34px; --radius-sm: 22px; --card-blur: 18px;
+  --btn-r: 999px; --pill-r: 999px; --grain-op: .3;
+}
+html[data-style="soft"] .m-glow { opacity: .9; }
+html[data-style="soft"] .m-waves { opacity: .14; }
+html[data-style="soft"] .m-halo { opacity: .35; }
+
+/* ============================================================
+   06 深海 OCEAN —— 无衬线 + 大写字距，像说明书
+   ============================================================ */
+html[data-style="ocean"] {
+  --font-display: var(--font-sans); --font-body: var(--font-sans);
+  --display-w: 300; --display-sp: .1em; --display-case: none; --h1-scale: .92;
+  --radius: 20px; --radius-sm: 12px; --card-blur: 14px;
+  --btn-r: 999px; --pill-r: 999px; --grain-op: .4;
+}
+html[data-style="ocean"] .m-waves { opacity: .7; }
+html[data-style="ocean"] .m-glow { opacity: .8; }
+html[data-style="ocean"] .m-halo { opacity: .35; }
+
+/* ============================================================
+   07 玻璃 GLASS —— 粗无衬线、毛玻璃、精密网格
+   ============================================================ */
+html[data-style="glass"] {
+  --font-display: var(--font-sans); --font-body: var(--font-sans);
+  --display-w: 600; --display-sp: -.05em; --display-case: none; --h1-scale: .96;
+  --radius: 16px; --radius-sm: 10px; --card-blur: 24px;
+  --btn-r: 12px; --pill-r: 999px; --grain-op: .28;
+}
+html[data-style="glass"] .m-grid { opacity: .35; }
+html[data-style="glass"] .m-halftone { opacity: .18; }
+html[data-style="glass"] .m-glow { opacity: .7; }
+
+/* ============================================================
+   08 海报 POSTER —— 超粗黑体、全大写、硬边
+   ============================================================ */
+html[data-style="poster"] {
+  --font-display: var(--font-black); --font-body: var(--font-sans);
+  --display-w: 900; --display-sp: -.02em; --display-case: uppercase; --h1-scale: .82;
+  --radius: 0px; --radius-sm: 0px; --card-blur: 4px;
+  --btn-r: 0px; --pill-r: 0px; --grain-op: .7;
+  --btn-primary-bg: var(--a1);
+}
+html[data-style="poster"] .m-halftone { opacity: .5; }
+html[data-style="poster"] .m-halo { opacity: .35; }
+html[data-style="poster"] .m-glow { opacity: 1; }
+html[data-style="poster"] .m-grid { opacity: .08; }
+html[data-style="poster"] .ln3 em { font-style: normal; font-family: var(--font-black); }
+
+/* ============================================================
+   09 书法 INK —— 毛笔字，竖排味，印章边
+   ============================================================ */
+html[data-style="ink"] {
+  --font-display: var(--font-brush); --font-body: var(--font-song);
+  --display-w: 400; --display-sp: .06em; --display-case: none; --h1-scale: .92;
+  --radius: 6px; --radius-sm: 3px; --card-blur: 6px;
+  --btn-r: 6px; --pill-r: 0px; --grain-op: .75;
+}
+html[data-style="ink"] .m-halftone { opacity: .22; }
+html[data-style="ink"] .m-glow { opacity: .55; }
+html[data-style="ink"] .ln2::after { -webkit-text-stroke-width: 2px; opacity: .6; }
+html[data-style="ink"] .section-title em { font-family: var(--font-serif); font-style: italic; }
+
+/* ============================================================
+   10 手写 HAND —— 钢笔字，像草稿纸
+   ============================================================ */
+html[data-style="hand"] {
+  --font-display: var(--font-hand); --font-body: var(--font-song);
+  --display-w: 400; --display-sp: .03em; --display-case: none; --h1-scale: 1;
+  --radius: 18px; --radius-sm: 10px; --card-blur: 8px;
+  --btn-r: 18px; --pill-r: 999px; --grain-op: .5;
+}
+html[data-style="hand"] .m-glow { opacity: .8; }
+html[data-style="hand"] .m-halo { opacity: .3; }
+html[data-style="hand"] .m-grid { opacity: .12; }
+
+/* ============================================================
+   背景美术（所有风格共用，只是显隐不同）
+   ============================================================ */
+.motif { position: absolute; inset: 0; overflow: hidden; }
+
+.m-waves {
+  position: absolute; inset: auto 0 -6% 0; width: 100%; height: 62%;
+  opacity: 0; transition: opacity .8s var(--ease);
+}
+.m-waves path { fill: none; stroke: var(--a1); stroke-width: 1.2; opacity: .55; }
+.m-waves .w2 { stroke: var(--a2); opacity: .4; }
+.m-waves .w3 { stroke: var(--a3); opacity: .3; }
+.m-waves path { animation: waveDrift 18s ease-in-out infinite alternate; }
+.m-waves .w2 { animation-duration: 24s; }
+.m-waves .w3 { animation-duration: 31s; }
+
+.m-grid {
+  position: absolute; inset: 0; opacity: 0;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(120% 90% at 50% 10%, #000 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 10%, #000 0%, transparent 72%);
+  transition: opacity .8s var(--ease);
+}
+
+.m-halftone {
+  position: absolute; inset: 0; opacity: 0;
+  background-image: radial-gradient(var(--fg) .9px, transparent 1px);
+  background-size: 10px 10px;
+  mask-image: radial-gradient(90% 70% at 80% 20%, #000 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(90% 70% at 80% 20%, #000 0%, transparent 70%);
+  transition: opacity .8s var(--ease);
+}
+
+.m-halo {
+  position: absolute; border-radius: 50%; opacity: 0;
+  border: 1px solid var(--a1);
+  transition: opacity .8s var(--ease);
+}
+.m-halo.h1 { width: 74vw; height: 74vw; left: -14vw; top: -26vw; }
+.m-halo.h2 { width: 52vw; height: 52vw; right: -12vw; top: 6vw; border-color: var(--a3); }
+
+.m-glow {
+  position: absolute; inset: 0; opacity: .8;
+  background:
+    radial-gradient(50% 40% at 15% 12%, color-mix(in srgb, var(--a2) 26%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 85% 18%, color-mix(in srgb, var(--a3) 22%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 50% 100%, color-mix(in srgb, var(--a1) 18%, transparent), transparent 70%);
+  transition: opacity .8s var(--ease);
+}
+
+@keyframes waveDrift { to { transform: translateX(-26px); } }

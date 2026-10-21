@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雾灯镇 · 钟声10:07 — 本格侦探推理</title>
+<style>
+/* ============================================================
+   复古暗调侦探主题：深褐近黑 + 琥珀金 + 衬线 + 打字机字距
+   ============================================================ */
+:root{
+  --bg0:#0c0a08; --bg1:#151009; --panel:#1c150c; --panel2:#241a0f;
+  --ink:#d8c9a8; --dim:#8f7f60; --gold:#c9a25a; --gold2:#e0c078;
+  --red:#a04040; --green:#7ca05c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Georgia,"Times New Roman","Songti SC",SimSun,serif;
+  background:radial-gradient(ellipse at 50% -20%,#241a0e 0%,var(--bg1) 45%,var(--bg0) 100%);
+  color:var(--ink);letter-spacing:.4px;min-height:100vh;padding:18px;
+}
+.wrap{max-width:1180px;margin:0 auto}
+/* ---------- 顶栏 ---------- */
+header{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  border:1px solid var(--gold);outline:1px solid var(--gold2);outline-offset:3px;
+  background:linear-gradient(180deg,#241a0e,#17110a);padding:12px 20px;
+}
+h1{font-size:26px;letter-spacing:8px;color:var(--gold2);font-weight:500}
+h1 small{display:block;font-size:12px;color:var(--dim);letter-spacing:4px;margin-top:4px}
+.meter{font-size:14px;color:var(--ink)}
+.meter b{color:var(--red)}
+.stars{font-size:15px;color:var(--gold2);letter-spacing:2px}
+.tb{border:1px solid var(--gold);background:transparent;color:var(--gold);padding:6px 14px;
+  font-family:inherit;font-size:14px;letter-spacing:2px;cursor:pointer;transition:.15s}
+.tb:hover{background:rgba(201,162,90,.15)}
+/* ---------- 布局 ---------- */
+.grid{display:grid;grid-template-columns:300px 1fr;gap:16px;margin-top:16px}
+aside,section{background:var(--panel);border:1px solid #4a3a20;padding:14px 16px}
+h2{font-size:15px;color:var(--gold2);letter-spacing:5px;border-bottom:1px solid #4a3a20;padding-bottom:8px;margin-bottom:10px}
+/* ---------- 案卷 ---------- */
+.case p{font-size:13.5px;line-height:1.9;color:var(--dim);margin-bottom:10px}
+.sus{border:1px solid #4a3a20;background:var(--panel2);padding:10px 12px;margin-bottom:10px}
+.sus h3{color:var(--ink);font-size:15px;letter-spacing:2px}
+.sus .role{font-size:12px;color:var(--dim);margin:2px 0 6px}
+.sus p{font-size:12.5px;line-height:1.7;color:var(--dim)}
+.sus button{margin-top:8px;width:100%;padding:7px 0;border:1px solid var(--red);background:transparent;
+  color:var(--red);font-family:inherit;font-size:13px;letter-spacing:3px;cursor:pointer;transition:.15s}
+.sus button:hover{background:var(--red);color:#fff}
+/* ---------- 线索卡 ---------- */
+.tabs{margin-bottom:10px}
+.tabs button{border:1px solid #4a3a20;background:transparent;color:var(--dim);padding:6px 16px;
+  font-family:inherit;font-size:13px;letter-spacing:2px;cursor:pointer;margin-right:6px}
+.tabs button.on{background:rgba(201,162,90,.18);color:var(--gold2);border-color:var(--gold)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.clue{border:1px solid #4a3a20;background:var(--panel2);padding:10px;cursor:pointer;transition:.15s;position:relative}
+.clue:hover{border-color:var(--gold2);transform:translateY(-2px)}
+.clue .tag{font-size:11px;letter-spacing:2px;color:var(--gold);display:block;margin-bottom:6px}
+.clue .ct{font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:6px}
+.clue .cs{font-size:12px;color:var(--dim);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.clue.own{border-color:#7c9c5c}
+.clue.own .tag{color:#7ca05c}
+.clue.key{border-color:var(--gold2);box-shadow:0 0 12px rgba(201,162,90,.25)}
+.clue.pick{border-color:var(--red);background:#2a1710}
+.clue .rm{position:absolute;top:6px;right:8px;color:var(--red);font-size:14px}
+/* ---------- 推理台 ---------- */
+.desk{margin-top:14px;border:1px dashed #6a5330;padding:12px}
+.desk .hint{font-size:12px;color:var(--dim);margin-bottom:8px}
+.basket{display:flex;gap:8px;flex-wrap:wrap;min-height:42px;margin-bottom:10px}
+.basket .slot{width:140px;min-height:40px;border:1px solid #4a3a20;background:#12100a;padding:6px;
+  font-size:12px;color:var(--dim);display:flex;align-items:center;justify-content:center;text-align:center}
+.basket .slot.on{border-color:var(--red);color:var(--ink)}
+.brow{display:flex;gap:10px;align-items:center}
+.brow button{padding:8px 20px;border:1px solid var(--gold);background:rgba(201,162,90,.12);color:var(--gold2);
+  font-family:inherit;font-size:14px;letter-spacing:3px;cursor:pointer}
+.brow button:hover{background:var(--gold);color:#1c1405}
+.brow .note{font-size:12px;color:var(--dim)}
+/* ---------- 日志 ---------- */
+.log{margin-top:14px;max-height:190px;overflow-y:auto;border-top:1px solid #4a3a20;padding-top:10px;font-size:13.5px;line-height:1.9;color:var(--ink)}
+.log .bad{color:var(--red)}
+.log .good{color:#a8c890}
+.log .meta{color:var(--dim)}
+/* ---------- 弹窗 ---------- */
+.veil{position:fixed;inset:0;background:rgba(10,7,4,.82);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal{background:var(--panel);border:1px solid var(--gold);outline:1px solid var(--gold2);outline-offset:3px;
+  max-width:560px;width:92%;padding:24px 28px;box-shadow:0 18px 60px #000}
+.modal h3{color:var(--gold2);letter-spacing:4px;font-size:19px;margin-bottom:12px}
+.modal .body{font-size:14.5px;line-height:2;color:var(--ink)}
+.modal .who{color:var(--dim);font-size:12px;margin-bottom:10px}
+.modal button{margin-top:16px;padding:8px 26px;border:1px solid var(--gold);background:rgba(201,162,90,.12);
+  color:var(--gold2);font-family:inherit;font-size:14px;letter-spacing:3px;cursor:pointer}
+.winbox{text-align:center}
+.winbox .sig{font-size:52px;margin:10px 0}
+.winbox h2{font-size:30px;color:var(--gold2);letter-spacing:8px;border:none;margin:6px 0 14px}
+.winbox p{font-size:14px;line-height:2.1;color:var(--ink);text-align:left;margin:0 auto;max-width:480px}
+@media (max-width:860px){ .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>雾 灯 镇<small>THE FOGLAMP CASE · 钟声 10:07 · 本格侦探推理</small></h1>
+    <div>
+      <span class="meter">⚖ 失误 <b id="m-num">0</b> / <span id="m-max">6</span></span>
+      <span class="stars" id="k-stars">★★★★</span>
+      <button class="tb" id="btn-save">💾 存档</button>
+      <button class="tb" id="btn-load">📂 读档</button>
+      <button class="tb" id="btn-reset">⟲ 重新调查</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- 左：案卷 -->
+    <aside>
+      <h2>案 卷</h2>
+      <div class="case">
+        <p>1931 年 11 月 23 日，雾灯镇药房老板哈维·奥德曼死于自家后屋：后脑钝器伤，门从内侧反链，钥匙在他衣袋里。你是受邀而来的侦探。</p>
+        <p>「把证词与物证拼起来，最多错六次。集齐四条关键推理，就能指控真凶。」</p>
+      </div>
+      <h2 style="margin-top:16px">嫌疑人</h2>
+      <div id="suspects"></div>
+    </aside>
+
+    <!-- 右：线索与推理 -->
+    <section>
+      <h2>线 索 卡</h2>
+      <div class="tabs">
+        <button data-tab="证词" class="on">证 词</button>
+        <button data-tab="物证">物 证</button>
+        <button data-tab="结论">结 论</button>
+      </div>
+      <div class="cards" id="cards"></div>
+
+      <div class="desk">
+        <div class="hint">① 点卡片加入推理台（最多 3 张，再点移除）② 按「组合推理」得出结论。</div>
+        <div class="basket" id="basket"></div>
+        <div class="brow">
+          <button id="btn-reason">⚖ 组合推理</button>
+          <button id="btn-clear">清空</button>
+          <span class="note" id="desk-note">关键线索 ★ 全 4 条后即可指控</span>
+        </div>
+      </div>
+
+      <div class="log" id="log"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   《雾灯镇》—— 数据层（纯数据，所有推理规则都在这里）
+   ============================================================ */
+const __DATA__ = {
+  MISTAKE_LIMIT: 6,               // 失误上限：归零即败北
+  KEY_NEED: 4,                    // 通关需要的关键结论数
+
+  /* ---- 嫌疑人（含错误指控时各自的辩白） ---- */
+  SUSPECTS: [
+    { id:"cole",    name:"科尔·克雷文", role:"神父",
+      brief:"镇上唯一的教袍人。与死者有十年旧账。",
+      alibi:"「案发夜我在教堂与药房之间走动——我确实怕别人知道我来过两趟。」" },
+    { id:"pierce",  name:"约翰·皮尔",  role:"药房学徒",
+      brief:"案发夜八到十点独自守柜台。",
+      alibi:"「我只想继承药房……先生待我不薄，我为何要杀他？」" },
+    { id:"anna",    name:"安娜·奥德曼", role:"死者之妻",
+      brief:"常晚归，与死者感情冷淡。",
+      alibi:"「我九点半前都在教堂。门锁着，是皮尔开的门——你们再问我也没别的。」" },
+    { id:"henderson", name:"亨利·赫德森", role:"镇长",
+      brief:"半年前因土地与死者争执。",
+      alibi:"「八点到十点半我有二十个证人。至于账本——那桩镇定剂生意，我承认。」" },
+  ],
+
+  /* ---- 初始线索：证词 ×5、物证 ×8 ---- */
+  CLUES: [
+    { id:"w_anna",  kind:"证词", speaker:"安娜·奥德曼", speakerRole:"死者之妻",
+      title:"安娜的证词",
+      text:"「我九点在教堂晚祷，九点半到家——大门锁着，叩了半天没人应，后来……是皮尔给我开的门。」" },
+    { id:"w_pierce", kind:"证词", speaker:"约翰·皮尔", speakerRole:"药房学徒（案发夜守柜）",
+      title:"皮尔的证词",
+      text:"「八点到十点我一步没离柜台。晚饭后哈维先生进后屋配新方，再没出来。十点我端灯油进去，发现后屋门从里面用链子扣上了——我吓得跑去找神父。」" },
+    { id:"w_henderson", kind:"证词", speaker:"亨利·赫德森", speakerRole:"镇长",
+      title:"镇长的证词",
+      text:"「八点到十点半我在市政厅开会，二十个人作证。土地的事是半年前吵的，早就翻篇了。」" },
+    { id:"w_cole", kind:"证词", speaker:"科尔·克雷文", speakerRole:"神父",
+      title:"神父的证词",
+      text:"「九点前后我路过药房，把借的药典还给皮尔。后屋灯亮着，哈维在里面对药方——隔着窗应了我一声，声音……听着像他。」" },
+    { id:"w_edgar", kind:"证词", speaker:"埃德加", speakerRole:"邻居 · 马车夫",
+      title:"邻居的证词",
+      text:"「九点半上下吧，听见后屋头有瓷器碎了。那家子常打翻药罐——我没当回事，就睡了。」" },
+    { id:"e_door", kind:"物证", speaker:"现场勘验", speakerRole:"第一现场",
+      title:"门链与钥匙",
+      text:"后屋门从内侧扣着黄铜门链；死者衣袋里躺着唯一的房门钥匙。窗从内插销——密室。" },
+    { id:"e_crock", kind:"物证", speaker:"现场勘验", speakerRole:"第一现场",
+      title:"碎药罐与油渍",
+      text:"靠窗地板碎着一只陶药罐，罐底有深色干涸油渍；碎瓷散落方向朝向门外。" },
+    { id:"e_clock", kind:"物证", speaker:"现场勘验", speakerRole:"第一现场",
+      title:"停摆的挂钟",
+      text:"后屋铜挂钟停在 10:07，钟面玻璃有一道新裂纹，指针尖沾着一点暗色。" },
+    { id:"e_pipe", kind:"物证", speaker:"现场勘验", speakerRole:"第一现场",
+      title:"死者烟斗",
+      text:"死者惯用的陶烟斗搁在桌角，斗钵里积着新烟灰——死前一小时左右有人抽过它。" },
+    { id:"e_print", kind:"物证", speaker:"现场勘验", speakerRole:"屋外",
+      title:"窗外鞋印",
+      text:"后窗下方湿泥地上印着一双鞋印：宽大、平底，纹路是十字褶痕——像教袍下的鞋。" },
+    { id:"e_ledger", kind:"物证", speaker:"药房账本", speakerRole:"书证",
+      title:"账本的末页",
+      text:"药房账本末页写着：「赫。明晚照旧。」斜体，墨色比正文新。" },
+    { id:"e_letter", kind:"物证", speaker:"药典夹层", speakerRole:"书证",
+      title:"十年前的旧信",
+      text:"《投药本草》夹层里藏着一封泛黄的信：「梅贝尔之死，我会等你交代。科尔。」笔迹工整，像抄过《圣经》。" },
+    { id:"e_wound", kind:"物证", speaker:"验尸报告", speakerRole:"法医",
+      title:"验尸报告",
+      text:"后脑一处钝器伤，创口宽约两指、深而狭——不是重物所为，应是「小而沉的硬物」；死亡时间 21:20–22:00。" },
+    { id:"e_morter", kind:"物证", speaker:"药柜检查", speakerRole:"第二现场",
+      title:"药柜铜杵",
+      text:"压药铜杵被擦得锃亮，可杵头的凹缝里还嵌着一丝暗红与陶屑——它与碎裂的药罐底部恰好吻合。" },
+  ],
+
+  /* ---- 推理矩阵：combos（2–3 张线索 id）→ 结论卡 ----
+     结论卡 kind 为「结论」；key=true 为通关关键 ★；干扰线 herring=true 合法但不指向真凶 */
+  DEDUCTIONS: [
+    { id:"k1", icon:"🕰", title:"★ 声音的破绽", key:true,
+      combos:[["w_cole","w_pierce"]],
+      text:"皮尔 8–10 点守柜台、从没离开；邻居 9:30 听见打斗声——那么神父所谓『9 点路过，隔窗听见哈维应声』里，应声的到底是谁？他只说『声音像他』——因为他站在后屋门口时，哈维已经不能说话了。" },
+    { id:"k2", icon:"⚰", title:"★ 死亡时刻", key:true,
+      combos:[["w_edgar","e_clock","e_crock"]],
+      text:"碎药罐落在 9:30（邻居证词）、挂钟停在 10:07——打斗自 9:30 起，死者于 10:07 前一瞬被击。21:00 神父路过时『应声的哈维』与 21:20 后的死者之间，只有神父自己在场。" },
+    { id:"k3", icon:"🚪", title:"★ 伪密室与教袍鞋印", key:true,
+      combos:[["e_door","e_crock","e_print"]],
+      text:"屋里反链、窗外却有鞋印：凶手打斗后从窗离开，再于门外用细绳借着门缝把黄铜链扣上——伪密室。窗下十字褶痕的平底鞋，镇上只有科尔神父穿得起教袍。" },
+    { id:"k4", icon:"📜", title:"★ 十年前的遗书", key:true,
+      combos:[["e_letter","w_cole"]],
+      text:"旧信署名科尔，信中说『梅贝尔之死，我会等你交代』——梅贝尔是神父的妹妹，十年前死于死者亲手配制的『慎眠剂』，尸检被压下了。十年后死者翻出旧账要挟，神父说：『我确实怕别人知道我来过两趟。』" },
+    { id:"k5", icon:"🔨", title:"凶器认定", key:false,
+      combos:[["e_wound","e_morter","e_crock"]],
+      text:"创口『宽两指、小而沉』＝药柜铜杵；杵头暗红与陶屑、碎罐吻合——凶器是药房自己的铜杵，擦拭过，却擦不干净。" },
+    { id:"h1", icon:"🔖", title:"镇长的镇定剂", herring:true,
+      combos:[["e_ledger","w_henderson"]],
+      text:"『赫』＝赫德森：他与死者不过是镇定剂供货交易（镇静药条例即将出台，他怕断供）。八点开会之事有二十人作证——镇长排除。" },
+    { id:"h2", icon:"🐣", title:"学徒的私心", herring:true,
+      combos:[["w_pierce","e_ledger"]],
+      text:"皮尔想接管药房，夜里抢配新方；『明晚照旧』是哈维吩咐他继续做镇定剂——一条支线，无关命案。" },
+    { id:"h3", icon:"🌫", title:"妻子的晚归", herring:true,
+      combos:[["w_anna","e_pipe"]],
+      text:"烟斗新灰是死者 21:00 前抽的；安娜 9:30 才到家，与钟声 10:07 不符——丈夫的死与她无关，可她确实有私情，才支支吾吾。" },
+  ],
+
+  /* ---- 未定义组合 → 错误推论（固定文案随机取） ---- */
+  WRONG_POOL: [
+    "「这两张卡片毫无关联……你的推断跑偏了。」",
+    "「侦探，线索不能这样硬拼——重新想想。」",
+    "「你把不同人的话缝在一起，得出的结论却站不住脚。」",
+    "「没有物证支撑的推理是空中楼阁。再去看看现场吧。」",
+    "「思路已经歪了。先停一停，把卷宗再读一遍。」",
+  ],
+
+  /* ---- 关键结论的解锁条件复述（供开罪时引用） ---- */
+  ACCUSE_WIN: {
+    suspect:"cole",
+    line:"科尔·克雷文。门外教袍鞋印，21:00 的『声音像他』，9:30–10:07 的死亡窗口，以及十年前那封写给自己妹妹的信——罪名成立。",
+  },
+};
+
+/* ============================================================
+   核心逻辑 —— 纯函数区（不依赖 DOM；selftest.mjs 直接引用此段）
+   ============================================================ */
+/*__CORE_START__*/
+/** 组合标准化：去掉重复、排序，返回 '+' 连接键 */
+function coreKey(ids){
+  return Array.from(new Set(ids)).sort().join('+');
+}
+/** 检查一组线索是否命中推理矩阵。
+ *  返回 { hit:true, ded }（命中）或 { hit:false, wrong:true }（错误推论） */
+function coreCheckCombo(ids, D){
+  const key = coreKey(ids);
+  for(const d of D.DEDUCTIONS){
+    for(const c of d.combos){
+      if(coreKey(c) === key) return { hit:true, ded:d };
+    }
+  }
+  return { hit:false, wrong:true };
+}
+/** 是否已集齐全部关键结论 */
+function coreHasAllKeys(owned, D){
+  const want = D.DEDUCTIONS.filter(d=>d.key).length;
+  let have = 0;
+  for(const d of D.DEDUCTIONS) if(d.key && owned.includes(d.id)) have++;
+  return have >= want;
+}
+/** 指控判定：
+ *  owned 为已获结论 id 数组；返回 { result:'win'|'insufficient'|'wrong', suspect } */
+function coreAccuse(suspectId, owned, D){
+  const right = D.ACCUSE_WIN.suspect;
+  if(!coreHasAllKeys(owned, D)) return { result:'insufficient', suspect:suspectId };
+  if(suspectId !== right) return { result:'wrong', suspect:suspectId };
+  return { result:'win', suspect:suspectId };
+}
+/** 存档序列化（只含推理进度） */
+function coreSerialize(st, D){
+  return JSON.stringify({ v:1, owned:st.owned, basket:st.basket, mistakes:st.mistakes, won:st.won, lost:st.lost });
+}
+/** 读档反序列化；非法/旧版本返回 null */
+function coreDeserialize(raw, D){
+  try{
+    const o = JSON.parse(raw);
+    if(!o || o.v !== 1) return null;
+    if(!Array.isArray(o.owned) || !Array.isArray(o.basket)) return null;
+    return { owned:o.owned, basket:o.basket, mistakes:o.mistakes||0, won:!!o.won, lost:!!o.lost };
+  }catch{ return null; }
+}
+/*__CORE_END__*/
+
+/* ============================================================
+   DOM 层（游戏交互）
+   ============================================================ */
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const SAVE_KEY = "foglamp_case_v1";
+
+/* ---- 运行时状态 ---- */
+let st = { owned:[], basket:[], mistakes:0, won:false, lost:false };
+let tab = "证词";               // 当前标签页：证词/物证/结论
+
+/* ---- 工具 ---- */
+function log(text, cls){
+  const p = document.createElement("p");
+  if(cls) p.className = cls;
+  p.textContent = text;
+  $("#log").appendChild(p);
+  $("#log").scrollTop = 1e5;
+}
+function byId(id){ return D.CLUES.concat(D.DEDUCTIONS.map(d=>({ ...d, kind:"结论", speaker:"推理所得", text:d.text }))).find(c=>c.id===id); }
+function permutKey(ids){ return coreKey(ids); }
+
+/* ---- 谜面初始化：所有结论卡不发放，初始只显示证词/物证 ---- */
+function visibleClues(){
+  if(tab === "结论") return D.DEDUCTIONS.filter(d=>st.owned.includes(d.id));
+  return D.CLUES.filter(c=>c.kind === tab);
+}
+
+/* ---- 渲染：嫌疑人卡 ---- */
+function renderSuspects(){
+  const box = $("#suspects"); box.innerHTML = "";
+  for(const s of D.SUSPECTS){
+    const d = document.createElement("div"); d.className = "sus";
+    d.innerHTML = `<h3>${s.name}</h3><div class="role">${s.role}</div><p>${s.brief}</p>`;
+    const b = document.createElement("button");
+    b.textContent = "⚖ 指控此人";
+    b.onclick = () => accuse(s.id, s.name);
+    d.appendChild(b);
+    box.appendChild(d);
+  }
+}
+
+/* ---- 渲染：线索卡 ---- */
+function renderCards(){
+  const box = $("#cards"); box.innerHTML = "";
+  for(const c of visibleClues()){
+    const d = document.createElement("div");
+    d.className = "clue" + (st.owned.includes(c.id) ? " own" : "");
+    if(c.key) d.className += " key";
+    if(st.basket.includes(c.id)) d.className += " pick";
+    const tag = c.kind === "结论" ? (c.key ? "★ 关键" : "○ 结论") : c.kind;
+    d.innerHTML = `<span class="tag">${tag} · ${c.speaker}</span>
+      <div class="ct">${c.icon ? c.icon + " " : ""}${c.title}</div>
+      <div class="cs">${c.text}</div>` + (st.basket.includes(c.id) ? '<span class="rm">✕</span>' : "");
+    d.onclick = () => { 
+      if(st.basket.includes(c.id)){ st.basket = st.basket.filter(x=>x!==c.id); }
+      else if(!st.owned.includes(c.id) || c.kind === "结论"){
+        if(st.basket.length >= 3){ note("推理台已满（最多 3 张）——先清空或移除一张。"); return; }
+        if(!st.basket.includes(c.id)) st.basket.push(c.id);
+      }
+      renderBasket(); renderCards(); autosave();
+    };
+    box.appendChild(d);
+  }
+}
+function note(t){ $("#desk-note").textContent = t; }
+function renderBasket(){
+  const box = $("#basket"); box.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const s = document.createElement("div");
+    const id = st.basket[i];
+    s.className = "slot" + (id ? " on" : "");
+    s.textContent = id ? byId(id).title : (i === 0 ? "点选第一张…" : "（空）");
+    box.appendChild(s);
+  }
+  note(st.basket.length === 3 ? "组合就绪——点「组合推理」。" : `已选 ${st.basket.length} / 3。`);
+}
+
+/* ---- 推理：核心调用 + DOM 结果 ---- */
+function reason(){
+  if(st.basket.length < 2){ log("至少放入 2 张线索卡才能推理。", "bad"); return; }
+  const res = coreCheckCombo(st.basket, D);
+  if(res.hit){
+    const d = res.ded;
+    if(!st.owned.includes(d.id)) st.owned.push(d.id);
+    st.basket = [];
+    log(`【推理成立】${d.icon} 得到结论《${d.title}》：${d.text}`, "good");
+    if(d.herring) log("（干扰线：记档案，别用来指控。）", "meta");
+    if(d.key) log(`关键线索 ★ ${countKeys()}/4——集齐即可指控！`, "good");
+    openModal({
+      title: d.icon + " 新线索成立：" + d.title,
+      body: `<div class="who">${d.herring ? "○ 干扰线 · 存疑" : d.key ? "★ 关键结论" : "○ 支持性结论"}</div><p>${d.text}</p>`,
+      btn: "收入档案",
+    });
+  } else {
+    st.mistakes++;
+    st.basket = [];
+    const t = D.WRONG_POOL[(st.mistakes - 1) % D.WRONG_POOL.length];
+    log(`【错误推论】${t}（失误 ${st.mistakes}/${D.MISTAKE_LIMIT}）`, "bad");
+    openModal({ title:"⚖ 错误推论", body:`<p>${t}</p>`, btn:"再想想" });
+  }
+  renderAll(); checkLose();
+}
+function countKeys(){ return D.DEDUCTIONS.filter(d=>d.key && st.owned.includes(d.id)).length; }
+
+/* ---- 指控 ---- */
+function accuse(sid, name){
+  const s = D.SUSPECTS.find(x=>x.id===sid);
+  const res = coreAccuse(sid, st.owned, D);
+  if(res.result === "insufficient"){
+    st.mistakes++;
+    log(`【证据不足】你还缺少关键推理——「${name}」的律师替你挡下了这次指控。（失误 +1）`, "bad");
+    openModal({ title:"⚖ 证据不足", body:`<p>「你没有四条关键结论就敢指控？法官被我请来了。」— ${name}</p><div class="who">还需 ${4-countKeys()} 条 ★ 关键结论。</div>`, btn:"退庭" });
+  } else if(res.result === "wrong"){
+    st.mistakes++;
+    log(`【错误指控】${name} 的辩白：${s.alibi}（失误 +1）`, "bad");
+    openModal({ title:"⚖ 指控失败", body:`<p>${s.alibi}</p>`, btn:"承认错误" });
+  } else {
+    st.won = true;
+    log(`【真相大白】${D.ACCUSE_WIN.line}`, "good");
+    openWin();
+  }
+  renderAll(); checkLose();
+}
+function checkLose(){
+  if(st.mistakes >= D.MISTAKE_LIMIT && !st.won){
+    st.lost = true;
+    openLose();
+  }
+}
+
+/* ---- 弹窗 ---- */
+function openModal({title, body, btn}){
+  const v = document.createElement("div"); v.className = "veil";
+  const m = document.createElement("div"); m.className = "modal";
+  m.innerHTML = `<h3>${title}</h3><div class="body">${body}</div>`;
+  const b = document.createElement("button"); b.textContent = btn || "关闭";
+  b.onclick = () => v.remove();
+  m.appendChild(b); v.appendChild(m); document.body.appendChild(v);
+}
+function openWin(){
+  const v = document.createElement("div"); v.className = "veil";
+  v.innerHTML = `<div class="modal winbox"><h2>案 破</h2><div class="sig">⚜</div>
+    <p>真凶：科尔·克雷文。<br>十年账册、一夜钟声——你把 1931 年雾灯镇案钉进了档案。镇上的人终于可以睡个好觉；而神父会在离镇的马车上，一遍遍背诵他妹妹的祷词。</p>
+    <button id="w-again">再办一桩 (重新调查)</button></div>`;
+  v.querySelector("#w-again").onclick = () => resetGame();
+  document.body.appendChild(v);
+}
+function openLose(){
+  const v = document.createElement("div"); v.className = "veil";
+  v.innerHTML = `<div class="modal winbox"><h2>推理生涯终结</h2><div class="sig">🕯</div>
+    <p>失误六次，雾灯镇的警官没收了你的徽章。这桩案子，成了你卷宗里唯一的黑洞——夜里还会听见 10:07 的钟声。</p>
+    <button id="l-again">从头再来 (重新调查)</button></div>`;
+  v.querySelector("#l-again").onclick = () => resetGame();
+  document.body.appendChild(v);
+}
+
+/* ---- 存档 / 读档 / 重置（核心序列化函数 + localStorage） ---- */
+function autosave(){ try{ localStorage.setItem(SAVE_KEY, coreSerialize(st, D)); }catch(e){} }
+function saveGame(){ autosave(); log("档案已封存。", "meta"); }
+function loadGame(){
+  const raw = localStorage.getItem(SAVE_KEY);
+  const loaded = coreDeserialize(raw, D);
+  if(!loaded){ log("没有可读取的档案——先玩、再存档。", "bad"); return; }
+  st = { owned:loaded.owned, basket:[], mistakes:loaded.mistakes, won:loaded.won, lost:loaded.lost };
+  if(st.won){ openWin(); return; }
+  if(st.lost){ openLose(); return; }
+  renderAll();
+  log("档案已展开——接着上次的线索继续。", "good");
+}
+function resetGame(){
+  localStorage.removeItem(SAVE_KEY);
+  st = { owned:[], basket:[], mistakes:0, won:false, lost:false };
+  document.querySelectorAll(".veil").forEach(v=>v.remove());
+  renderAll();
+  log("新的一卷：1931 年 11 月 23 日，雾灯镇。", "meta");
+}
+
+/* ---- 总渲染 ---- */
+function renderAll(){
+  $("#m-num").textContent = st.mistakes;
+  $("#m-max").textContent = D.MISTAKE_LIMIT;
+  const got = countKeys();
+  $("#k-stars").textContent = "★".repeat(got) + "☆".repeat(4-got);
+  $("#k-stars").style.color = got >= 4 ? "var(--green)" : "var(--gold2)";
+  renderSuspects(); renderCards(); renderBasket();
+}
+
+/* ---- 事件绑定 ---- */
+document.querySelectorAll(".tabs button").forEach(b=>{
+  b.onclick = () => {
+    document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    tab = b.dataset.tab;
+    renderCards();
+  };
+});
+$("#btn-reason").onclick = reason;
+$("#btn-clear").onclick = () => { st.basket = []; renderBasket(); renderCards(); autosave(); };
+$("#btn-save").onclick = saveGame;
+$("#btn-load").onclick = loadGame;
+$("#btn-reset").onclick = () => {
+  if(confirm("确定要清空进度、重新调查吗？")) resetGame();
+};
+
+/* ---- 启动：读档优先，否则新开 ---- */
+(function boot(){
+  const raw = localStorage.getItem(SAVE_KEY);
+  const loaded = coreDeserialize(raw, D);
+  if(loaded){
+    st = { owned:loaded.owned, basket:[], mistakes:loaded.mistakes, won:loaded.won, lost:loaded.lost };
+    if(st.won){ openWin(); }
+    else if(st.lost){ openLose(); }
+  }
+  renderAll();
+  log("1931 · 雾灯镇药房后屋：钟停在 10:07。证词与物证共 14 张，请开始你的推理。", "meta");
+})();
+</script>
+</body>
+</html>

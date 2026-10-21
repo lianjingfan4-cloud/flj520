@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERROR WORLD v0.9.3 —— BROKEN BUILD</title>
+<style>
+/* ============================================================================
+ *  异变世界 · ERROR WORLD —— 复古旧网页游戏质感
+ *  CRT 显像管 + 绿色荧光控制台 + 八位像素块 + 假浏览器窗口边框
+ * ========================================================================== */
+:root{
+  --phos:#9fe870;          /* 荧光绿 */
+  --phos-dim:#4f8a3a;      /* 暗绿 */
+  --bg:#0a0f0a;
+  --panel:#101a10;
+  --line:#24401f;
+  --warn:#ff5a5a;
+  --cyan:#6fe6ff;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; background:#050705; color:var(--phos);
+  font-family:"Courier New", Consolas, monospace; }
+body{ display:flex; align-items:center; justify-content:center; min-height:100vh;
+  padding:16px; letter-spacing:.5px; }
+
+/* 假浏览器窗口 */
+.crt{
+  position:relative; width:min(760px,96vw); background:var(--bg);
+  border:3px solid #2a3a2a; border-radius:10px;
+  box-shadow:0 0 0 3px #000, 0 0 42px rgba(159,232,112,.16), inset 0 0 90px rgba(0,0,0,.7);
+  overflow:hidden;
+}
+/* CRT 扫描线 + 暗角 */
+.crt::before{ content:""; position:absolute; inset:0; pointer-events:none; z-index:20;
+  background:repeating-linear-gradient(to bottom, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
+  mix-blend-mode:multiply; }
+.crt::after{ content:""; position:absolute; inset:0; pointer-events:none; z-index:21;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+
+/* 标题栏 */
+.titlebar{ display:flex; align-items:center; gap:8px; padding:6px 10px;
+  background:linear-gradient(#4a5a4a,#223022); border-bottom:2px solid #000; }
+.titlebar .dot{ width:12px; height:12px; border-radius:50%; border:1px solid #000; }
+.dot.red{ background:#ff5f57; } .dot.yellow{ background:#febc2e; } .dot.green{ background:#28c840; }
+.titlebar .t{ flex:1; text-align:center; font-size:12px; color:#d8f2c8; }
+
+/* 菜单条 */
+.menubar{ display:flex; gap:4px; padding:4px 8px; border-bottom:1px solid #000;
+  background:#162016; font-size:12px; color:#9fe870; }
+.menubar span{ padding:1px 6px; cursor:pointer; border-bottom:2px solid transparent; }
+.menubar span:hover{ color:#fff; border-bottom-color:var(--phos); }
+
+/* 状态/控制台区域 */
+.screen{ padding:10px; }
+.hud{ display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  font-size:13px; padding:6px 8px; margin-bottom:8px;
+  background:#0d130d; border:1px solid var(--line); border-radius:4px; }
+.hud b{ color:#fff; }
+.hud .pv{ min-width:132px; }
+.hud .fnd{ color:var(--cyan); }
+
+/* 游戏画布 */
+canvas{ display:block; margin:0 auto; background:#0a0f0a;
+  border:2px solid #000; box-shadow:0 0 0 1px var(--line); image-rendering:pixelated;
+  max-width:100%; }
+
+/* 控制台日志 */
+.console{ margin-top:8px; min-height:118px; max-height:190px; overflow-y:auto;
+  background:#050805; border:1px solid var(--line); border-radius:4px; padding:6px 8px;
+  font-size:13px; line-height:1.5; }
+.logline{ white-space:pre-wrap; word-break:break-word; }
+.logline::before{ content:"> "; color:var(--phos-dim); }
+.logline.warn{ color:var(--warn); } .logline.good{ color:#9dff6e; }
+.logline.bug{ color:var(--cyan); font-weight:bold; } .logline.meta{ color:#8ab6ff; }
+
+/* 输入行（密码门） */
+.inputrow{ display:none; gap:6px; margin-top:8px; align-items:center; }
+.inputrow.on{ display:flex; }
+.inputrow label{ font-size:12px; color:var(--cyan); }
+.inputrow input{ flex:1; background:#050805; color:var(--phos); border:1px solid var(--line);
+  padding:6px; font-family:inherit; font-size:14px; letter-spacing:2px; outline:none; }
+.inputrow input:focus{ border-color:var(--cyan); box-shadow:0 0 8px rgba(111,230,255,.3); }
+
+/* 底部控制按钮 + D-pad */
+.controls{ display:flex; align-items:center; gap:16px; margin-top:10px; flex-wrap:wrap; }
+.btn{ background:#162016; color:var(--phos); border:2px solid #2a3a2a; border-radius:4px;
+  padding:6px 12px; font-family:inherit; font-size:12px; cursor:pointer; }
+.btn:hover{ background:#1d2b1d; border-color:var(--phos); }
+.dpad{ display:grid; grid-template-columns:repeat(3,34px); grid-template-rows:repeat(2,34px);
+  gap:4px; }
+.dpad button{ grid-column:span 1; background:#162016; color:var(--phos);
+  border:1px solid #2a3a2a; font-size:14px; cursor:pointer; }
+.dpad button:active{ background:#2b3f2b; }
+.dpad .u{ grid-column:2; grid-row:1; } .dpad .l{ grid-column:1; grid-row:2; }
+.dpad .d{ grid-column:2; grid-row:2; } .dpad .r{ grid-column:3; grid-row:2; }
+.legend{ font-size:11px; color:var(--phos-dim); max-width:330px; }
+.legend b{ color:#d8f2c8; }
+
+/* 开场/结局浮层 */
+.overlay{ position:absolute; inset:0; z-index:40; display:flex; align-items:center;
+  justify-content:center; background:rgba(0,0,0,.82); padding:20px; }
+.overlay.hidden{ display:none; }
+.card{ max-width:560px; width:100%; background:#0c120c; border:2px solid var(--line);
+  border-radius:6px; padding:18px 20px; font-size:14px; line-height:1.6; }
+.card h2{ margin:0 0 8px; color:var(--cyan); font-size:18px; }
+.card p{ margin:6px 0; }
+.card .warn{ color:var(--warn); }
+.card ul{ margin:8px 0 0; padding-left:18px; }
+.card li{ margin:5px 0; }
+.card .k{ color:var(--phos); }
+.card .btns{ margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+.blink{ animation:blink 1.1s steps(1) infinite; }
+@keyframes blink{ 50%{ opacity:0; } }
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<div class="crt">
+  <div class="titlebar">
+    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+    <span class="t">ERROR WORLD v0.9.3 —— BROKEN BUILD</span>
+  </div>
+  <div class="menubar">
+    <span>文件</span><span>游戏</span><span>声音</span><span>帮助</span>
+    <span style="margin-left:auto;color:#57704f;">(Build 坏掉了,别理我)</span>
+  </div>
+
+  <div class="screen">
+    <div class="hud">
+      <span class="pv">LEVEL <b id="hudLevel">1</b>/4</span>
+      <span class="pv">STEPS <b id="hudSteps">0</b></span>
+      <span class="fnd">BUGS FOUND <b id="hudBugs">0</b>/4</span>
+      <span id="hudHint" style="margin-left:auto;font-size:12px;color:#8ab6ff;"></span>
+    </div>
+
+    <canvas id="game" width="416" height="288"></canvas>
+
+    <div class="console" id="console"></div>
+
+    <div class="inputrow" id="inputrow">
+      <label>暗号&gt;_</label>
+      <input id="pw" autocomplete="off" spellcheck="false" maxlength="16">
+      <button class="btn" id="pwGo">确认</button>
+    </div>
+
+    <div class="controls">
+      <div class="dpad">
+        <button class="u" data-d="0,-1" title="↑">▲</button>
+        <button class="l" data-d="-1,0" title="←">◀</button>
+        <button class="d" data-d="0,1" title="↓">▼</button>
+        <button class="r" data-d="1,0" title="→">▶</button>
+      </div>
+      <div class="legend">
+        <b>方向键 / WASD</b> 四周走动 · 踩到按钮即触发 · 撞到密码门在下方输入暗号。<br>
+        这游戏<b>到处是 BUG</b>——别相信界面说的话,试着去<b>钻空子</b>。
+      </div>
+      <button class="btn" id="btnReset">重开本关</button>
+      <button class="btn" id="btnNew">重新开始</button>
+    </div>
+  </div>
+
+  <!-- 开场浮层 -->
+  <div class="overlay" id="intro">
+    <div class="card">
+      <h2>⚠ SYSTEM FAILURE — 你被碎片整理进了坏掉的世界</h2>
+      <p>系统自检… <span class="warn">MEMORY LEAK 0x0F00</span> · <span class="warn">NULL POINTER</span> ·
+        这一格世界<b>写坏了</b>。</p>
+      <p>这里是一个老登给孙子做的网页小游戏。可测试员一甩手,<b>逻辑全乱了</b>。</p>
+      <p class="warn">【任务】按界面写的去做,你永远出不去。找到这个世界藏着的 <b>4 个 BUG</b>,
+        利用它们穿过墙、按错按钮、踩传送格、输错暗号,逃到<b>最终出口</b>。</p>
+      <p>你被传送到 <b>第 1 关 · 裂缝之墙</b>。祝好运。</p>
+      <div class="btns"><button class="btn" id="btnStart">━ 进入世界 ━</button></div>
+    </div>
+  </div>
+
+  <!-- 结局浮层 -->
+  <div class="overlay hidden" id="ending">
+    <div class="card">
+      <h2>🏆 你利用 BUG 逃出了坏掉的世界</h2>
+      <p>没有哪一步是靠"正确操作"走的——每一步都是钻空子。控制台打印了这份
+        <b>《BUG 修复清单》</b>(也是本关真正想教你的东西):</p>
+      <ul id="bugReport"></ul>
+      <div class="btns">
+        <button class="btn" id="btnAgain">再坏一次</button>
+        <button class="btn" id="btnEndClose">关闭窗口</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+ *  异变世界 · ERROR WORLD —— 游戏逻辑
+ *  —— 全文件唯一一段脚本 ——
+ *  结构：引擎(纯逻辑，不碰 DOM，便于 Node/vm 自测) + UI(boot 操作 DOM)。
+ *  玩法：踩格子找路，但每关都藏着"写反/写坏"的判定，必须利用 BUG 才能过关。
+ *  =========================================================================*/
+
+/* 引擎：与 DOM 完全解耦。引擎里的每一个"让玩家钻空子"的地方，
+ *  都对应一类经典编程 Bug——这些是【故意的】玩法 Bug，不是代码写错了。 */
+var GAME = (function(){
+  "use strict";
+
+  /* ---------------------------------------------------------------
+   * ① 常量与参数（集中配置，便于核实/修改）
+   * --------------------------------------------------------------- */
+  var W = 13, H = 9, TILE_SIZE = 32;     // 网格 13x9，格子像素 32
+  var PASSWORD = "EXIT";                 // 第4关"提示你输入的正确暗号"(实际故意放成错误值)
+
+  // 地形符
+  var TILE = {
+    WALL:"#", EMPTY:" ", START:"<", EXIT:"E", DOOR:"D",
+    BTN_A:"A", BTN_B:"B", GATE_EXIT:"G", GATE_TRAP:"g", MONSTER:"M", GLITCH:"X"
+  };
+
+  /* ---------------------------------------------------------------
+   * ② 四大 BUG 的元数据（结局"修复清单"也在游戏里复用这份数据）
+   * --------------------------------------------------------------- */
+  var BUGS = {
+    "WALL":   { n:1, name:"裂缝之墙", find:"每关顶排墙在『判定』里漏了 (off-by-one)",
+                fix:"碰撞循环要用 `y<H` 且不要从 y=1 起跳过首行；或对边界提前做越界判定" },
+    "BUTTON": { n:2, name:"反向电路", find:"按钮的标签与它真正开哪扇门『接反了』",
+                fix:"把『开门』按钮的 handler 指向出口门 G，而非陷阱门 g" },
+    "PORT":   { n:3, name:"虚空传送", find:"踩到出口房外墙时读到了『越界坐标』",
+                fix:"取 tile 前先判 `x>=0 && x<W && y>=0 && y<H`，越界一律当作边界/墙处理" },
+    "INVERT": { n:4, name:"逆转之门", find:"判断暗号的条件『写反了』",
+                fix:"把开门条件改回 `input === PASSWORD`（而不是 `input !== PASSWORD`）" }
+  };
+
+  /* ---------------------------------------------------------------
+   * ③ 四个关卡地图（每行恰 13 字符）
+   * --------------------------------------------------------------- */
+  var LEVELS = [
+    /* 第 1 关 · 裂缝之墙：中墙+锁门。真正的出路是"穿墙"(顶排墙漏判)。 */
+    { name:"裂缝之墙", start:{x:2,y:4},
+      hint:"有扇门锁着,写着『需要钥匙』……可是怎么都找不到真钥匙。墙缝在闪。",
+      map:[
+        "#############",
+        "#      #    #",
+        "#      #    #",
+        "#      #    #",
+        "#      D   E#",
+        "#      #    #",
+        "#      #    #",
+        "#      #    #",
+        "#############"
+      ] },
+
+    /* 第 2 关 · 反向电路：两个按钮，标签与动作接反。 */
+    { name:"反向电路", start:{x:2,y:6},
+      hint:"两个按钮。白给的『开门』多半是陷阱,而那个『危险!别碰』……说不定才通。",
+      map:[
+        "#############",
+        "#  E  #   M #",
+        "#     #     #",
+        "###G###g#####",
+        "#           #",
+        "#   A B     #",
+        "#  <        #",
+        "#           #",
+        "#############"
+      ] },
+
+    /* 第 3 关 · 虚空传送：出口房被墙封死，只有一格在闪雪花的虚空墙。 */
+    { name:"虚空传送", start:{x:2,y:6},
+      hint:"右边的出口房四面都被墙封死……可只有一面墙在『闪雪花』,下面还有裂缝。",
+      map:[
+        "#############",
+        "#       #   #",
+        "#       #   #",
+        "#       #   #",
+        "#       X E #",
+        "#       #   #",
+        "#       #   #",
+        "#       #   #",
+        "#############"
+      ] },
+
+    /* 第 4 关 · 逆转之门：铁门上写着暗号提示，但判断条件是反的。 */
+    { name:"逆转之门", start:{x:2,y:6},
+      hint:"铁门上写着『请输入正确暗号』,旁边贴了张便签:『答案是 EXIT』……可总觉得哪里反了。",
+      map:[
+        "#############",
+        "#        #  #",
+        "#        #  #",
+        "#        G E#",
+        "#        #  #",
+        "#        #  #",
+        "#  <     #  #",
+        "#        #  #",
+        "#############"
+      ] }
+  ];
+
+  /* ---------------------------------------------------------------
+   * ④ 工具函数
+   * --------------------------------------------------------------- */
+  function buildGrid(map){ return map.map(function(r){ return r.split(""); }); }
+  function inBounds(x,y){ return x >= 0 && x < W && y >= 0 && y < H; }
+  function tileAt(st,x,y){ return inBounds(x,y) ? st.grid[y][x] : null; }
+
+  /* 记录一条日志（限制长度防爆） */
+  function log(st,msg){
+    st.log.push(msg);
+    if (st.log.length > 220) st.log.splice(0, st.log.length - 220);
+  }
+
+  /* 标记"已利用某 BUG"，首次利用返回 true 并打印高亮日志 */
+  function useBug(st,id){
+    if (st.bugFound.indexOf(id) >= 0) return false;
+    st.bugFound.push(id);
+    var b = BUGS[id];
+    log(st, "【BUG#" + b.n + " " + b.name + " 已利用】" + b.find);
+    return true;
+  }
+
+  function clone(st){ return JSON.parse(JSON.stringify(st)); }
+  function isWon(st){ return st.won === true; }
+
+  /* ---------------------------------------------------------------
+   * ⑤ 关卡状态搭建
+   * --------------------------------------------------------------- */
+  function setup(levelIndex, carry){
+    var lv = LEVELS[levelIndex];
+    var st = {
+      levelIndex: levelIndex, grid: buildGrid(lv.map),
+      px: lv.start.x, py: lv.start.y,
+      doors: {}, used: {}, pw: { open:false, tried:false }, pwOpen:false,
+      bugFound: [], levelDone:false, won:false,
+      steps:0, log:[], hint: lv.hint, name: lv.name, teleTarget:null
+    };
+    if (carry && carry.bugFound) st.bugFound = carry.bugFound.slice();
+    if (levelIndex === 1){ st.doors = { G:false, g:false }; }        // 第2关：两扇门闸，初始关
+    if (levelIndex === 2){ st.teleTarget = { x:10, y:5 }; }          // 第3关：虚空传送落点
+    if (levelIndex === 3){ st.pw = { open:false, tried:false }; }    // 第4关：密码门
+    return st;
+  }
+  function newGame(){ return setup(0, null); }
+
+  /* 过一关后跳到下一关（保留已发现的 BUG 计数） */
+  function advance(st){
+    if (!st.levelDone || st.won) return st;
+    var n = st.levelIndex + 1;
+    if (n >= LEVELS.length){ st.won = true; return st; }
+    var carry = { bugFound: st.bugFound };
+    var nst = setup(n, carry);
+    Object.keys(nst).forEach(function(k){ st[k] = nst[k]; });
+    return st;
+  }
+
+  /* 重开当前关（保留 bugFound） */
+  function resetLevel(st){
+    var carry = { bugFound: st.bugFound };
+    var nst = setup(st.levelIndex, carry);
+    Object.keys(nst).forEach(function(k){ st[k] = nst[k]; });
+    return st;
+  }
+
+  /* ---------------------------------------------------------------
+   * ⑥ 碰撞判定 —— ★ 每关的 BUG 就藏在这几行里 ★
+   * --------------------------------------------------------------- */
+  /* 碰撞：关键是把【每关专属的 BUG 判定】放在最前，否则会被通用"墙=实心"短路，
+   *  那些"故意让玩家钻空子"的漏洞点就永远不生效了。 */
+  function isSolid(st,x,y){
+    var t = tileAt(st,x,y);
+    if (t === null) return true;                 // 越界一律视为墙
+    if (st.levelIndex === 0) return lv0Solid(st,x,y,t);   // 第1关 off-by-one 穿墙
+    if (st.levelIndex === 1) return lv1Solid(st,x,y,t);   // 第2关 门闸/怪物
+    if (st.levelIndex === 2) return lv2Solid(st,x,y,t);   // 第3关 虚空格(可踩)
+    return lv3Solid(st,x,y,t);                            // 第4关 密码门
+  }
+  function lv0Solid(st,x,y,t){
+    /* BUG#1 —— off-by-one：顶排墙(7,1)在判定里被漏掉，等于不存在。
+     *   正常应返回 true，但因为碰撞判定"从 y=2 才开始算"，y=1 这排被跳过。 */
+    if (x === 7 && y === 1) return false;        // ★ 漏洞点：这格能穿过去
+    if (t === TILE.WALL || t === TILE.DOOR) return true;   // 锁门+墙实心(『需要钥匙』是谎言)
+    return false;
+  }
+  function lv1Solid(st,x,y,t){
+    if (t === TILE.WALL || t === TILE.MONSTER) return true;   // 墙+Bug兽挡路
+    if (t === TILE.GATE_EXIT) return !st.doors.G;    // 出口门闸：关了才实心
+    if (t === TILE.GATE_TRAP) return !st.doors.g;    // 陷阱门闸：关了才实心
+    return false;
+  }
+  function lv2Solid(st,x,y,t){
+    /* BUG#3 —— 虚空格(X)按普通墙渲染,但判定里"不实心",踩上去触发传送。
+     *   真实原因：取不到 tile 时走了错误的越界回退,反而能进去。 */
+    if (t === TILE.WALL) return true;            // 普通墙仍实心
+    return false;                                 // 虚空格 X 可踩→触发传送
+  }
+  function lv3Solid(st,x,y,t){
+    if (t === TILE.WALL) return true;            // 普通墙实心
+    if (t === TILE.GATE_EXIT) return !st.pw.open;    // 密码门闸：输对(反转)才开
+    return false;
+  }
+
+  /* ---------------------------------------------------------------
+   * ⑦ 移动一步（返回事件，供 UI & 测试使用）
+   * --------------------------------------------------------------- */
+  function step(st,dx,dy){
+    st.steps++;
+    var nx = st.px + dx, ny = st.py + dy;
+    var t = tileAt(st,nx,ny);
+
+    if (isSolid(st,nx,ny)){
+      // 撞到东西：按地形给反馈
+      if (st.levelIndex === 3 && t === TILE.GATE_EXIT && !st.pw.open){
+        st.pwOpen = true;
+        log(st, "[系统] 你撞上加密铁门。门板上写着『输入正确暗号』(可在下方输入框输入后回车)。等等——旁边便签似乎提示你答案…可『条件』好像反了?");
+      } else if (t === TILE.MONSTER){
+        log(st, "你撞在 Bug 兽身上。它咧嘴一笑:『这里根本不是出口。回头吧。』");
+      } else if (t === TILE.DOOR){
+        log(st, "门锁着。『需要钥匙』……可你翻遍周身,只有一把来路不明的坏钥匙。这扇门是死路。");
+      } else {
+        log(st, "撞墙了。(嗯,墙是实心的,这一面正常)");
+      }
+      return { moved:false, blocked:true, tile:t };
+    }
+
+    st.px = nx; st.py = ny;                       // 通过，落子/移动
+    var ev = { moved:true, tile:t };
+
+    if (st.levelIndex === 0 && nx === 7 && ny === 1){
+      useBug(st,"WALL");
+      log(st, "你走进了这面『画出来』的墙——判定里根本没它! 你从墙里穿了过去。)");
+    } else if (t === TILE.DOOR){
+      log(st, "你摸了摸门,锁着的。");
+    } else if (t === TILE.EXIT){
+      if (st.levelIndex === LEVELS.length - 1){
+        st.won = true;
+        log(st, "🏆 [最终出口] 你穿过了异变世界的门! 世界在你身后碎裂成一行行报错。");
+      } else {
+        st.levelDone = true;
+        log(st, "✅ 第 " + (st.levelIndex + 1) + " 关完成! 你利用 BUG 钻了出去,进入下一关。");
+      }
+    } else if (st.levelIndex === 2 && t === TILE.GLITCH){
+      useBug(st,"PORT");
+      log(st, "[内存越界] 坐标读到了墙外面……你被『虚空』吸了一下,再睁眼已在封死的出口房里!");
+      var tt = st.teleTarget; st.px = tt.x; st.py = tt.y;
+    } else if (st.levelIndex === 1 && t === TILE.BTN_A){
+      if (!st.used.A){ st.used.A = true; pressButton(st,"A"); }
+    } else if (st.levelIndex === 1 && t === TILE.BTN_B){
+      if (!st.used.B){ st.used.B = true; pressButton(st,"B"); }
+    } else if (st.levelIndex === 1 && t === TILE.MONSTER){
+      log(st, "你踩到了陷阱房。Bug 兽瞪着你的空背包,乐了。");
+    }
+    return ev;
+  }
+
+  /* ---------------------------------------------------------------
+   * ⑧ 第2关按钮 —— ★ 接线接反了 ★
+   * --------------------------------------------------------------- */
+  function pressButton(st,id){
+    if (id === "A"){
+      /* BUG#2 —— 『开门』按钮其实捅开了陷阱门 g；正常应开出口门 G */
+      st.doors.g = true;
+      useBug(st,"BUTTON");
+      log(st, "你按下了『开门』。咔哒……旁边那扇『写着一堆危险符』的门开了! 这不是出口啊!");
+    } else {
+      /* 『危险!别碰』按钮其实捅开了真正的出口门 G */
+      st.doors.G = true;
+      useBug(st,"BUTTON");
+      log(st, "你按下了『危险!别碰』。…咔嚓,那扇看起来平平无奇的『出口门』竟然开了! 接线果然接反了。");
+    }
+  }
+
+  /* ---------------------------------------------------------------
+   * ⑨ 第4关密码提交 —— ★ 条件写反了 ★
+   * --------------------------------------------------------------- */
+  function submitPassword(st,text){
+    if (!st.pwOpen && !st.pw.open) return { ok:false, msg:"还没有遇到需要暗号的门。" };
+    text = (text == null ? "" : String(text)).trim();
+    if (st.pw.open) return { ok:true, msg:"门已经开了。" };
+    if (text === "") return { ok:false, msg:"请输入点什么,别留空。" };
+    if (text === PASSWORD){
+      /* BUG#4 —— 你输入了"提示的正确暗号" EXIT，门却不动：条件被写反了 */
+      st.pw.tried = true; st.pwOpen = false;
+      log(st, "你输入了暗号『" + text + "』。铁门纹丝不动,一行红字弹出:『……条件反了!』(试试看,输个别的?)");
+      return { ok:false, msg:"反转! 门没开,再想想。" };
+    }
+    st.pw.open = true; st.pwOpen = false;
+    useBug(st,"INVERT");
+    log(st, "门轰地一声开了。你没输入『正确』暗号,门反而开了——这正是 BUG#4:判断条件写反了。");
+    return { ok:true, msg:"门开了!" };
+  }
+
+  /* ---------------------------------------------------------------
+   * ⑩ 导出给 UI 与 Node/vm 自测
+   * --------------------------------------------------------------- */
+  return {
+    W:W, H:H, TILE:TILE, TILE_SIZE:TILE_SIZE, PASSWORD:PASSWORD,
+    BUGS:BUGS, LEVELS:LEVELS,
+    newGame:newGame, advance:advance, resetLevel:resetLevel, clone:clone,
+    getLevel:function(i){ return setup(i, null); },
+    step:step, isSolid:isSolid, tileAt:tileAt, isWon:isWon,
+    pressButton:pressButton, submitPassword:submitPassword
+  };
+})();
+
+/* 暴露为全局（浏览器=window；Node/vm 沙盒=context.GAME） */
+(function(root){
+  root.GAME = GAME;
+})(typeof window !== "undefined" ? window
+   : (typeof globalThis !== "undefined" ? globalThis : this));
+
+/* ============================================================================
+ *  UI 层：仅在此层操作 DOM。自测（Node/vm 无 document）不会执行 boot()。
+ * ==========================================================================*/
+function boot(){
+  var state = GAME.newGame();
+
+  var canvas = document.getElementById("game");
+  var ctx = canvas.getContext("2d");
+  var hudLevel = document.getElementById("hudLevel");
+  var hudSteps = document.getElementById("hudSteps");
+  var hudBugs  = document.getElementById("hudBugs");
+  var hudHint  = document.getElementById("hudHint");
+  var consolev = document.getElementById("console");
+  var inputrow = document.getElementById("inputrow");
+  var pw = document.getElementById("pw");
+  var pwGo = document.getElementById("pwGo");
+  var intro = document.getElementById("intro");
+  var ending = document.getElementById("ending");
+  var bugReport = document.getElementById("bugReport");
+
+  /* ---------- 颜色 ---------- */
+  var C = {
+    wall:"#2f4a2f", wallHi:"#527a52", floor:"#0d150d", floorGrid:"#12200f",
+    player:"#e8ffa0", playerDark:"#7cae4a",
+    exit:"#38e07c", exitPulse:"#9dff6e",
+    door:"#6b4a24", doorHi:"#8f6532", lock:"#c9a24b",
+    btnA:"#7a2a2a", btnAHi:"#a84a4a", btnB:"#2f7a4a", btnBHi:"#53a86b",
+    gate:"#4a4a5a", gateHi:"#6f6f88", gateOpen:"#2f7a4a",
+    glitch:"#6a3ab0", glitchHi:"#8f5ad0",
+    monster:"#c03434", monsterEy:"#ffd24a",
+    text:"#d8f2c8", shadow:"rgba(0,0,0,.5)"
+  };
+
+  function logLine(msg, cls){
+    var div = document.createElement("div");
+    div.className = "logline" + (cls ? " " + cls : "");
+    div.textContent = msg;
+    consolev.appendChild(div);
+    consolev.scrollTop = consolev.scrollHeight;
+  }
+  function renderLog(){
+    consolev.innerHTML = "";
+    state.log.forEach(function(line){
+      var cls = "";
+      if (line.indexOf("BUG#") >= 0) cls = "bug";
+      else if (line.indexOf("🏆") >= 0 || line.indexOf("完成") >= 0) cls = "good";
+      else if (line.indexOf("系统") >= 0 || line.indexOf("越界") >= 0) cls = "meta";
+      else if (line.indexOf("撞") >= 0 || line.indexOf("反了") >= 0 || line.indexOf("死路") >= 0) cls = "warn";
+      logLine(line, cls);
+    });
+  }
+
+  /* ---------- 像素风画格 ---------- */
+  function tileRect(x,y,color,hi,xo,yo,w,h,outline){
+    xo = xo||0; yo = yo||0; w = w||TILE_X; h = h||TILE_Y;
+    x = x*TILE_X + xo; y = y*TILE_Y + yo;
+    ctx.fillStyle = color; ctx.fillRect(x,y,w,h);
+    if (hi){ ctx.fillStyle = hi; ctx.fillRect(x,y,w,2); ctx.fillRect(x,y,2,h); }
+    if (outline){ ctx.strokeStyle = outline; ctx.lineWidth = 1; ctx.strokeRect(x+.5,y+.5,w-1,h-1); }
+  }
+  function textCell(x,y,str,color,size){
+    ctx.fillStyle = color || C.text; ctx.font = (size||9) + "px monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(str, x*TILE_X + TILE_X/2, y*TILE_Y + TILE_Y/2);
+  }
+  /* 以像素坐标画字（用在格子内部做小标签） */
+  function pix(px,py,str,color,size){
+    ctx.fillStyle = color || C.text; ctx.font = (size||9) + "px monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(str, px, py);
+  }
+  function glowRect(x,y,w,h,color){
+    ctx.save(); ctx.shadowBlur = 14; ctx.shadowColor = color;
+    ctx.fillStyle = color; ctx.fillRect(x,y,w,h); ctx.restore();
+  }
+
+  var TILE_X = GAME.TILE_SIZE, TILE_Y = GAME.TILE_SIZE;   // 32
+  var W = GAME.W, H = GAME.H;
+
+  /* ---------- 画一个地形格 ---------- */
+  function drawTile(x,y,t){
+    if (t === null) return;
+    if (t === GAME.TILE.WALL){
+      // 第1关 (7,1)：判定"穿墙"，视觉上是墙但画一条裂缝暗示
+      if (state.levelIndex === 0 && x === 7 && y === 1){
+        tileRect(x,y,C.wall,C.wallHi,0,0,TILE_X,TILE_Y);
+        ctx.strokeStyle = C.glitch; ctx.beginPath();
+        ctx.moveTo(x*TILE_X+8, y*TILE_Y+17); ctx.lineTo(x*TILE_X+16, y*TILE_Y+11);
+        ctx.lineTo(x*TILE_X+26, y*TILE_Y+20); ctx.stroke();
+      } else {
+        tileRect(x,y,C.wall,C.wallHi,0,0,TILE_X,TILE_Y);
+      }
+      return;
+    }
+    if (t === GAME.TILE.EMPTY || t === GAME.TILE.START){
+      tileRect(x,y,C.floor,null,0,0,TILE_X,TILE_Y);
+      ctx.strokeStyle = C.floorGrid; ctx.strokeRect(x*TILE_X+.5,y*TILE_Y+.5,TILE_X-1,TILE_Y-1);
+      return;
+    }
+    if (t === GAME.TILE.EXIT){
+      var pulse = 1 + 0.25*Math.sin(Date.now()/220);
+      tileRect(x,y,C.floor,null,0,0,TILE_X,TILE_Y);
+      glowRect(x*TILE_X+6, y*TILE_Y+6, TILE_X-12, TILE_Y-12, C.exit);
+      textCell(x,y,"E",C.exitPulse,12);
+      return;
+    }
+    if (t === GAME.TILE.DOOR){
+      tileRect(x,y,C.door,C.doorHi,0,0,TILE_X,TILE_Y);
+      ctx.fillStyle = C.lock; ctx.beginPath();
+      ctx.arc(x*TILE_X+TILE_X/2, y*TILE_Y+16, 4, 0, Math.PI*2); ctx.fill();
+      ctx.fillRect(x*TILE_X+TILE_X/2-1, y*TILE_Y+18, 2, 6);
+      return;
+    }
+    if (t === GAME.TILE.BTN_A){
+      tileRect(x,y,C.btnA,C.btnAHi,3,3,TILE_X-6,TILE_Y-3);
+      var cx = x*TILE_X + TILE_X/2, cy = y*TILE_Y + TILE_Y/2;
+      pix(cx, cy-6, "开", C.text, 11);
+      pix(cx, cy+6, "门", C.text, 11);
+      return;
+    }
+    if (t === GAME.TILE.BTN_B){
+      tileRect(x,y,C.btnB,C.btnBHi,3,3,TILE_X-6,TILE_Y-3);
+      var cxB = x*TILE_X + TILE_X/2, cyB = y*TILE_Y + TILE_Y/2;
+      pix(cxB, cyB-6, "危", C.text, 11);
+      pix(cxB, cyB+6, "险", C.text, 11);
+      pix(cxB, cyB+13, "别碰!","#ff5a5a", 8);
+      return;
+    }
+    if (t === GAME.TILE.GATE_EXIT || t === GAME.TILE.GATE_TRAP){
+      var isExitGate = (t === GAME.TILE.GATE_EXIT);
+      var open = isExitGate ? state.doors.G : state.doors.g;
+      if (state.levelIndex === 3){ open = state.pw.open; isExitGate = true; }
+      var base = open ? C.gateOpen : C.gate;
+      var hi   = open ? C.gateOpen : C.gateHi;
+      tileRect(x,y,base,hi,0,0,TILE_X,TILE_Y);
+      if (open){ textCell(x,y,"OPEN",C.text,9); }
+      else { textCell(x,y,isExitGate?"G":"g",C.gateHi,11); }
+      return;
+    }
+    if (t === GAME.TILE.GLITCH){
+      // 雪花闪烁的虚空墙
+      var fl = Math.random() < 0.35;
+      tileRect(x,y,fl?C.glitchHi:C.glitch,null,0,0,TILE_X,TILE_Y);
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      for (var i=0;i<5;i++){
+        var fx = (x*TILE_X + Math.floor(Math.random()*20))|0;
+        var fy = (y*TILE_Y + Math.floor(Math.random()*20))|0;
+        ctx.fillRect(fx,fy, (Math.random()<0.5?3:1), 1);
+      }
+      return;
+    }
+    if (t === GAME.TILE.MONSTER){
+      tileRect(x,y,C.monster,null,0,0,TILE_X,TILE_Y);
+      ctx.fillStyle = C.monsterEy;
+      ctx.fillRect(x*TILE_X+8, y*TILE_Y+10, 5, 5);
+      ctx.fillRect(x*TILE_X+19, y*TILE_Y+10, 5, 5);
+      return;
+    }
+    // 未知/普通（地面）兜底
+    tileRect(x,y,C.floor,null,0,0,TILE_X,TILE_Y);
+  }
+
+  /* ---------- 画玩家（小人像素，带上下浮动）---------- */
+  function drawPlayer(){
+    var bob = Math.floor(Math.sin(Date.now()/260)*2);
+    var x = state.px*TILE_X, y = state.py*TILE_Y + bob;
+    ctx.fillStyle = C.playerDark; ctx.fillRect(x+9, y+6, 14, 12);   // 身
+    ctx.fillStyle = C.player;    ctx.fillRect(x+9, y+6, 14, 4);     // 头
+    ctx.fillStyle = C.playerDark; ctx.fillRect(x+7, y+16, 3, 6);    // 手
+    ctx.fillRect(x+22, y+16, 3, 6);
+    ctx.fillStyle = C.player; ctx.fillRect(x+11, y+9, 3, 3);        // 眼
+    ctx.fillRect(x+19, y+9, 3, 3);
+  }
+
+  /* ---------- 汇总渲染 ---------- */
+  function render(){
+    ctx.clearRect(0,0,W*TILE_X,H*TILE_Y);
+    for (var yy=0; yy<H; yy++){
+      for (var xx=0; xx<W; xx++){
+        drawTile(xx,yy, GAME.tileAt(state,xx,yy));
+      }
+    }
+    drawPlayer();
+    hudLevel.textContent = state.levelIndex + 1;
+    hudSteps.textContent = state.steps;
+    hudBugs.textContent = state.bugFound.length;
+    hudHint.textContent = state.hint ? ("◎ " + state.hint) : "";
+    renderLog();
+    // 密码门输入框显隐
+    inputrow.classList.toggle("on", !!state.pwOpen);
+    if (state.pwOpen){ setTimeout(function(){ pw.focus(); }, 40); }
+    if (state.won){ showEnding(); }
+  }
+
+  /* ---------- 开场 ---------- */
+  function startGame(){
+    intro.classList.add("hidden");
+    state = GAME.newGame();
+    state.log.push("你被『碎片整理』扔进了一个写坏的老网页游戏:ERROR WORLD。");
+    state.log.push("为找出路,你得学会读它的 BUG:撞墙、按错、踩空、输错暗号——都可能是路。");
+    render();
+  }
+
+  /* ---------- 结局 ---------- */
+  function showEnding(){
+    ending.classList.remove("hidden");
+    bugReport.innerHTML = "";
+    Object.keys(GAME.BUGS).forEach(function(id){
+      var b = GAME.BUGS[id];
+      var li = document.createElement("li");
+      li.innerHTML = "BUG#" + b.n + " <span class=\"k\">" + b.name + "</span> —— " +
+        b.find + "。<span style=\"color:#9dff6e\">修法:</span>" + b.fix;
+      bugReport.appendChild(li);
+    });
+  }
+
+  /* ---------- 移动入口 ---------- */
+  function tryMove(dx,dy){
+    GAME.step(state, dx, dy);
+    if (state.levelDone && !state.won){ GAME.advance(state); }
+    render();
+  }
+
+  /* ---------- 键盘 ---------- */
+  var DIRS = { "ArrowUp":[0,-1], "ArrowDown":[0,1], "ArrowLeft":[-1,0], "ArrowRight":[1,0],
+               "w":[0,-1], "s":[0,1], "a":[-1,0], "d":[1,0], "W":[0,-1], "S":[0,1], "A":[-1,0], "D":[1,0] };
+  document.addEventListener("keydown", function(e){
+    if (intro.classList.contains("hidden") === false){ if (e.key === "Enter" || e.key === " "){ startGame(); } return; }
+    if (e.key === "Enter" && state.pwOpen){ e.preventDefault(); doSubmit(); return; }
+    var d = DIRS[e.key];
+    if (d && !state.pwOpen){ e.preventDefault(); tryMove(d[0], d[1]); }
+  });
+
+  /* ---------- 密码提交 ---------- */
+  function doSubmit(){
+    var r = GAME.submitPassword(state, pw.value);
+    pw.value = "";
+    render();
+  }
+  pwGo.addEventListener("click", doSubmit);
+  pw.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); doSubmit(); } });
+
+  /* ---------- D-pad ---------- */
+  document.querySelectorAll(".dpad button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var d = b.getAttribute("data-d").split(",").map(Number);
+      tryMove(d[0], d[1]);
+    });
+  });
+
+  /* ---------- 按钮 ---------- */
+  document.getElementById("btnReset").addEventListener("click", function(){
+    GAME.resetLevel(state); state.log.push("(你重开了本关。BUG 计数保留。)");
+    render();
+  });
+  document.getElementById("btnNew").addEventListener("click", function(){ startGame(); });
+  document.getElementById("btnStart").addEventListener("click", startGame);
+  document.getElementById("btnAgain").addEventListener("click", function(){
+    ending.classList.add("hidden"); startGame();
+  });
+  document.getElementById("btnEndClose").addEventListener("click", function(){
+    document.querySelector(".crt").style.display = "none";
+    // 假装"关不掉"——它就是坏掉的世界
+    setTimeout(function(){ document.querySelector(".crt").style.display = ""; }, 900);
+    var c = document.getElementById("console");
+    if (c){ var d = document.createElement("div"); d.className = "logline warn";
+      d.textContent = "你点『关闭』没用——这是个坏掉的世界,窗口倔强地没关。"; c.appendChild(d); }
+  });
+
+  /* ---------- 轻量动画（雪花/出场）---------- */
+  setInterval(render, 130);
+}
+
+/* 自测（Node/vm 无 document）时不启动 UI，只保留引擎逻辑 */
+if (typeof document !== "undefined" && document.querySelector){ boot(); }
+</script>
+</body>
+</html>

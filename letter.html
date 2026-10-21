@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="ink-noir" data-family="nocturne" data-style="print" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>一封信 · 范连璟</title>
+<meta name="robots" content="noindex" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<style>
+  .letter-wrap {
+    position: relative; z-index: 2; min-height: 100svh;
+    display: grid; place-items: center; padding: clamp(80px, 10vw, 130px) 20px clamp(60px, 8vw, 100px);
+  }
+  .letter {
+    width: min(720px, 100%);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--fg) 4%, transparent), transparent 30%),
+      color-mix(in srgb, var(--bg) 92%, var(--fg));
+    border: 1px solid var(--card-line);
+    border-radius: 6px;
+    padding: clamp(28px, 5vw, 64px);
+    box-shadow: 0 50px 90px -50px rgba(0, 0, 0, .85);
+    position: relative;
+  }
+  .letter::before {
+    content: ""; position: absolute; inset: 14px; border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+    pointer-events: none; border-radius: 3px;
+  }
+  .l-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: .24em; color: var(--fg-faint); text-transform: uppercase; }
+  .l-to { font-family: var(--font-serif); font-size: clamp(20px, 2.4vw, 28px); margin-top: 26px; color: var(--fg); }
+  .l-body { margin-top: 18px; display: grid; gap: 16px; }
+  .l-body p { font-family: var(--font-serif); font-size: clamp(14px, 1.35vw, 17.5px); line-height: 2.1; color: var(--fg-dim); }
+  .l-body p em { font-style: italic; color: var(--a1-t); }
+  .l-sign { margin-top: 30px; display: flex; justify-content: flex-end; align-items: center; gap: 14px; }
+  .l-sign span { font-family: var(--font-serif); font-style: italic; font-size: clamp(16px, 1.8vw, 22px); color: var(--fg); }
+  .l-seal {
+    width: 54px; height: 54px; border-radius: 50%;
+    display: grid; place-items: center; flex: 0 0 auto;
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--a1) 90%, white), var(--a3));
+    color: var(--bg); font-family: var(--font-serif); font-size: 22px;
+    box-shadow: 0 8px 22px -10px color-mix(in srgb, var(--a1) 70%, transparent);
+    transform: rotate(-7deg);
+  }
+  .l-note { margin-top: 26px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .16em; color: var(--fg-faint); }
+  .l-back { margin-top: 22px; display: flex; gap: 20px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; }
+  .l-back a { color: var(--fg-dim); }
+  .l-back a:hover { color: var(--a1-t); }
+
+  /* 门 */
+  .gate { position: fixed; inset: 0; z-index: 9000; display: grid; place-items: center; background: var(--bg); padding: 24px; transition: opacity .7s var(--ease), visibility .7s; }
+  .gate.go { opacity: 0; visibility: hidden; pointer-events: none; }
+  .gate-card { width: min(420px, 100%); text-align: center; }
+  .gate-card h1 { font-family: var(--font-display); font-size: clamp(24px, 3.4vw, 34px); font-weight: var(--display-w); letter-spacing: -.02em; }
+  .gate-card p { margin-top: 10px; font-size: 12.5px; line-height: 1.9; color: var(--fg-dim); }
+  .gate-form { display: flex; gap: 8px; margin-top: 22px; }
+  .gate-form input { flex: 1; min-width: 0; padding: 13px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--line-strong); color: var(--fg); font-family: var(--font-mono); font-size: 13px; outline: none; }
+  .gate-form input:focus { border-color: var(--a1); }
+  .gate-form button { padding: 0 18px; border-radius: 10px; cursor: pointer; background: var(--btn-primary-bg); color: var(--on-accent); font-size: 13px; }
+  .gate-err { margin-top: 12px; font-size: 11.5px; color: var(--a3); min-height: 1.2em; }
+  .gate-hint { margin-top: 18px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .14em; color: var(--fg-faint); }
+  .shake { animation: shake .38s var(--ease); }
+  @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<div class="grain" aria-hidden="true"></div>
+<canvas class="dust-canvas" id="dust" aria-hidden="true"></canvas>
+
+<div class="gate" id="gate">
+  <div class="gate-card" id="gateCard">
+    <h1>还有一封信。</h1>
+    <p>它没寄出去，也没打算寄。<br />要打开，得先说出我的班号。</p>
+    <form class="gate-form" id="gateForm" autocomplete="off">
+      <input id="gateInput" type="text" placeholder="四个字 + 四个数字" aria-label="口令" maxlength="16" />
+      <button type="submit">拆开</button>
+    </form>
+    <p class="gate-err" id="gateErr"></p>
+    <p class="gate-hint">提示：空天 ____</p>
+  </div>
+</div>
+
+<main id="main" class="letter-wrap">
+  <article class="letter">
+    <div class="l-head"><span>未寄出 · Unsent</span><span>上海 / 莫斯科</span></div>
+
+    <p class="l-to">给二十年后的我：</p>
+
+    <div class="l-body">
+      <p>见字如晤。</p>
+      <p>提笔时正落雪。莫斯科的雪下得慢，落在窗台上不化；不像上海，湿冷，往骨头缝里钻。</p>
+      <p>近来在算一块蜂窝夹层。数字跑完，屏幕暗下去，才想起该问一问你：这些年，还抬头么？</p>
+      <p>我素来是个看着寡淡的人。事来了便做，做不完便熬，熬过了喝口水，第二日照旧上课。旁人说这是看得开，其实只是把话都留在了纸上。</p>
+      <p>若你仍在为一桩小事反复较真，甚好，说明还没被磨钝；若已不甚较真，也不坏 —— 那必是寻到了更值得较真的东西。</p>
+      <p>望你还记得高密。一望无际的平地，站上去能望见很远的天。人从那样的地方出来，走再远，心里也该空着一块，留给风。</p>
+      <p>望你还能打两板球，还能一眼认出照片里是哪个县。<em>图寻</em>这点本事，留着罢，它是我少有的、纯粹为了好玩才练的东西。</p>
+      <p>也望你别只做一个会算的人。算得再准，不如看得清。山、雪、星，看的时候不必问它有什么用。</p>
+      <p>我这边都好。花在长，鸡在下蛋，画册又添了几页。你那边呢？</p>
+    </div>
+
+    <div class="l-sign">
+      <span>范连璟</span>
+      <i class="l-seal" aria-hidden="true">璟</i>
+    </div>
+
+    <p class="l-note">写完才发现，这封信其实是写给现在的自己的。</p>
+
+    <div class="l-back">
+      <a href="room.html">← 回房间</a>
+      <a href="index.html">回外面</a>
+    </div>
+  </article>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script src="js/extras.js"></script>
+<script>
+(function () {
+  'use strict';
+  const KEY = 'nova-letter-open';
+  const PASS = ['空天2202', '空天 2202', 'kt2202', '2202'];
+  const gate = document.getElementById('gate');
+  const card = document.getElementById('gateCard');
+  const form = document.getElementById('gateForm');
+  const input = document.getElementById('gateInput');
+  const err = document.getElementById('gateErr');
+
+  let unlocked = false;
+  try { unlocked = localStorage.getItem(KEY) === '1'; } catch (e) { }
+  if (unlocked && gate) gate.remove();
+
+  if (form) {
+    setTimeout(function () { input.focus(); }, 300);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const v = (input.value || '').replace(/\s/g, '');
+      const ok = PASS.some(function (p) { return p.replace(/\s/g, '') === v; });
+      if (ok) {
+        try { localStorage.setItem(KEY, '1'); } catch (e2) { }
+        gate.classList.add('go');
+        setTimeout(function () { gate.remove(); }, 800);
+      } else {
+        err.textContent = v ? '不是这个班号。' : '写点什么。';
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+        input.select();
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

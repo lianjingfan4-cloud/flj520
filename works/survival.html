@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>荒野幸存者 · 生存策略小游戏</title>
+<style>
+  /* ============================================================
+     荒野幸存者 —— 样式表（纯 DOM，无 Canvas）
+     ============================================================ */
+  :root{
+    --bg-a:#1c2b1f; --bg-b:#2e4433;          /* 背景渐变（荒野绿） */
+    --panel:#f6f1e7;                          /* 主体面板（米白） */
+    --ink:#2a2a22;                            /* 主文字 */
+    --muted:#7a6f58;                          /* 次要文字 */
+    --line:#d9cfba;                           /* 分隔线 */
+    --food:#e0823d;  --water:#3d8fd0;         /* 食物橙 / 水蓝 */
+    --stamina:#5aa85a; --health:#d05050;      /* 体力绿 / 生命红 */
+    --accent:#8a6d3b;                         /* 按钮主色 */
+    --accent-d:#6f5730;
+    --danger:#b04040;
+    --ok:#3f7d3f;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; min-height:100%; }
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+    background:radial-gradient(circle at 30% 20%, var(--bg-b), var(--bg-a) 70%);
+    color:var(--ink);
+    display:flex; justify-content:center; padding:20px 12px;
+  }
+  /* 主体卡片 */
+  .board{
+    width:min(520px,100%);
+    background:var(--panel);
+    border-radius:18px;
+    padding:22px 22px 26px;
+    box-shadow:0 16px 40px rgba(0,0,0,.45);
+    position:relative;
+  }
+  header{ text-align:center; margin-bottom:6px; }
+  header h1{ margin:0; font-size:26px; letter-spacing:2px; color:var(--ink); }
+  header .subtitle{ color:var(--muted); font-size:13px; margin-top:4px; }
+
+  /* 四项数值面板 */
+  .stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; margin:16px 0 8px; }
+  .stat .stat-label{
+    display:flex; align-items:center; gap:6px;
+    font-size:13px; font-weight:700; color:var(--ink);
+    margin-bottom:5px;
+  }
+  .stat .stat-num{ margin-left:auto; font-weight:700; font-variant-numeric:tabular-nums; color:var(--muted); }
+  .stat .stat-num b{ color:var(--ink); }
+  .bar{ height:12px; background:#e6ddc9; border-radius:7px; overflow:hidden; box-shadow:inset 0 1px 2px rgba(0,0,0,.15); }
+  .bar-fill{ height:100%; width:50%; border-radius:7px; transition:width .3s ease; }
+  .bar-fill.food{ background:linear-gradient(90deg,var(--food),#f0a55e); }
+  .bar-fill.water{ background:linear-gradient(90deg,var(--water),#67b3e8); }
+  .bar-fill.stamina{ background:linear-gradient(90deg,var(--stamina),#7cc87c); }
+  .bar-fill.health{ background:linear-gradient(90deg,var(--health),#e57575); }
+  .stat.danger .bar-fill{ filter:saturate(1.2) brightness(.95); }
+  .stat.danger .stat-label{ color:var(--danger); }
+
+  /* 回合与庇护所信息条 */
+  .info{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:8px;
+    background:#efe7d6; border:1px solid var(--line); border-radius:12px;
+    padding:10px 14px; margin:6px 0 16px; font-size:14px;
+  }
+  .info .chip{ display:inline-flex; align-items:center; gap:6px; font-weight:700; }
+  .info .chip b{ color:var(--accent-d); }
+  .goal{ width:100%; text-align:center; font-size:12px; color:var(--muted); }
+
+  /* 行动按钮区 */
+  .actions{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .action-btn{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    border:none; border-radius:14px; cursor:pointer;
+    background:linear-gradient(180deg,#fffdf7,var(--panel));
+    border:1px solid var(--line);
+    padding:14px 10px 12px; font-family:inherit;
+    box-shadow:0 3px 0 rgba(0,0,0,.08);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .action-btn:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 5px 12px rgba(0,0,0,.18); }
+  .action-btn:active:not(:disabled){ transform:translateY(1px); box-shadow:0 2px 4px rgba(0,0,0,.12); }
+  .action-btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .action-btn .btn-icon{ font-size:26px; line-height:1; }
+  .action-btn .btn-name{ font-size:15px; font-weight:800; margin-top:4px; }
+  .action-btn .btn-hint{ font-size:11px; color:var(--muted); }
+  .action-btn.insufficient .btn-hint{ color:var(--danger); font-weight:700; }
+
+  /* 日志区 */
+  .log-wrap{ margin-top:18px; }
+  .log-title{ font-size:13px; font-weight:800; color:var(--accent-d); margin:0 0 8px; }
+  .log{
+    height:230px; overflow-y:auto;
+    background:#2b2317; border-radius:12px; padding:10px 12px;
+    display:flex; flex-direction:column; gap:8px;
+    border:1px solid #3a2f1f;
+  }
+  .log-entry{
+    font-size:13px; line-height:1.5; color:#e8ddc4;
+    padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.05);
+    border-left:3px solid #888;
+    animation:pop .25s ease;
+  }
+  @keyframes pop{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+  .log-entry.action { border-left-color:#e8a94b; }
+  .log-entry.event  { border-left-color:#7fb4e0; background:rgba(120,170,220,.10); }
+  .log-entry.passive{ border-left-color:#8a7d5f; background:rgba(140,125,95,.08); }
+  .log-entry.danger { border-left-color:#ff6b6b; background:rgba(200,70,70,.14); color:#ffd7d7; }
+  .log-entry.error  { border-left-color:#ffca4a; background:rgba(255,202,74,.12); color:#ffe9b0; }
+  .log-entry .turn-tag{ font-size:11px; color:#9c8f74; margin-right:6px; }
+
+  /* 胜负浮层 */
+  .overlay{
+    position:absolute; inset:0; z-index:10;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(20,24,18,.72); border-radius:18px;
+    text-align:center; padding:20px;
+  }
+  .overlay.hidden{ display:none; }
+  .overlay.panel{ background:transparent; }
+  .result{
+    background:var(--panel); border-radius:16px; padding:26px 30px;
+    max-width:90%; box-shadow:0 18px 50px rgba(0,0,0,.5);
+  }
+  .result .emoji{ font-size:52px; line-height:1; }
+  .result h2{ margin:10px 0 6px; font-size:24px; }
+  .result p{ margin:0 0 14px; color:var(--muted); font-size:14px; }
+  .result .final-stats{ font-size:13px; color:var(--ink); margin:0 0 16px; line-height:1.8; }
+  .btn-restart{
+    border:none; border-radius:10px; cursor:pointer; font-family:inherit;
+    background:linear-gradient(180deg,var(--accent),var(--accent-d));
+    color:#fff; font-size:15px; font-weight:800; padding:12px 28px;
+    box-shadow:0 4px 0 #57431f; transition:transform .08s ease;
+  }
+  .btn-restart:hover{ transform:translateY(-2px); }
+  .btn-restart:active{ transform:translateY(2px); box-shadow:0 2px 0 #57431f; }
+
+  .footer{ text-align:center; font-size:11px; color:var(--muted); margin-top:14px; }
+</style>
+</head>
+<body>
+
+<div class="board">
+  <header>
+    <h1>🏕️ 荒野幸存者</h1>
+    <div class="subtitle">在荒野中活下去 · 坚持活过 30 回合即可获救</div>
+  </header>
+
+  <!-- 四项数值面板：DOM 进度条 -->
+  <section class="stats">
+    <div class="stat" id="stat-food">
+      <div class="stat-label"><span>🍎</span><span>食物</span><span class="stat-num"><b id="foodVal">50</b>/100</span></div>
+      <div class="bar"><div class="bar-fill food" id="foodBar" style="width:50%"></div></div>
+    </div>
+    <div class="stat" id="stat-water">
+      <div class="stat-label"><span>💧</span><span>水</span><span class="stat-num"><b id="waterVal">50</b>/100</span></div>
+      <div class="bar"><div class="bar-fill water" id="waterBar" style="width:50%"></div></div>
+    </div>
+    <div class="stat" id="stat-stamina">
+      <div class="stat-label"><span>⚡</span><span>体力</span><span class="stat-num"><b id="staminaVal">70</b>/100</span></div>
+      <div class="bar"><div class="bar-fill stamina" id="staminaBar" style="width:70%"></div></div>
+    </div>
+    <div class="stat" id="stat-health">
+      <div class="stat-label"><span>❤️</span><span>生命</span><span class="stat-num"><b id="healthVal">100</b>/100</span></div>
+      <div class="bar"><div class="bar-fill health" id="healthBar" style="width:100%"></div></div>
+    </div>
+  </section>
+
+  <!-- 回合 / 庇护所信息 -->
+  <section class="info">
+    <span class="chip">🕐 回合 <b id="turn">1</b> / <b id="turnMax">30</b></span>
+    <span class="chip">⛺ 庇护所 <b id="shelter">0</b> / <b id="shelterMax">5</b></span>
+    <span class="chip" id="statusChip">📌 状态：行进途中</span>
+    <div class="goal">目标：存活 30 回合。归零的数值会持续扣减生命。</div>
+  </section>
+
+  <!-- 行动按钮：由 JS 依据 CONFIG 动态生成，保证单一数据源 -->
+  <section class="actions" id="actions"></section>
+
+  <!-- 事件日志 -->
+  <section class="log-wrap">
+    <p class="log-title">📜 冒险日志</p>
+    <div class="log" id="log"></div>
+  </section>
+
+  <div class="footer">数值参数集中在代码顶部 CONFIG · 纯 DOM 实现</div>
+</div>
+
+<!-- 胜负浮层 -->
+<div class="overlay hidden" id="overlay">
+  <div class="result">
+    <div class="emoji" id="resultEmoji">🎉</div>
+    <h2 id="resultTitle">通关！</h2>
+    <p id="resultDesc"></p>
+    <div class="final-stats" id="resultStats"></div>
+    <button class="btn-restart" id="btnRestart">🔄 重新开始</button>
+  </div>
+</div>
+
+<script>
+/* =============================================================================
+ *  荒野幸存者 · 游戏逻辑（全文件唯一一段脚本）
+ *  设计说明：
+ *    - 采用"引擎(纯逻辑) + UI(DOM)"两层。全部游戏规则与数值都在下方的 CONFIG
+ *      中集中定义；引擎函数不依赖 DOM，便于逻辑自测（模拟游玩）。
+ *    - GAME 用 var 声明，便于在 Node 沙盒中用 vm.runInContext 读取核心函数做自测。
+ * ============================================================================= */
+
+var GAME = (function(){
+  "use strict";
+
+  /* -------------------------------------------------------------
+   * ① 参数配置（集中在此处修改，便于调平衡）
+   * ------------------------------------------------------------- */
+  var CONFIG = {
+    // 初始四项数值
+    INIT: { food:45, water:45, stamina:70, health:100 },
+    // 各项数值上限
+    MAX:  { food:100, water:100, stamina:100, health:100 },
+
+    // 每回合"时光流逝"被动扣减（负数为减少）
+    BASE_COST: { food:-4, water:-5, stamina:-1 },
+
+    // 目标回合数（完成第 WIN_TURN 回合且存活即通关）
+    WIN_TURN: 30,
+
+    // 每次行动后触发随机事件的概率（0~1）
+    EVENT_CHANCE: 0.42,
+
+    // 庇护所：等级上限 与 每级降低"可防护"事件负面伤害的比例
+    SHELTER_MAX: 5,
+    SHELTER_SHIELD: 0.12,
+
+    // 数值归零时的每回合扣血惩罚
+    FOOD_THIRST_PENALTY: 5,   // 断粮
+    WATER_THIRST_PENALTY: 8,  // 脱水（比断粮更致命）
+    FATIGUE_PENALTY: 3,       // 体力透支
+
+    /* 行动定义：
+     * cost    —— 体力变化（正=消耗，负=恢复）
+     * food/water —— 资源增加（可选）
+     * shelter —— 庇护所等级提升（可选） */
+    ACTIONS: {
+      gatherFood:{ label:"采集食物", icon:"🍎", cost:12,  food:+14, water:+1,  desc:"寻找果实与浆果充饥" },
+      findWater: { label:"寻找水源", icon:"💧", cost:12,  water:+16, food:+1,   desc:"在附近寻找干净饮水" },
+      buildShelter:{ label:"搭建庇护所", icon:"⛺", cost:16, shelter:+1,         desc:"加固遮蔽物抵御灾害" },
+      rest:      { label:"休息",     icon:"😴", cost:-28,                       desc:"恢复体力" }
+    },
+
+    /* 随机事件：
+     * deltas  —— 数值变化（正=增加，负=减少）
+     * protect —— 该事件可被庇护所削减伤害的数值键（仅对"负向"数值生效）
+     * text    —— 事件描述文本 */
+    EVENTS: [
+      { id:"rain",   label:"🌧️ 暴雨",     protect:["health","stamina","food"],
+        deltas:{ water:+6, stamina:-8, health:-4 },
+        text:"一场暴雨突然来袭，把你淋得浑身湿透。" },
+      { id:"beast",  label:"🐗 野兽袭击", protect:["health"],
+        deltas:{ health:-12, stamina:-6 },
+        text:"一头野兽从灌木丛中窜出，扑向你发动攻击！" },
+      { id:"supply", label:"📦 找到补给", protect:[],
+        deltas:{ food:+12, water:+12 },
+        text:"你在一处废墟里找到了一只还能用的补给箱。" },
+      { id:"sunny",  label:"☀️ 晴好天气", protect:[],
+        deltas:{ stamina:+8, water:-3 },
+        text:"天空放晴，温暖的阳光让你恢复了精神。" },
+      { id:"injury", label:"🩹 意外受伤", protect:[],
+        deltas:{ health:-7, stamina:-4 },
+        text:"你被尖锐的荆棘划伤，伤口火辣辣地疼。" },
+      { id:"stream", label:"🫗 发现溪流", protect:[],
+        deltas:{ water:+18, stamina:+3 },
+        text:"你找到一条清澈的溪流，痛饮了一番。" }
+    ]
+  };
+
+  /* -------------------------------------------------------------
+   * ② 工具函数
+   * ------------------------------------------------------------- */
+  // 将数值限制在 [min,max]，非数字安全回退为 0
+  function clamp(value, min, max){
+    value = Number(value);
+    if (isNaN(value)) value = 0;
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+  }
+
+  // 在四项数值上应用增量并夹取到 [0, MAX]
+  function applyDelta(state, stat, delta){
+    if (typeof delta === "number" && delta !== 0 && CONFIG.MAX[stat] !== undefined){
+      state[stat] = clamp(state[stat] + delta, 0, CONFIG.MAX[stat]);
+    }
+  }
+
+  function applyDeltas(state, deltas){
+    for (var key in deltas){
+      if (Object.prototype.hasOwnProperty.call(deltas, key)) applyDelta(state, key, deltas[key]);
+    }
+  }
+
+  // 带符号格式化：+5 / -3
+  function fmtSigned(n){ return n > 0 ? ("+" + n) : ("" + n); }
+
+  // 把增量对象格式化为 "水+6 体力-8 生命-4"
+  function fmtDeltas(obj){
+    var names = { food:"🍎食物", water:"💧水", stamina:"⚡体力", health:"❤️生命" };
+    var parts = [];
+    for (var key in obj){
+      if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] !== 0){
+        parts.push(names[key] + fmtSigned(obj[key]));
+      }
+    }
+    return parts.length ? parts.join(" ") : "无变化";
+  }
+
+  /* -------------------------------------------------------------
+   * ③ 状态创建与查询
+   * ------------------------------------------------------------- */
+  function createState(){
+    return {
+      food:CONFIG.INIT.food, water:CONFIG.INIT.water,
+      stamina:CONFIG.INIT.stamina, health:CONFIG.INIT.health,
+      shelter:0,           // 庇护所等级
+      turn:1,              // 当前回合号（1 起）
+      over:false,          // 是否结束
+      won:false,           // 是否胜利
+      reason:""            // 结束原因
+    };
+  }
+
+  // 某行动当前是否可执行（体力足够或为恢复类；游戏未结束）
+  function canDo(state, actionId){
+    var act = CONFIG.ACTIONS[actionId];
+    if (!act || state.over) return false;
+    // cost>=0 表示消耗体力，需要足够体力；cost<0 表示恢复体力，恒可用
+    return act.cost >= 0 ? (state.stamina >= act.cost) : true;
+  }
+
+  /* -------------------------------------------------------------
+   * ④ 行动结算（只结算行动本身，不推进回合）
+   * ------------------------------------------------------------- */
+  function performAction(state, actionId){
+    var act = CONFIG.ACTIONS[actionId];
+    var error = function(msg){ return { type:"error", text:msg }; };
+
+    if (!act || state.over) return [ error("游戏已结束，请点击重新开始。") ];
+    if (!canDo(state, actionId)) return [ error("体力不足，无法“" + act.label + "”，请先休息。") ];
+
+    // 结算体力（cost 负=恢复）
+    state.stamina = clamp(state.stamina + act.cost, 0, CONFIG.MAX.stamina);
+
+    // 结算资源 / 庇护所
+    var parts = [];
+    var costText = act.cost >= 0 ? ("消耗体力 " + act.cost) : ("恢复体力 " + (-act.cost));
+    if (typeof act.food === "number"){ applyDelta(state, "food", act.food); parts.push("食物" + fmtSigned(act.food)); }
+    if (typeof act.water === "number"){ applyDelta(state, "water", act.water); parts.push("水" + fmtSigned(act.water)); }
+    if (typeof act.shelter === "number"){
+      state.shelter = clamp(state.shelter + act.shelter, 0, CONFIG.SHELTER_MAX);
+      parts.push("庇护所等级+" + act.shelter);
+    }
+
+    var line = act.icon + " 你" + act.label + "，可能" + costText + (parts.length ? "；" + parts.join("，") : "") + "。";
+    return [ { type:"action", text:line } ];
+  }
+
+  /* -------------------------------------------------------------
+   * ⑤ 随机事件结算
+   * ------------------------------------------------------------- */
+  function rollEvent(state){
+    if (Math.random() >= CONFIG.EVENT_CHANCE) return [];   // 未触发
+
+    var ev = CONFIG.EVENTS[Math.floor(Math.random() * CONFIG.EVENTS.length)];
+    var eff = {};
+
+    // 计算实际生效的数值变化（受庇护所削减）
+    for (var key in ev.deltas){
+      if (!Object.prototype.hasOwnProperty.call(ev.deltas, key)) continue;
+      var val = ev.deltas[key];
+      var isProtected = ev.protect.indexOf(key) >= 0 && val < 0;
+      if (isProtected){
+        val = Math.round(val * (1 - state.shelter * CONFIG.SHELTER_SHIELD));
+      }
+      eff[key] = val;
+    }
+    applyDeltas(state, eff);
+
+    var shielded = "";
+    for (var k in ev.deltas){
+      if (Object.prototype.hasOwnProperty.call(ev.deltas,k)
+          && ev.protect.indexOf(k) >= 0
+          && ev.deltas[k] < 0 && eff[k] > ev.deltas[k]){
+        shielded = "（庇护所为你抵挡了部分"+ k + "伤害）";
+        break;
+      }
+    }
+    return [ { type:"event", text: ev.label + " " + ev.text + "［" + fmtDeltas(eff) + "］" + shielded } ];
+  }
+
+  /* -------------------------------------------------------------
+   * ⑥ 时光流逝与饥渴/透支惩罚
+   * ------------------------------------------------------------- */
+  function applyPassive(state){
+    var logs = [];
+    var base = CONFIG.BASE_COST;
+    var changes = [];
+    if (base.food){ applyDelta(state, "food", base.food); changes.push("食物" + fmtSigned(base.food)); }
+    if (base.water){ applyDelta(state, "water", base.water); changes.push("水" + fmtSigned(base.water)); }
+    if (base.stamina){ applyDelta(state, "stamina", base.stamina); changes.push("体力" + fmtSigned(base.stamina)); }
+    if (changes.length) logs.push({ type:"passive", text:"⏳ 时光流逝：" + changes.join("，") });
+
+    if (state.food <= 0){
+      applyDelta(state, "health", -CONFIG.FOOD_THIRST_PENALTY);
+      logs.push({ type:"danger", text:"🍽️ 你已断粮，饥饿令你虚弱，生命 -" + CONFIG.FOOD_THIRST_PENALTY });
+    }
+    if (state.water <= 0){
+      applyDelta(state, "health", -CONFIG.WATER_THIRST_PENALTY);
+      logs.push({ type:"danger", text:"💧 你已断水，脱水令你濒危，生命 -" + CONFIG.WATER_THIRST_PENALTY });
+    }
+    if (state.stamina <= 0){
+      applyDelta(state, "health", -CONFIG.FATIGUE_PENALTY);
+      logs.push({ type:"danger", text:"😵 体力透支，你几乎支撑不住，生命 -" + CONFIG.FATIGUE_PENALTY });
+    }
+    return logs;
+  }
+
+  /* -------------------------------------------------------------
+   * ⑦ 完整回合：行动 → 事件 → 时光流逝 → 判定
+   *    返回该回合产生的日志数组（供 UI 与自测共用）
+   * ------------------------------------------------------------- */
+  function runTurn(state, actionId){
+    if (state.over) return [ { type:"error", text:"游戏已结束，请点击重新开始。" } ];
+
+    var logs = [];
+    // 1) 行动结算；失败（体力不足）则不消耗回合、不触发后续
+    var actionLogs = performAction(state, actionId);
+    if (actionLogs.length && actionLogs[0].type === "error") return actionLogs;
+    logs = logs.concat(actionLogs);
+
+    // 2) 随机事件
+    logs = logs.concat(rollEvent(state));
+    // 3) 时光流逝 + 归零惩罚
+    logs = logs.concat(applyPassive(state));
+    // 4) 回合推进
+    state.turn += 1;
+    // 5) 胜负判定：先判死亡，再判通关
+    if (state.health <= 0){
+      state.over = true; state.won = false;
+      state.reason = "你倒在了这无边的荒野里，最终没能等到救援……";
+    } else if (state.turn > CONFIG.WIN_TURN){
+      state.over = true; state.won = true;
+      state.reason = "你成功在荒野中活过了 " + CONFIG.WIN_TURN + " 回合，等来了救援队，得救了！";
+    }
+    return logs;
+  }
+
+  // 导出给 UI 与自测使用
+  return { CONFIG: CONFIG, createState: createState, canDo: canDo, runTurn: runTurn };
+})();
+
+/* =============================================================================
+ *  UI 层：仅在此层操作 DOM。自测时（Node/vm 无 document）不会执行 boot()。
+ * ============================================================================= */
+function boot(){
+  // ---- 初始状态 ----
+  var state = GAME.createState();
+  var logEntries = [];          // 全部日志（文本）
+  var logBox       = document.getElementById("log");
+  var overlay      = document.getElementById("overlay");
+  var actionsWrap  = document.getElementById("actions");
+  var maxTurn      = GAME.CONFIG.WIN_TURN;
+
+  // 依据 CONFIG 动态生成行动按钮（保证和参数一致）
+  (function buildButtons(){
+    actionsWrap.innerHTML = "";
+    Object.keys(GAME.CONFIG.ACTIONS).forEach(function(id){
+      var act = GAME.CONFIG.ACTIONS[id];
+      var btn = document.createElement("button");
+      btn.className = "action-btn";
+      btn.dataset.action = id;
+      var costText = act.cost >= 0 ? ("消耗体力 " + act.cost) : ("恢复体力 " + (-act.cost));
+      var effectText = [];
+      if (typeof act.food   === "number") effectText.push("食物+" + act.food);
+      if (typeof act.water  === "number") effectText.push("水+" + act.water);
+      if (typeof act.shelter=== "number") effectText.push("庇护所+" + act.shelter);
+      btn.innerHTML =
+        '<span class="btn-icon">' + act.icon + '</span>' +
+        '<span class="btn-name">' + act.label + '</span>' +
+        '<span class="btn-hint">' + costText + (effectText.length ? (" · " + effectText.join(" ")) : "") + '</span>';
+      btn.addEventListener("click", function(){ onAction(id); });
+      actionsWrap.appendChild(btn);
+    });
+  })();
+
+  // ---- 渲染四项数值 ----
+  function renderStat(stat, elValue, elBar, elStat){
+    var val = state[stat];
+    var pct = Math.round((val / GAME.CONFIG.MAX[stat]) * 100);
+    elValue.textContent = val;
+    elBar.style.width = pct + "%";
+    // 归零危险状态高亮
+    elStat.classList.toggle("danger", val <= 15);
+  }
+  function render(){
+    renderStat("food",    document.getElementById("foodVal"),    document.getElementById("foodBar"),    document.getElementById("stat-food"));
+    renderStat("water",   document.getElementById("waterVal"),   document.getElementById("waterBar"),   document.getElementById("stat-water"));
+    renderStat("stamina", document.getElementById("staminaVal"), document.getElementById("staminaBar"), document.getElementById("stat-stamina"));
+    renderStat("health",  document.getElementById("healthVal"), document.getElementById("healthBar"), document.getElementById("stat-health"));
+
+    document.getElementById("turn").textContent = Math.min(state.turn, maxTurn);
+    document.getElementById("turnMax").textContent = maxTurn;
+    document.getElementById("shelter").textContent = state.shelter;
+    document.getElementById("shelterMax").textContent = GAME.CONFIG.SHELTER_MAX;
+
+    // 状态芯片
+    var chip = document.getElementById("statusChip");
+    if (state.health <= 0) chip.textContent = "📌 状态：濒死";
+    else if (state.food <= 0 || state.water <= 0) chip.textContent = "📌 状态：饥渴交加！";
+    else if (state.stamina < 20) chip.textContent = "📌 状态：疲惫不堪";
+    else chip.textContent = "📌 状态：行进途中";
+
+    // 行动按钮可用性
+    var buttons = actionsWrap.querySelectorAll(".action-btn");
+    buttons.forEach(function(btn){
+      var id = btn.dataset.action;
+      var ok = GAME.canDo(state, id);
+      btn.disabled = !ok;
+      btn.classList.toggle("insufficient", !ok && GAME.CONFIG.ACTIONS[id].cost >= 0);
+    });
+
+    // 结束后显示浮层
+    if (state.over) showResult();
+  }
+
+  // ---- 日志 ----
+  function pushLog(entries, turnTag){
+    entries.forEach(function(e){
+      var div = document.createElement("div");
+      div.className = "log-entry " + e.type;
+      div.innerHTML = '<span class="turn-tag">' + turnTag + '</span>' + e.text;
+      logBox.appendChild(div);
+    });
+    logBox.scrollTop = logBox.scrollHeight;   // 滚动到底部
+  }
+
+  // ---- 执行一次行动 ----
+  function onAction(actionId){
+    var turnTag = "第" + Math.min(state.turn, maxTurn) + "回合";
+    var logs = GAME.runTurn(state, actionId);
+    // 仅把"本轮真实发生的"日志（若非错误/失败）追加到日志区
+    if (!(logs.length === 1 && logs[0].type === "error")){
+      logEntries = logEntries.concat(logs);
+      pushLog(logs, turnTag);
+    } else {
+      // 体力不足的提示也写入日志，给玩家反馈
+      pushLog(logs, turnTag);
+    }
+    render();
+  }
+
+  // ---- 胜负浮层 ----
+  function showResult(){
+    var emoji = document.getElementById("resultEmoji");
+    var title = document.getElementById("resultTitle");
+    var desc  = document.getElementById("resultDesc");
+    var stats = document.getElementById("resultStats");
+    if (state.won){
+      emoji.textContent = "🎉";
+      title.textContent = "通关成功！";
+      desc.textContent = state.reason;
+    } else {
+      emoji.textContent = "💀";
+      title.textContent = "生存失败";
+      desc.textContent = state.reason;
+    }
+    stats.innerHTML =
+      "共坚持 <b>" + Math.min(state.turn, maxTurn) + "</b> 回合<br>" +
+      "最终状态：🍎" + state.food + " · 💧" + state.water + " · ⚡" + state.stamina + " · ❤️" + state.health;
+    overlay.classList.remove("hidden");
+  }
+
+  // ---- 重新开始 ----
+  function restart(){
+    state = GAME.createState();
+    logEntries = [];
+    logBox.innerHTML = "";
+    overlay.classList.add("hidden");
+    render();
+  }
+  document.getElementById("btnRestart").addEventListener("click", restart);
+
+  // ---- 首次渲染 ----
+  pushLog([{ type:"event", text:"🏕️ 你在一场事故后独自醒来，身边只剩空背包。活下去，等待救援……" }], "序章");
+  render();
+}
+
+/* 自测/Node(vm) 环境下没有 document，跳过 UI 引导，只保留引擎逻辑 */
+if (typeof document !== "undefined" && document.querySelector){
+  boot();
+}
+</script>
+</body>
+</html>

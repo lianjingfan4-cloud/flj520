@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="copper" data-family="nocturne" data-style="cinematic" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>房间 · 范连璟</title>
+<meta name="robots" content="noindex" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<style>
+  .room-wrap { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; padding: 20px; }
+  .room-frame {
+    width: min(1180px, 100%); max-height: calc(100svh - 40px);
+    border-radius: var(--radius); overflow: hidden;
+    border: 1px solid var(--card-line); box-shadow: var(--shadow);
+    background: var(--bg); position: relative;
+  }
+  .room-frame svg { display: block; width: 100%; height: auto; }
+
+  .obj { cursor: pointer; }
+  .obj .hit { transition: filter .3s var(--ease), opacity .3s var(--ease); }
+  .obj:hover .hit { filter: drop-shadow(0 0 10px var(--a1)); }
+  .obj:focus { outline: none; }
+  .obj:focus-visible .hit { filter: drop-shadow(0 0 12px var(--a3)); }
+
+  .room-hud {
+    position: absolute; left: 0; right: 0; top: 0; padding: 14px 18px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .18em;
+    color: var(--fg-faint); text-transform: uppercase; pointer-events: none;
+  }
+  .room-hud a { pointer-events: auto; color: var(--fg-dim); }
+  .room-hud a:hover { color: var(--a1-t); }
+
+  .note {
+    position: fixed; right: clamp(14px, 3vw, 34px); bottom: clamp(14px, 3vw, 34px);
+    z-index: 60; width: min(320px, calc(100vw - 28px));
+    padding: 18px 20px; border-radius: 16px;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border: 1px solid var(--line-strong);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .35s var(--ease), transform .45s var(--ease-out);
+  }
+  .note.on { opacity: 1; transform: none; pointer-events: auto; }
+  .note-k { font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; color: var(--a1-t); text-transform: uppercase; }
+  .note-t { font-family: var(--font-serif); font-size: 20px; margin: 6px 0 8px; }
+  .note-p { font-size: 13px; line-height: 1.9; color: var(--fg-dim); }
+  .note-x { position: absolute; right: 10px; top: 8px; font-size: 14px; color: var(--fg-faint); cursor: pointer; }
+  .note-x:hover { color: var(--fg); }
+
+  /* 门 */
+  .gate {
+    position: fixed; inset: 0; z-index: 9000; display: grid; place-items: center;
+    background: var(--bg); padding: 24px;
+    transition: opacity .7s var(--ease), visibility .7s;
+  }
+  .gate.go { opacity: 0; visibility: hidden; pointer-events: none; }
+  .gate-card { width: min(420px, 100%); text-align: center; }
+  .gate-mark {
+    width: 54px; height: 54px; margin: 0 auto 24px; border-radius: 50%;
+    border: 1px solid var(--line-strong); display: grid; place-items: center;
+    color: var(--a1-t); box-shadow: var(--glow);
+  }
+  .gate-card h1 { font-family: var(--font-display); font-size: clamp(24px, 3.4vw, 34px); font-weight: var(--display-w); letter-spacing: -.02em; }
+  .gate-card p { margin-top: 10px; font-size: 12.5px; line-height: 1.9; color: var(--fg-dim); }
+  .gate-form { display: flex; gap: 8px; margin-top: 22px; }
+  .gate-form input {
+    flex: 1; min-width: 0; padding: 13px 14px; border-radius: 10px;
+    background: var(--card); border: 1px solid var(--line-strong); color: var(--fg);
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: .06em; outline: none;
+    transition: border-color .3s var(--ease);
+  }
+  .gate-form input:focus { border-color: var(--a1); }
+  .gate-form button {
+    padding: 0 18px; border-radius: 10px; cursor: pointer;
+    background: var(--btn-primary-bg); color: var(--on-accent); font-size: 13px;
+  }
+  .gate-err { margin-top: 12px; font-size: 11.5px; color: var(--a3); min-height: 1.2em; }
+  .gate-hint { margin-top: 18px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .14em; color: var(--fg-faint); }
+  .shake { animation: shake .38s var(--ease); }
+  @keyframes shake { 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<canvas class="dust-canvas" id="dust" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ 门 ============ -->
+<div class="gate" id="gate">
+  <div class="gate-card" id="gateCard">
+    <div class="gate-mark" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="9" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M13 12h8M18 12v3M21 12v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>这扇门，要一句话。</h1>
+    <p>四个字。我在第一页念过。<br />念对了，房间里就亮了。</p>
+    <form class="gate-form" id="gateForm" autocomplete="off">
+      <input id="gateInput" type="text" placeholder="四个字" aria-label="口令" maxlength="12" />
+      <button type="submit">开门</button>
+    </form>
+    <p class="gate-err" id="gateErr"></p>
+    <p class="gate-hint">提示：魏武挥鞭，东临碣石……</p>
+  </div>
+</div>
+
+<main id="main" class="room-wrap">
+  <div class="room-frame">
+    <div class="room-hud">
+      <a href="index.html">← 回到外面</a>
+      <span>深夜 · 02:00 · 一个人的房间</span>
+      <a href="letter.html">一封信 →</a>
+    </div>
+
+    <svg viewBox="0 0 1180 760" id="roomSvg" aria-label="一间深夜的房间">
+      <defs>
+        <linearGradient id="r-wall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--a2)" stop-opacity=".14"/>
+          <stop offset=".6" stop-color="var(--a1)" stop-opacity=".05"/>
+          <stop offset="1" stop-color="var(--bg)" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="r-lamp">
+          <stop offset="0" stop-color="var(--a1)" stop-opacity=".5"/>
+          <stop offset=".55" stop-color="var(--a1)" stop-opacity=".12"/>
+          <stop offset="1" stop-color="var(--a1)" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="r-win" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--a2)" stop-opacity=".4"/>
+          <stop offset="1" stop-color="var(--a2)" stop-opacity=".05"/>
+        </linearGradient>
+        <linearGradient id="r-floor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--fg)" stop-opacity=".06"/>
+          <stop offset="1" stop-color="var(--fg)" stop-opacity=".01"/>
+        </linearGradient>
+      </defs>
+
+      <rect width="1180" height="760" fill="url(#r-wall)"/>
+      <rect y="560" width="1180" height="200" fill="url(#r-floor)"/>
+      <path d="M0,560 H1180" stroke="var(--line-strong)" stroke-width="1"/>
+
+      <!-- 窗 -->
+      <g class="obj" data-note="moscow" tabindex="0" role="button" aria-label="窗">
+        <g class="hit">
+          <rect x="744" y="92" width="356" height="330" fill="url(#r-win)"/>
+          <g fill="var(--fg)" opacity=".8">
+            <circle cx="790" cy="140" r="1.8"/><circle cx="848" cy="118" r="1.2"/><circle cx="906" cy="164" r="1.5"/>
+            <circle cx="964" cy="126" r="1"/><circle cx="1024" cy="150" r="1.6"/><circle cx="1064" cy="112" r="1.2"/>
+            <circle cx="820" cy="216" r="1.3"/><circle cx="892" cy="252" r="1"/><circle cx="980" cy="226" r="1.4"/>
+            <circle cx="1046" cy="268" r="1.1"/><circle cx="768" cy="296" r="1"/><circle cx="942" cy="318" r="1.2"/>
+          </g>
+          <circle cx="1040" cy="180" r="26" fill="var(--bg)" stroke="var(--a3)" stroke-width="1.2" opacity=".9"/>
+          <path d="M744,92 h356 v330 h-356 z" fill="none" stroke="var(--fg)" stroke-width="3.4" opacity=".7"/>
+          <path d="M922,92 v330 M744,257 h356" stroke="var(--fg)" stroke-width="2.6" opacity=".55"/>
+          <path d="M700,430 q120,-16 240,0" stroke="var(--fg)" stroke-width="2" opacity=".25" fill="none"/>
+        </g>
+      </g>
+
+      <!-- 海报 -->
+      <g class="obj" data-note="poster" tabindex="0" role="button" aria-label="海报">
+        <g class="hit">
+          <rect x="86" y="112" width="188" height="248" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.6" opacity=".9"/>
+          <path d="M86,360 L274,152 L274,214 L86,422 Z" fill="var(--a1)" opacity=".75"/>
+          <circle cx="196" cy="214" r="52" fill="none" stroke="var(--a2)" stroke-width="2" opacity=".8"/>
+          <path d="M196,176 l11,34 h36 l-29,22 11,34 -29,-22 -29,22 11,-34 -29,-22 h36 z" fill="var(--a3)" opacity=".9"/>
+          <rect x="104" y="316" width="80" height="5" fill="var(--fg)" opacity=".3"/>
+          <rect x="104" y="328" width="52" height="5" fill="var(--fg)" opacity=".22"/>
+        </g>
+      </g>
+
+      <!-- 望远镜 -->
+      <g class="obj" data-note="scope" tabindex="0" role="button" aria-label="望远镜">
+        <g class="hit">
+          <path d="M560,470 L700,392" stroke="var(--fg)" stroke-width="16" stroke-linecap="round" opacity=".8"/>
+          <path d="M548,478 L586,456" stroke="var(--a2)" stroke-width="20" stroke-linecap="round"/>
+          <circle cx="702" cy="390" r="17" fill="var(--bg)" stroke="var(--fg)" stroke-width="3" opacity=".9"/>
+          <path d="M636,436 L614,520 M636,436 L676,516" stroke="var(--fg)" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+          <path d="M600,520 h76" stroke="var(--fg)" stroke-width="5" stroke-linecap="round" opacity=".4"/>
+        </g>
+      </g>
+
+      <!-- 书架 + 唱片 -->
+      <g class="obj" data-note="record" tabindex="0" role="button" aria-label="唱片">
+        <g class="hit">
+          <rect x="330" y="196" width="300" height="14" fill="var(--fg)" opacity=".22"/>
+          <rect x="330" y="330" width="300" height="14" fill="var(--fg)" opacity=".22"/>
+          <g opacity=".85">
+            <rect x="350" y="246" width="14" height="84" fill="var(--a2)"/>
+            <rect x="368" y="238" width="14" height="92" fill="var(--a3)"/>
+            <rect x="386" y="252" width="14" height="78" fill="var(--a1)"/>
+            <rect x="404" y="244" width="14" height="86" fill="var(--fg)" opacity=".5"/>
+            <rect x="422" y="256" width="14" height="74" fill="var(--a2)"/>
+          </g>
+          <g opacity=".9">
+            <circle cx="512" cy="292" r="34" fill="var(--bg)" stroke="var(--fg)" stroke-width="2"/>
+            <circle cx="512" cy="292" r="12" fill="var(--a1)" opacity=".9"/>
+            <circle cx="512" cy="292" r="3" fill="var(--bg)"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- 台灯 -->
+      <g class="obj" data-note="lamp" tabindex="0" role="button" aria-label="台灯">
+        <g class="hit">
+          <circle cx="250" cy="470" r="150" fill="url(#r-lamp)"/>
+          <path d="M250,470 V330" stroke="var(--fg)" stroke-width="4" opacity=".6"/>
+          <path d="M198,330 q52,-16 104,0 l-22,-46 q-30,-10 -60,0 z" fill="var(--a1)" opacity=".85"/>
+          <circle cx="250" cy="332" r="7" fill="var(--a3)"/>
+          <path d="M212,470 h76" stroke="var(--fg)" stroke-width="6" stroke-linecap="round" opacity=".5"/>
+        </g>
+      </g>
+
+      <!-- 桌子 -->
+      <g class="obj" data-note="desk" tabindex="0" role="button" aria-label="桌子">
+        <g class="hit">
+          <path d="M110,556 h560 l30,26 h-620 z" fill="var(--fg)" opacity=".4"/>
+          <path d="M160,582 v120 M600,582 v120" stroke="var(--fg)" stroke-width="8" opacity=".28"/>
+          <!-- 书 -->
+          <rect x="300" y="530" width="150" height="12" fill="var(--a2)" opacity=".85"/>
+          <rect x="316" y="518" width="118" height="12" fill="var(--a3)" opacity=".8"/>
+          <!-- 球拍 -->
+          <ellipse cx="500" cy="500" rx="34" ry="42" fill="var(--a1)" opacity=".85" stroke="var(--fg)" stroke-width="2.4"/>
+          <path d="M482,474 q18,-10 36,0" stroke="var(--fg)" stroke-width="1.6" opacity=".35" fill="none"/>
+          <path d="M500,542 v42" stroke="var(--fg)" stroke-width="9" stroke-linecap="round" opacity=".8"/>
+          <!-- 地图 -->
+          <path d="M120,520 q40,-14 80,0 q40,14 80,0 l0,36 q-40,14 -80,0 q-40,-14 -80,0 z" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.6" opacity=".9"/>
+          <path d="M145,532 q30,-8 60,0 M160,542 q26,-6 50,0" stroke="var(--a1)" stroke-width="1.4" opacity=".8" fill="none"/>
+        </g>
+      </g>
+
+      <!-- 猫 -->
+      <g class="obj" data-note="cat" tabindex="0" role="button" aria-label="猫">
+        <g class="hit">
+          <ellipse cx="700" cy="600" rx="62" ry="34" fill="var(--fg)" opacity=".55"/>
+          <circle cx="750" cy="566" r="30" fill="var(--fg)" opacity=".6"/>
+          <path d="M730,548 l-8,-22 l20,10 z M770,548 l8,-22 l-20,10 z" fill="var(--fg)" opacity=".6"/>
+          <circle cx="740" cy="562" r="2.4" fill="var(--bg)"/>
+          <circle cx="760" cy="562" r="2.4" fill="var(--bg)"/>
+          <path d="M742,588 q18,40 44,34" stroke="var(--fg)" stroke-width="7" fill="none" opacity=".45" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- 花盆 -->
+      <g class="obj" data-note="plant" tabindex="0" role="button" aria-label="花盆">
+        <g class="hit">
+          <path d="M832,470 q34,-8 68,0 l-8,44 q-26,6 -52,0 z" fill="var(--a2)" opacity=".8" stroke="var(--fg)" stroke-width="1.8"/>
+          <path d="M866,470 v-54" stroke="var(--fg)" stroke-width="2.4" fill="none"/>
+          <path d="M866,436 q-22,-8 -28,-24 q20,-6 28,14" fill="var(--a1)" opacity=".85" stroke="var(--fg)" stroke-width="1.4"/>
+          <path d="M866,416 q22,-8 28,-24 q-20,-6 -28,14" fill="var(--a3)" opacity=".85" stroke="var(--fg)" stroke-width="1.4"/>
+        </g>
+      </g>
+
+      <!-- 地毯 + 影子 -->
+      <ellipse cx="380" cy="700" rx="300" ry="46" fill="var(--a2)" opacity=".1"/>
+      <ellipse cx="600" cy="722" rx="420" ry="26" fill="var(--fg)" opacity=".05"/>
+    </svg>
+  </div>
+</main>
+
+<aside class="note" id="note" aria-live="polite">
+  <span class="note-x" id="noteX" role="button" tabindex="0" aria-label="关闭">✕</span>
+  <p class="note-k" id="noteK">ROOM</p>
+  <p class="note-t" id="noteT"></p>
+  <p class="note-p" id="noteP"></p>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script src="js/extras.js"></script>
+<script>
+(function () {
+  'use strict';
+  const KEY = 'nova-room-open';
+  const PASS = ['换了人间', 'huanshirenjian', 'hrrj', '换了人间！'];
+
+  const gate = document.getElementById('gate');
+  const card = document.getElementById('gateCard');
+  const form = document.getElementById('gateForm');
+  const input = document.getElementById('gateInput');
+  const err = document.getElementById('gateErr');
+
+  function openRoom() {
+    gate.classList.add('go');
+    setTimeout(function () { gate.remove(); }, 800);
+  }
+
+  let unlocked = false;
+  try { unlocked = localStorage.getItem(KEY) === '1'; } catch (e) { }
+  if (unlocked) { gate.remove(); }
+
+  if (form) {
+    setTimeout(function () { input.focus(); }, 300);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const v = (input.value || '').trim();
+      if (PASS.indexOf(v) >= 0) {
+        try { localStorage.setItem(KEY, '1'); } catch (e2) { }
+        openRoom();
+      } else {
+        err.textContent = v ? '不对。再想想那四句里头。' : '总得写点什么。';
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+        input.select();
+      }
+    });
+  }
+
+  /* ---------------- 房间里的东西 ---------------- */
+  const NOTES = {
+    moscow: { k: '窗 · WINDOW', t: '莫斯科的窗', p: '雪会下很久，落到窗台上不化。上海不下雪，所以我还挺喜欢这儿。' },
+    poster: { k: '海报 · POSTER', t: '一张旧海报', p: '红的，斜的，一颗星。我喜欢那种蛮不讲理的力量 —— 一块颜色就够说一句话。' },
+    scope: { k: '望远镜 · SCOPE', t: '看月亮用的', p: '图寻就是从这个习惯长出来的：先看形状，再看影子，最后看那条路有几车道。' },
+    record: { k: '唱片 · CANON', t: '卡农', p: '从小听到大。写这页的时候，背景音乐也是它。' },
+    lamp: { k: '台灯 · LAMP', t: '凌晨两点', p: '它还亮着。我不是熬夜型，但一算起来就忘了时间。' },
+    desk: { k: '桌子 · DESK', t: '桌上的东西', p: '一本书停在第三章，一副球拍，一张折过的地图。都是没做完但我还惦记着的事。' },
+    cat: { k: '猫 · CAT', t: '它不叫', p: '我算不下去的时候，它就坐上来。它不知道什么叫有限元，但它知道什么时候该来。' },
+    plant: { k: '花 · PLANT', t: '养了很久', p: '隔壁有一盆更大的，在 garden.html。你可以去浇它。' }
+  };
+
+  const note = document.getElementById('note');
+  const noteK = document.getElementById('noteK');
+  const noteT = document.getElementById('noteT');
+  const noteP = document.getElementById('noteP');
+  const noteX = document.getElementById('noteX');
+
+  function hideNote() { note.classList.remove('on'); }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.obj'), function (el) {
+    function show() {
+      const n = NOTES[el.dataset.note];
+      if (!n) return;
+      noteK.textContent = n.k;
+      noteT.textContent = n.t;
+      noteP.textContent = n.p;
+      note.classList.add('on');
+    }
+    el.addEventListener('click', show);
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); }
+    });
+  });
+
+  if (noteX) noteX.addEventListener('click', hideNote);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') hideNote();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="cyber" data-family="vivid" data-style="cyber" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>图寻 · 范连璟</title>
+<meta name="description" content="看图猜地方。六张照片，凭感觉。答案是我标的，可能不准。" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<link rel="stylesheet" href="css/scene.css" />
+<style>
+  .guess-wrap { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(96px, 11vw, 140px) clamp(16px, 4vw, 32px) 70px; }
+  .g-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
+  .g-title { font-family: var(--font-display); font-size: clamp(30px, 5vw, 64px); line-height: 1.05; letter-spacing: -.04em; font-weight: var(--display-w); text-transform: uppercase; }
+  .g-title em { font-style: normal; color: var(--a1); }
+
+  .score { font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; color: var(--fg-faint); }
+  .score b { color: var(--a1); font-size: 22px; letter-spacing: 0; }
+
+  .photo-box { position: relative; border: 1px solid var(--card-line); border-radius: 4px; overflow: hidden; background: #000; }
+  .photo-box img { width: 100%; height: min(52vh, 460px); object-fit: cover; display: block; filter: saturate(.9) contrast(1.02); }
+  .photo-box::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 120px rgba(0,0,0,.55); pointer-events: none; }
+  .q-no { position: absolute; left: 12px; top: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: #fff; opacity: .8; text-shadow: 0 2px 12px #000; }
+
+  .options { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: 14px; }
+  .opt {
+    padding: 14px 16px; text-align: left; cursor: pointer;
+    border: 1px solid var(--line-strong); background: transparent; color: var(--fg);
+    font-size: 14px; letter-spacing: .02em; border-radius: 2px;
+    transition: border-color .2s, background-color .2s, color .2s;
+  }
+  .opt:hover { border-color: var(--a1); color: var(--a1-t); }
+  .opt.right { border-color: var(--a1); background: color-mix(in srgb, var(--a1) 16%, transparent); color: var(--fg); }
+  .opt.wrong { border-color: var(--a3); background: color-mix(in srgb, var(--a3) 14%, transparent); color: var(--fg-faint); }
+  .opt:disabled { cursor: default; }
+
+  .feedback { margin-top: 14px; min-height: 46px; font-size: 13px; line-height: 1.8; color: var(--fg-dim); }
+  .feedback b { color: var(--a1-t); }
+  .next-btn {
+    margin-top: 8px; padding: 12px 22px; border-radius: 2px; cursor: pointer;
+    background: var(--a1); color: var(--on-accent); font-size: 13px; letter-spacing: .06em;
+    border: 0;
+  }
+  .next-btn[hidden] { display: none; }
+
+  .result { text-align: center; padding: 40px 10px; display: none; }
+  .result.on { display: block; }
+  .result h2 { font-family: var(--font-display); font-size: clamp(26px, 4vw, 44px); letter-spacing: -.03em; }
+  .result p { margin-top: 10px; color: var(--fg-dim); font-size: 13px; }
+  .note { margin-top: 18px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .14em; color: var(--fg-faint); line-height: 1.9; }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<div class="backdrop" aria-hidden="true">
+  <div class="mesh"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+  <div class="motif"><div class="m-grid"></div><div class="m-glow"></div></div>
+  <div class="vignette"></div>
+</div>
+<canvas class="dust-canvas" id="dust" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="回到主页">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">赛博</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置" aria-expanded="false" aria-controls="themePanel">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="theme-panel" id="themePanel" role="dialog" aria-modal="false" aria-label="外观设置" aria-hidden="true">
+  <div class="tp-head"><span>换一种光</span><em>T 开关</em></div>
+  <div class="tp-tabs" role="tablist">
+    <button class="tp-tab is-on" type="button" role="tab" data-tab="color" aria-selected="true">颜色 <b id="famNow">霓彩</b></button>
+    <button class="tp-tab" type="button" role="tab" data-tab="style" aria-selected="false">风格 <b id="styleNow">赛博</b></button>
+  </div>
+  <div class="tp-pane" id="paneColor">
+    <div class="fam-list" id="famList"></div>
+    <p class="fam-blurb" id="famBlurb"></p>
+    <div class="sw-grid" id="swList"></div>
+  </div>
+  <div class="tp-pane" id="paneStyle" hidden>
+    <div class="st-grid" id="styleList"></div>
+    <p class="tp-tip">字体、圆角、质感。颜色变了，页面里的画也跟着变。</p>
+  </div>
+  <div class="tp-foot" id="tpFoot">5 个色系 · 60 种颜色 · 10 种风格</div>
+</div>
+
+<main id="main" class="guess-wrap">
+  <div class="g-head">
+    <div>
+      <p class="kicker" style="margin-bottom:10px">图寻 · GEOGUESS</p>
+      <h1 class="g-title">这是<em>哪儿</em>？</h1>
+    </div>
+    <div class="score">得分 <b id="score">0</b> / <span id="total">6</span></div>
+  </div>
+
+  <div class="photo-box">
+    <img id="photo" alt="待猜的照片" />
+    <span class="q-no" id="qno">01 / 06</span>
+  </div>
+
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" type="button" hidden>下一张 →</button>
+
+  <div class="result" id="result">
+    <h2 id="resultTitle">看完了。</h2>
+    <p id="resultText"></p>
+    <p class="note">答案是我按图的特征标的，可能不准 —— 你要是发现了错的，告诉我，我改。</p>
+    <button class="next-btn" id="againBtn" type="button">再来一轮</button>
+  </div>
+
+  <p class="note">这是"图寻"的一点小游戏：题库 14 张，每局随机抽 8 张，四选一。真正的图寻是一张路边的照片，能说出它在中国哪条路 —— 那个本事，我留着。</p>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+
+<script src="js/scenes.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const POOL = [
+    { img: 'assets/scene/fjord.jpg',  answer: '挪威',   opts: ['挪威', '智利', '新西兰', '冰岛'] },
+    { img: 'assets/scene/canyon.jpg', answer: '美国',   opts: ['美国', '澳大利亚', '西班牙', '摩洛哥'] },
+    { img: 'assets/scene/snow.jpg',   answer: '瑞士',   opts: ['瑞士', '日本', '加拿大', '尼泊尔'] },
+    { img: 'assets/scene/ridge.jpg',  answer: '苏格兰', opts: ['苏格兰', '爱尔兰', '挪威', '威尔士'] },
+    { img: 'assets/scene/falls.jpg',  answer: '新西兰', opts: ['新西兰', '加拿大', '瑞士', '智利'] },
+    { img: 'assets/scene/p/1050.jpg', answer: '葡萄牙', opts: ['葡萄牙', '意大利', '希腊', '克罗地亚'] },
+    { img: 'assets/scene/p/1015.jpg', answer: '挪威',   opts: ['挪威', '瑞典', '芬兰', '丹麦'] },
+    { img: 'assets/scene/p/1016.jpg', answer: '美国',   opts: ['美国', '墨西哥', '秘鲁', '阿根廷'] },
+    { img: 'assets/scene/p/1043.jpg', answer: '美国',   opts: ['美国', '加拿大', '瑞士', '奥地利'] },
+    { img: 'assets/scene/p/1036.jpg', answer: '瑞士',   opts: ['瑞士', '法国', '意大利', '斯洛文尼亚'] },
+    { img: 'assets/scene/p/1002.jpg', answer: '欧洲',   opts: ['欧洲', '亚洲', '北美洲', '大洋洲'] },
+    { img: 'assets/scene/p/1047.jpg', answer: '欧洲',   opts: ['欧洲', '非洲', '南美洲', '亚洲'] },
+    { img: 'assets/scene/p/1031.jpg', answer: '亚洲',   opts: ['亚洲', '欧洲', '非洲', '北美洲'] },
+    { img: 'assets/scene/p/1044.jpg', answer: '欧洲',   opts: ['欧洲', '亚洲', '北美洲', '非洲'] }
+  ];
+
+  const PER_ROUND = 8;   // 每局抽 8 题
+
+  function pickRounds(n) {
+    const pool = POOL.slice();
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    return pool.slice(0, Math.min(n, pool.length));
+  }
+
+  const ROUNDS = pickRounds(PER_ROUND);
+
+
+  const $ = function (id) { return document.getElementById(id); };
+  let i = 0, score = 0, locked = false;
+  document.getElementById('total').textContent = ROUNDS.length;
+
+  function shuffle(a) {
+    a = a.slice();
+    for (let k = a.length - 1; k > 0; k--) {
+      const j = Math.floor(Math.random() * (k + 1));
+      const t = a[k]; a[k] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function render() {
+    const r = ROUNDS[i];
+    locked = false;
+    $('photo').src = r.img;
+    $('qno').textContent = ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + ROUNDS.length).slice(-2);
+    $('feedback').innerHTML = '';
+    $('nextBtn').hidden = true;
+    $('result').classList.remove('on');
+
+    const box = $('options');
+    box.innerHTML = '';
+    shuffle(r.opts).forEach(function (name) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt';
+      b.textContent = name;
+      b.addEventListener('click', function () { pick(name, b); });
+      box.appendChild(b);
+    });
+  }
+
+  function pick(name, btn) {
+    if (locked) return;
+    locked = true;
+    const r = ROUNDS[i];
+    Array.prototype.forEach.call($('options').children, function (b) {
+      b.disabled = true;
+      if (b.textContent === r.answer) b.classList.add('right');
+    });
+    if (name === r.answer) {
+      score++;
+      $('feedback').innerHTML = '对了。<b>' + r.answer + '</b>';
+    } else {
+      btn.classList.add('wrong');
+      $('feedback').innerHTML = '不是这里 —— 是<b>' + r.answer + '</b>。';
+    }
+    $('score').textContent = score;
+    $('nextBtn').hidden = false;
+    $('nextBtn').textContent = (i === ROUNDS.length - 1) ? '看结果 →' : '下一张 →';
+  }
+
+  $('nextBtn').addEventListener('click', function () {
+    if (i < ROUNDS.length - 1) { i++; render(); }
+    else {
+      $('result').classList.add('on');
+      $('resultTitle').textContent = '你答对了 ' + score + ' / ' + ROUNDS.length;
+      $('resultText').textContent = score === ROUNDS.length
+        ? '全中。你大概也认得那些山。'
+        : (score >= ROUNDS.length / 2 ? '还行 —— 至少方向没跑偏。' : '不太熟这些地方，也正常。');
+      $('nextBtn').hidden = true;
+    }
+  });
+
+  $('againBtn').addEventListener('click', function () {
+    i = 0; score = 0; $('score').textContent = '0'; render();
+  });
+
+  $('total').textContent = ROUNDS.length;
+  render();
+})();
+</script>
+</body>
+</html>
