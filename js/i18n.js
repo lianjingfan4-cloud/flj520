@@ -104,6 +104,16 @@
     'B 站': 'Bilibili',
     '学院公示': 'A notice of the faculty',
 
+    '上海交大 · 飞行器设计 · 2025.3–2026.7 在莫斯科': 'Shanghai Jiao Tong · the craft of flying · 2025.3–2026.7 in Moscow',
+    '山东高密人。本科最后一年半在莫斯科航空学院（2025.3–': 'Of Gaomi in Shandong. My last year and a half of study was at the Moscow Aviation Institute (2025.3–',
+    '），现在在上海交大读飞行器设计。': '); now I read the craft of flying at Shanghai Jiao Tong.',
+    '喜欢陡峭的山、极光、星空，和那些蛮不讲理的苏联老海报。': 'I love steep mountains, the northern lights, the stars, and old Soviet posters that ask no leave.',
+    '棕色': 'Brown.',
+    '想是红的、蓝的、紫的': 'fain would I have them red, blue, violet',
+    '右上角的小太阳 ☀ 有 60 种颜色、10 种风格': 'Yon little sun above holds sixty hues and ten manners',
+    '上海': 'Shanghai',
+    '晴': 'clear', '阴': 'overcast', '雨': 'rain', '雪': 'snow',
+
     /* ---------- 拾趣 ---------- */
     '拾趣 · ODDMENTS': 'TRIFLES',
     '自己写的小东西，': 'Little things I have written,',
