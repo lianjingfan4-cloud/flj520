@@ -21,12 +21,14 @@
     { id: 'autoPalette', name: '自动换色', desc: '每 60 秒换一套颜色和背景', on: true },
     { id: 'nowCard', name: '现在的我', desc: '右下角那张小卡', on: false },
     { id: 'contours', name: '等高线', desc: '背景里极淡的地形线', on: true },
-    { id: 'altRuler', name: '海拔尺', desc: '右边那根 0–100 km 的尺', on: true }
+    { id: 'altRuler', name: '海拔尺', desc: '右边那根 0–100 km 的尺', on: true },
+    { id: 'sfx', name: '点击声', desc: '很轻的一下', on: true },
+    { id: 'snowsound', name: '雪的声音', desc: '合成的风雪底噪', on: false }
   ];
 
   const CLASS = {
     scene: 'off-scene', grain: 'off-grain', fog: 'off-fog',
-    dust: 'off-dust', cursor: 'off-cursor', motion: 'off-motion', photos: 'off-photos', random: 'bg-static', autoPalette: 'off-autopalette', nowCard: 'off-nowcard', contours: 'off-contours', altRuler: 'off-altruler'
+    dust: 'off-dust', cursor: 'off-cursor', motion: 'off-motion', photos: 'off-photos', random: 'bg-static', autoPalette: 'off-autopalette', nowCard: 'off-nowcard', contours: 'off-contours', altRuler: 'off-altruler', sfx: 'off-sfx', snowsound: 'off-snowsound'
   };
 
   let state = {};

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="copper" data-family="nocturne" data-style="cinematic" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>明信片 · 拾趣</title>
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="js/look.js?vj4ketn"></script>
+<link rel="stylesheet" href="css/style.css?vj4ketn" />
+<link rel="stylesheet" href="css/main.css?vj4ketn" />
+<link rel="stylesheet" href="css/pages.css?vj4ketn" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .wrap { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(88px,9vw,120px) clamp(16px,4vw,28px) 70px; }
+  h1 { font-family: var(--font-display); font-size: clamp(26px,4vw,48px); font-weight: var(--display-w); letter-spacing: -.02em; }
+  h1 em { font-style: normal; color: var(--a1); }
+  .sub { margin-top: 8px; font-size: 13px; color: var(--fg-dim); line-height: 1.9; }
+  .cols { display: grid; grid-template-columns: 1fr 380px; gap: 24px; margin-top: 24px; align-items: start; }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+  .picks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
+  .picks button { padding: 0; border: 2px solid transparent; border-radius: 3px; overflow: hidden; cursor: pointer; background: none; }
+  .picks button img { width: 100%; height: 64px; object-fit: cover; display: block; }
+  .picks button.on { border-color: var(--a1); }
+  .field { margin-top: 14px; }
+  .field label { display: block; font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; color: var(--fg-faint); margin-bottom: 6px; }
+  .field input, .field textarea {
+    width: 100%; padding: 11px 13px; border-radius: 3px; border: 1px solid var(--line-strong);
+    background: color-mix(in srgb, var(--bg) 55%, transparent); color: var(--fg); font-size: 14px;
+    font-family: var(--font-serif);
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--a1); }
+  .field textarea { min-height: 64px; resize: vertical; }
+  .acts { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .g-btn { padding: 10px 18px; border-radius: 3px; border: 1px solid var(--line-strong); background: transparent; color: var(--fg); font-size: 12px; cursor: pointer; }
+  .g-btn.primary { background: var(--a1); border-color: var(--a1); color: var(--on-accent); }
+  canvas { width: 100%; height: auto; border-radius: 3px; border: 1px solid var(--line-strong); display: block; background: #111; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="motif"><div class="m-glow"></div></div><div class="vignette"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html"><span class="brand-mark"></span><span class="brand-word">范连璟</span><sup class="brand-sup">°</sup></a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">铜</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none"><g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="24" y1="3.5" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="44.5"/><line x1="3.5" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="44.5" y2="24"/><line x1="9.5" y1="9.5" x2="13.4" y2="13.4"/><line x1="34.6" y1="34.6" x2="38.5" y2="38.5"/><line x1="9.5" y1="38.5" x2="13.4" y2="34.6"/><line x1="34.6" y1="13.4" x2="38.5" y2="9.5"/></g><circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/><circle class="sun-dot" cx="24" cy="24" r="3"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>做一张<em>明信片</em></h1>
+  <p class="sub">挑一张照片，写一句话，生成 4×6 的卡片存下来。</p>
+
+  <div class="cols">
+    <div>
+      <div class="picks" id="picks"></div>
+      <div class="field">
+        <label>写一句</label>
+        <textarea id="line" maxlength="60">雪落在窗台上不化。</textarea>
+      </div>
+      <div class="field">
+        <label>署名</label>
+        <input id="sign" value="范连璟 · Moscow" maxlength="24" />
+      </div>
+      <div class="acts">
+        <button class="g-btn primary" id="makeBtn" type="button">生成</button>
+        <a class="g-btn" id="saveLink" download="postcard.png" href="#">保存图片</a>
+        <button class="g-btn" id="shuffleBtn" type="button">换一批照片</button>
+      </div>
+    </div>
+
+    <div>
+      <canvas id="cv" width="1200" height="800"></canvas>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js?vj4ketn"></script>
+<script src="js/i18n.js?vj4ketn"></script>
+<script src="js/settings.js?vj4ketn"></script>
+<script src="js/music.js?vj4ketn"></script>
+<script src="js/fx.js?vj4ketn"></script>
+<script src="js/main.js?vj4ketn"></script>
+<script src="js/eggs.js?vj4ketn"></script>
+<script src="js/audio.js?vj4ketn"></script>
+<script src="js/photos.js?vj4ketn"></script>
+<script>
+(function () {
+  'use strict';
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const picks = document.getElementById('picks');
+  const lineEl = document.getElementById('line');
+  const signEl = document.getElementById('sign');
+  const saveLink = document.getElementById('saveLink');
+
+  const all = (window.PHOTOS || []).map(function (p) { return p.src; });
+  const fallback = ['assets/scene/fjord.jpg', 'assets/scene/snow.jpg', 'assets/scene/falls.jpg', 'assets/scene/ridge.jpg'];
+  const bank = all.length ? all : fallback;
+
+  let pool = [], cur = '';
+
+  function refresh() {
+    pool = [];
+    const n = Math.min(12, bank.length);
+    while (pool.length < n) {
+      const s = bank[Math.floor(Math.random() * bank.length)];
+      if (pool.indexOf(s) < 0) pool.push(s);
+    }
+    picks.innerHTML = '';
+    pool.forEach(function (src, i) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = i === 0 ? 'on' : '';
+      b.innerHTML = '<img alt="" src="' + src + '" loading="lazy" />';
+      b.addEventListener('click', function () {
+        Array.prototype.forEach.call(picks.children, function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        cur = src;
+        draw();
+      });
+      picks.appendChild(b);
+    });
+    cur = pool[0];
+  }
+
+  function loadImg(src) {
+    return new Promise(function (res, rej) {
+      const im = new Image();
+      im.onload = function () { res(im); };
+      im.onerror = function () { rej(); };
+      im.src = src;
+    });
+  }
+
+  function css(n, d) {
+    return (getComputedStyle(document.documentElement).getPropertyValue(n) || d).trim();
+  }
+
+  async function draw() {
+    const W = 1200, H = 800;
+    ctx.clearRect(0, 0, W, H);
+    try {
+      const im = await loadImg(cur);
+      const s = Math.max(W / im.width, H / im.height);
+      const w = im.width * s, h = im.height * s;
+      ctx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
+    } catch (e) {
+      ctx.fillStyle = '#111'; ctx.fillRect(0, 0, W, H);
+    }
+
+    const g = ctx.createLinearGradient(0, H * 0.45, 0, H);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,.78)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, H * 0.45, W, H * 0.55);
+
+    ctx.strokeStyle = css('--a1', '#7cf3ff');
+    ctx.lineWidth = 3;
+    ctx.strokeRect(28, 28, W - 56, H - 56);
+
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'left';
+    ctx.font = '400 44px "Noto Serif SC", serif';
+    ctx.fillText(lineEl.value || '', 64, H - 128, W - 128);
+
+    ctx.fillStyle = css('--a1', '#7cf3ff');
+    ctx.font = '400 22px "JetBrains Mono", monospace';
+    ctx.fillText(signEl.value || '', 64, H - 72);
+
+    saveLink.href = cv.toDataURL('image/png');
+  }
+
+  document.getElementById('makeBtn').addEventListener('click', draw);
+  document.getElementById('shuffleBtn').addEventListener('click', function () { refresh(); draw(); });
+  lineEl.addEventListener('input', draw);
+  signEl.addEventListener('input', draw);
+
+  refresh();
+  draw();
+})();
+</script>
+</body>
+</html>

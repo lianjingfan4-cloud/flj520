@@ -29,13 +29,28 @@
     '书': 'assets/photos/p020.jpg'
   };
 
+  const TERM_NOTES = {
+    '山': '越高越安静，风也越大。',
+    '极光': '在莫斯科见过一次，绿得像有人在天空里划了一刀。',
+    '苏联': '海报、印刷体、混凝土 —— 一种很硬的审美。',
+    '莫斯科': '2025.3–2026.7，我在那儿读书。',
+    '雪': '落在窗台上不化，这是我对莫斯科的第一印象。',
+    '星星': '深夜是我的白天。',
+    '星空': '抬头看，别说话。',
+    '海': '在青岛看过一次大雾里的海。',
+    '走廊': '宿舍走廊的灯是声控的。',
+    '高密': '一望无际的平地，站上去能看见很远的天。',
+    '上海': '现在的城市，湿冷。',
+    '书': '不读书会的，写不出东西来。'
+  };
+
   let bubble = null;
 
   function makeBubble() {
     if (bubble) return bubble;
     bubble = document.createElement('div');
     bubble.className = 'term-bubble';
-    bubble.innerHTML = '<img alt="" /><span></span>';
+    bubble.innerHTML = '<img alt="" /><span></span><p></p>';
     document.body.appendChild(bubble);
     return bubble;
   }
@@ -47,6 +62,8 @@
     const b = makeBubble();
     b.querySelector('img').src = src;
     b.querySelector('span').textContent = word;
+    const noteEl = b.querySelector('p');
+    if (noteEl) noteEl.textContent = TERM_NOTES[word] || '';
     b.classList.add('on');
     moveBubble(e);
   }

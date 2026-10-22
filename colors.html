@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="midnight" data-family="nocturne" data-style="minimal" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>色彩考古 · 拾趣</title>
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="js/look.js?vj4ketn"></script>
+<link rel="stylesheet" href="css/style.css?vj4ketn" />
+<link rel="stylesheet" href="css/main.css?vj4ketn" />
+<link rel="stylesheet" href="css/pages.css?vj4ketn" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .wrap { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; padding: clamp(88px,9vw,120px) clamp(16px,4vw,32px) 70px; }
+  h1 { font-family: var(--font-display); font-size: clamp(28px,4.4vw,54px); font-weight: var(--display-w); letter-spacing: -.03em; }
+  h1 em { font-style: normal; color: var(--a1); }
+  .sub { margin-top: 10px; font-size: 13px; line-height: 2; color: var(--fg-dim); max-width: 700px; }
+  .fam { margin-top: 34px; }
+  .fam-head { display: flex; align-items: baseline; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .fam-head h2 { font-family: var(--font-display); font-size: 22px; font-weight: var(--display-w); }
+  .fam-head span { font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; color: var(--fg-faint); }
+  .fam-head p { margin-left: auto; font-size: 12px; color: var(--fg-dim); max-width: 44%; text-align: right; }
+  .sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin-top: 14px; }
+  .sw button {
+    border: 1px solid var(--line); border-radius: 4px; padding: 0; cursor: pointer; overflow: hidden;
+    background: transparent; text-align: left; color: var(--fg); transition: transform .25s var(--ease-out), border-color .25s;
+  }
+  .sw button:hover { transform: translateY(-3px); border-color: var(--fg); }
+  .sw .chip { display: flex; height: 54px; }
+  .sw .chip i { flex: 1; }
+  .sw .nm { padding: 8px 9px 9px; }
+  .sw .nm b { display: block; font-size: 12px; font-weight: 400; }
+  .sw .nm span { display: block; margin-top: 2px; font-family: var(--font-mono); font-size: 8px; letter-spacing: .1em; color: var(--fg-faint); }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="motif"><div class="m-grid"></div><div class="m-glow"></div></div><div class="vignette"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html"><span class="brand-mark"></span><span class="brand-word">范连璟</span><sup class="brand-sup">°</sup></a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">午夜</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none"><g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="24" y1="3.5" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="44.5"/><line x1="3.5" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="44.5" y2="24"/><line x1="9.5" y1="9.5" x2="13.4" y2="13.4"/><line x1="34.6" y1="34.6" x2="38.5" y2="38.5"/><line x1="9.5" y1="38.5" x2="13.4" y2="34.6"/><line x1="34.6" y1="13.4" x2="38.5" y2="9.5"/></g><circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/><circle class="sun-dot" cx="24" cy="24" r="3"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>六十种颜色，<em>都是一句话</em></h1>
+  <p class="sub">五个色系，每个色系十二种。名字是我自己起的 —— 点任何一个，整站就换成它。<br />
+    这页算是这套配色的考古现场：为什么是这五个色系，为什么每个都要十二个。</p>
+  <div id="host"></div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js?vj4ketn"></script>
+<script src="js/i18n.js?vj4ketn"></script>
+<script src="js/settings.js?vj4ketn"></script>
+<script src="js/music.js?vj4ketn"></script>
+<script src="js/fx.js?vj4ketn"></script>
+<script src="js/main.js?vj4ketn"></script>
+<script src="js/eggs.js?vj4ketn"></script>
+<script src="js/audio.js?vj4ketn"></script>
+<script>
+(function () {
+  'use strict';
+  const host = document.getElementById('host');
+  if (!window.LookKit) return;
+
+  window.LookKit.families.forEach(function (fam) {
+    const sec = document.createElement('section');
+    sec.className = 'fam';
+
+    const head = document.createElement('div');
+    head.className = 'fam-head';
+    head.innerHTML = '<h2>' + fam.name + '</h2><span>' + fam.palettes.length + ' 种 · ' + fam.en + '</span><p>' + (fam.blurb || '') + '</p>';
+    sec.appendChild(head);
+
+    const grid = document.createElement('div');
+    grid.className = 'sw';
+
+    fam.palettes.forEach(function (p) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<span class="chip"><i style="background:' + p.a1 + '"></i><i style="background:' + p.a2 + '"></i><i style="background:' + p.a3 + '"></i></span>' +
+        '<span class="nm"><b>' + p.name + '</b><span>' + p.a1 + ' · ' + p.mode + '</span></span>';
+      b.addEventListener('click', function () {
+        window.LookKit.setPalette(p.id, true);
+        if (window.toast) window.toast('换成了「' + p.name + '」');
+        setTimeout(function () { window.scrollTo(0, 0); }, 180);
+      });
+      grid.appendChild(b);
+    });
+
+    sec.appendChild(grid);
+    host.appendChild(sec);
+  });
+})();
+</script>
+</body>
+</html>

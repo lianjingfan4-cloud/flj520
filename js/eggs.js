@@ -63,7 +63,9 @@
     if (buf.indexOf('抬头') >= 0) {
       buf = '';
       document.body.classList.add('lift');
+      document.documentElement.classList.add('only-stars');
       setTimeout(function () { document.body.classList.remove('lift'); }, 1600);
+      setTimeout(function () { document.documentElement.classList.remove('only-stars'); }, 7000);
       bump('lift');
       toast('抬头。');
     }
