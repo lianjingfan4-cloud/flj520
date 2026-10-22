@@ -1242,3 +1242,20 @@ a.bk:hover { border-color: var(--a3); transform: translateY(-2px); }
 .settings-panel .sp-action {
   flex: 0 0 auto; position: static; margin-top: 8px;
 }
+
+/* 简单的翻页：不要 3D 书了 */
+.leaf, .book::before, .leaf-b { display: none !important; }
+.book {
+  display: grid !important; grid-template-columns: 1.15fr 1fr; gap: 0;
+  height: min(62vh, 620px) !important; perspective: none !important;
+  transform: none !important;
+}
+.book .page { position: relative !important; left: auto !important; top: auto !important;
+  width: auto !important; height: 100% !important; transform: none !important; }
+.book .page-l { border-radius: 4px 0 0 4px; }
+.book .page-r { border-radius: 0 4px 4px 0; }
+@media (max-width: 720px) {
+  .book { grid-template-columns: 1fr; grid-template-rows: 1.2fr 1fr; height: min(72vh, 640px) !important; }
+  .book .page-l { border-radius: 4px 4px 0 0; }
+  .book .page-r { border-radius: 0 0 4px 4px; }
+}

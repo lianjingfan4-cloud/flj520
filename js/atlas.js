@@ -196,6 +196,11 @@
   function next() {
     if (busy) return;
     const target = idx(current + 1);
+    fadeTo(target);
+    return;
+  }
+  function nextOld() {
+    const target = idx(current + 1);
     if (!wideQuery.matches) { fadeTo(target); return; }
     flips++;
     if (flips >= 9 && !glitched) { glitched = true; showGlitch(); return; }
@@ -214,7 +219,11 @@
 
   function prev() {
     if (busy) return;
-    if (!wideQuery.matches) { fadeTo(idx(current - 1)); return; }
+    fadeTo(idx(current - 1));
+    return;
+  }
+  function prevOld() {
+    if (false) { return; }
     busy = true;
     // 叶子左面下方先换成上一页的画（被盖着，看不见）
     setArt(pageL, plates[idx(current - 1)]);

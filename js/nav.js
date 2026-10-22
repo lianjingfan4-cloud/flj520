@@ -11,6 +11,8 @@
     { zh: '履历', en: 'RECORD', href: 'index.html#record' },
     { zh: '画册', en: 'ATLAS', href: 'atlas.html' },
     { zh: '拾趣', en: 'WORKS', href: 'works.html' },
+    { zh: '创意', en: 'IDEAS', href: 'ideas.html' },
+    { zh: '写作', en: 'WRITING', href: 'writing.html' },
     { zh: '图寻', en: 'GEO', href: 'guess.html' },
     { zh: '幼稚园', en: 'DOODLE', href: 'doodle.html' },
     { zh: '一盆花', en: 'GARDEN', href: 'garden.html' },

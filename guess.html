@@ -134,12 +134,13 @@
     <button class="next-btn" id="againBtn" type="button">再来一轮</button>
   </div>
 
-  <p class="note">这是"图寻"的一点小游戏：题库 14 张，每局随机抽 8 张，四选一。真正的图寻是一张路边的照片，能说出它在中国哪条路 —— 那个本事，我留着。</p>
+  <p class="note">题库 100 座城市的卫星图，每局随机抽 5 题，四选一。真正的图寻是一张路边的照片，能说出它在中国哪条路 —— 那个本事，我留着。</p>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 
+<script src="js/geo.js"></script>
 <script src="js/scenes.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/i18n.js"></script>
@@ -152,32 +153,30 @@
 (function () {
   'use strict';
 
-  const POOL = [
-    { img: 'assets/scene/fjord.jpg',  answer: '挪威',   opts: ['挪威', '智利', '新西兰', '冰岛'] },
-    { img: 'assets/scene/canyon.jpg', answer: '美国',   opts: ['美国', '澳大利亚', '西班牙', '摩洛哥'] },
-    { img: 'assets/scene/snow.jpg',   answer: '瑞士',   opts: ['瑞士', '日本', '加拿大', '尼泊尔'] },
-    { img: 'assets/scene/ridge.jpg',  answer: '苏格兰', opts: ['苏格兰', '爱尔兰', '挪威', '威尔士'] },
-    { img: 'assets/scene/falls.jpg',  answer: '新西兰', opts: ['新西兰', '加拿大', '瑞士', '智利'] },
-    { img: 'assets/scene/p/1050.jpg', answer: '葡萄牙', opts: ['葡萄牙', '意大利', '希腊', '克罗地亚'] },
-    { img: 'assets/scene/p/1015.jpg', answer: '挪威',   opts: ['挪威', '瑞典', '芬兰', '丹麦'] },
-    { img: 'assets/scene/p/1016.jpg', answer: '美国',   opts: ['美国', '墨西哥', '秘鲁', '阿根廷'] },
-    { img: 'assets/scene/p/1043.jpg', answer: '美国',   opts: ['美国', '加拿大', '瑞士', '奥地利'] },
-    { img: 'assets/scene/p/1036.jpg', answer: '瑞士',   opts: ['瑞士', '法国', '意大利', '斯洛文尼亚'] },
-    { img: 'assets/scene/p/1002.jpg', answer: '欧洲',   opts: ['欧洲', '亚洲', '北美洲', '大洋洲'] },
-    { img: 'assets/scene/p/1047.jpg', answer: '欧洲',   opts: ['欧洲', '非洲', '南美洲', '亚洲'] },
-    { img: 'assets/scene/p/1031.jpg', answer: '亚洲',   opts: ['亚洲', '欧洲', '非洲', '北美洲'] },
-    { img: 'assets/scene/p/1044.jpg', answer: '欧洲',   opts: ['欧洲', '亚洲', '北美洲', '非洲'] }
-  ];
+  const BANK = (window.GEO || []).map(function (g) { return g.name; });
+  const PER_ROUND = 5;
 
-  const PER_ROUND = 8;   // 每局抽 8 题
+  function shuffle(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const x = a[i]; a[i] = a[j]; a[j] = x;
+    }
+    return a;
+  }
+
+  function makeRound(city) {
+    const others = [];
+    while (others.length < 3 && BANK.length > 3) {
+      const n = BANK[Math.floor(Math.random() * BANK.length)];
+      if (n !== city.name && others.indexOf(n) < 0) others.push(n);
+    }
+    return { img: city.src, answer: city.name, opts: [city.name].concat(others) };
+  }
 
   function pickRounds(n) {
-    const pool = POOL.slice();
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
-    }
-    return pool.slice(0, Math.min(n, pool.length));
+    const pool = shuffle((window.GEO || []).slice());
+    return pool.slice(0, Math.min(n, pool.length)).map(makeRound);
   }
 
   const ROUNDS = pickRounds(PER_ROUND);

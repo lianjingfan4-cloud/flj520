@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="graphite" data-family="nocturne" data-style="glass" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>创意 · 范连璟</title>
+<meta name="description" content="范连璟的创意与科研项目：文明模拟、电子日记、MATLAB 音乐、AI 实验。" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<script src="js/look.js"></script>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/pages.css" />
+<link rel="stylesheet" href="css/scene.css" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 24px; }
+  .idea {
+    display: grid; gap: 10px; padding: 22px; border-radius: 4px; text-decoration: none; color: inherit;
+    border: 1px solid var(--card-line); background: color-mix(in srgb, var(--fg) 3%, transparent);
+    transition: border-color .3s var(--ease), transform .4s var(--ease-out);
+  }
+  a.idea:hover { border-color: var(--a1); transform: translateY(-3px); }
+  .idea .k { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .24em; color: var(--fg-faint); }
+  .idea h3 { font-family: var(--font-display); font-size: 21px; font-weight: var(--display-w); letter-spacing: -.01em; }
+  .idea p { font-size: 12px; line-height: 1.9; color: var(--fg-dim); }
+  .idea .tag { font-family: var(--font-mono); font-size: 8px; letter-spacing: .16em; color: var(--a1-t); }
+  .idea .tag.pending { color: var(--fg-faint); }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="motif"><div class="m-grid"></div><div class="m-glow"></div></div>
+  <div class="vignette"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-word">范连璟</span>
+    <sup class="brand-sup">°</sup>
+  </a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">石墨</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="24" y1="3.5" x2="24" y2="9" /><line x1="24" y1="39" x2="24" y2="44.5" />
+          <line x1="3.5" y1="24" x2="9" y2="24" /><line x1="39" y1="24" x2="44.5" y2="24" />
+          <line x1="9.5" y1="9.5" x2="13.4" y2="13.4" /><line x1="34.6" y1="34.6" x2="38.5" y2="38.5" />
+          <line x1="9.5" y1="38.5" x2="13.4" y2="34.6" /><line x1="34.6" y1="13.4" x2="38.5" y2="9.5" />
+        </g>
+        <circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5" />
+        <circle class="sun-dot" cx="24" cy="24" r="3" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="atlas-hero">
+    <p class="kicker" data-reveal>创意 · EXPERIMENTS</p>
+    <h1 data-reveal style="--i:1">算完结构之后，<em>我还想做点什么。</em></h1>
+    <p class="atlas-sub" data-reveal style="--i:2">
+      这里不放游戏（那些在拾趣），放的是实验、模拟和写了一半的工具。<br />
+      有的是网页，有的是脚本，有的只有一张表。
+    </p>
+  </section>
+
+  <section class="section" style="padding-top: 8px">
+    <div class="grid2">
+      <a class="idea" href="works/nianlun.html">
+        <span class="k">01 · 2016 年至今</span>
+        <h3>人类文明年轮</h3>
+        <p>5016 个真实事件、1258 个年份，绕成一个可以拖动的年轮。数据整理 + 交互设计。</p>
+        <span class="tag">打开 →</span>
+      </a>
+
+      <a class="idea" href="works/civsim.html">
+        <span class="k">02 · 模拟实验</span>
+        <h3>文明模拟器</h3>
+        <p>26 组参数（资源、科技、合作、灾变、侵略），跑了 26 个文明。这是其中一条完整回放。</p>
+        <span class="tag">看回放 →</span>
+      </a>
+
+      <a class="idea" href="works/diary.html">
+        <span class="k">03 · 工具</span>
+        <h3>电子日记</h3>
+        <p>离线可用的日记程序，纯前端，数据只存在本机。写给自己看的那种。</p>
+        <span class="tag">打开 →</span>
+      </a>
+
+      <div class="idea">
+        <span class="k">04 · MATLAB</span>
+        <h3>用 MATLAB 弹钢琴</h3>
+        <p>把乐谱变成频率和时间，用 MATLAB 合成声音。<b>当年做这个，是为了搞清楚傅里叶到底在干嘛。</b></p>
+        <span class="tag pending">代码项目 · 未做成网页</span>
+      </div>
+
+      <div class="idea">
+        <span class="k">05 · 生成艺术</span>
+        <h3>Qoder 也来比花</h3>
+        <p>让几个模型各自生成"花"，再放在一起比。程序生成 + 视觉比较。</p>
+        <span class="tag pending">代码项目 · 未做成网页</span>
+      </div>
+
+      <div class="idea">
+        <span class="k">06 · AI 实验</span>
+        <h3>AI 哲学</h3>
+        <p>一批关于意识、自由、道德的对话实验。我提问，它回答，我再反驳。</p>
+        <span class="tag pending">文档 · 未整理</span>
+      </div>
+
+      <div class="idea">
+        <span class="k">07 · AI 实验</span>
+        <h3>AI 人聊天</h3>
+        <p>一个可以持续对话的聊天系统，两千多个 Python 文件。做它是想知道"像人"到底难在哪。</p>
+        <span class="tag pending">代码项目 · 未做成网页</span>
+      </div>
+
+      <div class="idea">
+        <span class="k">08 · AI 实验</span>
+        <h3>AI 带我畅游科学</h3>
+        <p>让 AI 当向导，把物理、天文、生物串成一条可以走的路。</p>
+        <span class="tag pending">代码项目 · 未整理</span>
+      </div>
+
+      <div class="idea">
+        <span class="k">09 · 资料库</span>
+        <h3>MASTER geoguess</h3>
+        <p>图寻的训练资料：地形、植被、路牌、电线杆，八份文档。看得多了，一眼就知道大概在哪。</p>
+        <span class="tag pending">文档 · 未做成网页</span>
+      </div>
+
+      <div class="idea">
+        <span class="k">10 · 科研</span>
+        <h3>Shared Star</h3>
+        <p>面向上合组织青少年的航空航天教育平台。做过课程结构、交互原型和一批科普素材。</p>
+        <span class="tag pending">项目 · 部分素材未公开</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>© 2026 范连璟 · 创意</span>
+    <span class="f-c"><a class="door-link" href="room.html">房间</a><a href="index.html">← 回到主页</a></span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/scenes.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/main.js"></script>
+<script src="js/eggs.js"></script>
+</body>
+</html>
