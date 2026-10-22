@@ -1259,3 +1259,6 @@ a.bk:hover { border-color: var(--a3); transform: translateY(-2px); }
   .book .page-l { border-radius: 4px 4px 0 0; }
   .book .page-r { border-radius: 0 0 4px 4px; }
 }
+
+/* 底片模式 */
+.book.neg .plate-shot img { filter: invert(1) hue-rotate(180deg) contrast(1.05); }

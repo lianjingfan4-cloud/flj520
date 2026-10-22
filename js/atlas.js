@@ -533,6 +533,7 @@
         '<button type="button" data-act="fonts">四种字体</button>' +
         '<button type="button" data-act="paper">纸纹</button>' +
         '<button type="button" data-act="dots">网点</button>' +
+        '<button type="button" data-act="neg">底片</button>' +
         '<div class="at-axis" id="atAxis"></div>';
       bookEl.parentNode.insertBefore(host, bookEl);
     }
@@ -585,6 +586,14 @@
       }
 
       if (act === 'fonts') { fontsOverlay(); return; }
+
+      if (act === 'neg') {
+        const bk = document.getElementById('book');
+        if (!bk) return;
+        bk.classList.toggle('neg');
+        btn.classList.toggle('on', bk.classList.contains('neg'));
+        return;
+      }
 
       if (act === 'paper' || act === 'dots') {
         const bookEl = document.getElementById('book');

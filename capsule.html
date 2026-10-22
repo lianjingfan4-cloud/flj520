@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="fjord" data-family="nocturne" data-style="cinematic" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>时间胶囊 · 拾趣</title>
+<meta name="robots" content="noindex" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="js/look.js?vixqxy5"></script>
+<link rel="stylesheet" href="css/style.css?vixqxy5" />
+<link rel="stylesheet" href="css/main.css?vixqxy5" />
+<link rel="stylesheet" href="css/pages.css?vixqxy5" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .wrap { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding: clamp(90px,10vw,130px) clamp(18px,4vw,30px) 70px; }
+  h1 { font-family: var(--font-display); font-size: clamp(28px,4.4vw,52px); font-weight: var(--display-w); letter-spacing: -.02em; }
+  h1 em { font-style: normal; color: var(--a1); }
+  .sub { margin-top: 10px; font-size: 13px; line-height: 2; color: var(--fg-dim); }
+  .card { margin-top: 26px; padding: 22px; border: 1px solid var(--line-strong); border-radius: 4px; background: color-mix(in srgb, var(--fg) 3%, transparent); }
+  textarea {
+    width: 100%; min-height: 180px; resize: vertical; padding: 14px;
+    background: color-mix(in srgb, var(--bg) 60%, transparent);
+    border: 1px solid var(--line); border-radius: 3px;
+    color: var(--fg); font-family: var(--font-serif); font-size: 15px; line-height: 1.95;
+  }
+  textarea:focus { outline: none; border-color: var(--a1); }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; color: var(--fg-faint); }
+  input[type=date] {
+    padding: 9px 12px; border-radius: 3px; border: 1px solid var(--line-strong);
+    background: transparent; color: var(--fg); font-family: var(--font-mono); font-size: 12px;
+  }
+  .g-btn { padding: 10px 18px; border-radius: 3px; border: 1px solid var(--a1); background: var(--a1); color: var(--on-accent); font-size: 12.5px; cursor: pointer; }
+  .g-btn.ghost { background: transparent; border-color: var(--line-strong); color: var(--fg); }
+  .locked { text-align: center; padding: 40px 10px; }
+  .locked .big { font-family: var(--font-mono); font-size: clamp(30px,6vw,56px); color: var(--a1-t); letter-spacing: .04em; }
+  .locked p { margin-top: 12px; font-size: 13px; color: var(--fg-dim); }
+  .sealed { white-space: pre-wrap; font-family: var(--font-serif); font-size: 15.5px; line-height: 2.05; color: var(--fg); }
+  .meta { margin-top: 16px; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .16em; color: var(--fg-faint); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="motif"><div class="m-glow"></div></div><div class="vignette"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html"><span class="brand-mark"></span><span class="brand-word">范连璟</span><sup class="brand-sup">°</sup></a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">峡湾</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none"><g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="24" y1="3.5" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="44.5"/><line x1="3.5" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="44.5" y2="24"/><line x1="9.5" y1="9.5" x2="13.4" y2="13.4"/><line x1="34.6" y1="34.6" x2="38.5" y2="38.5"/><line x1="9.5" y1="38.5" x2="13.4" y2="34.6"/><line x1="34.6" y1="13.4" x2="38.5" y2="9.5"/></g><circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/><circle class="sun-dot" cx="24" cy="24" r="3"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>给未来的<em>一颗胶囊</em></h1>
+  <p class="sub">写一段话，定一个日子。在那天之前，这里只会显示倒计时 —— 连你自己也看不到。</p>
+
+  <div class="card" id="writeBox">
+    <textarea id="txt" placeholder="写点什么。写给一年后的自己，或者写给十年后的访客。"></textarea>
+    <div class="row">
+      <label>封到 <input type="date" id="when" /></label>
+      <button class="g-btn" id="sealBtn" type="button">封起来</button>
+    </div>
+    <p class="meta" id="hint">封起来之后，只有到那天才能打开。</p>
+  </div>
+
+  <div class="card locked" id="lockBox" hidden>
+    <p class="big" id="count">—</p>
+    <p>才能打开。</p>
+    <p class="meta" id="sealedAt"></p>
+    <button class="g-btn ghost" id="resetBtn" type="button" style="margin-top:16px">把胶囊毁掉，重写一颗</button>
+  </div>
+
+  <div class="card" id="openBox" hidden>
+    <div class="sealed" id="sealed"></div>
+    <p class="meta" id="openedAt"></p>
+    <button class="g-btn ghost" id="againBtn" type="button" style="margin-top:16px">再写一颗</button>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js?vixqxy5"></script>
+<script src="js/i18n.js?vixqxy5"></script>
+<script src="js/settings.js?vixqxy5"></script>
+<script src="js/music.js?vixqxy5"></script>
+<script src="js/fx.js?vixqxy5"></script>
+<script src="js/main.js?vixqxy5"></script>
+<script src="js/eggs.js?vixqxy5"></script>
+<script>
+(function () {
+  'use strict';
+  const KEY = 'nova-capsule';
+  const writeBox = document.getElementById('writeBox');
+  const lockBox = document.getElementById('lockBox');
+  const openBox = document.getElementById('openBox');
+  const txt = document.getElementById('txt');
+  const when = document.getElementById('when');
+  const count = document.getElementById('count');
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; }
+  }
+  function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { } }
+
+  function fmt(ms) {
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor(ms % 86400000 / 3600000);
+    const m = Math.floor(ms % 3600000 / 60000);
+    return d + ' 天 ' + h + ' 时 ' + m + ' 分';
+  }
+
+  function paint() {
+    const c = load();
+    if (!c) {
+      writeBox.hidden = false; lockBox.hidden = true; openBox.hidden = true;
+      return;
+    }
+    const left = c.unlock - Date.now();
+    if (left > 0) {
+      writeBox.hidden = true; openBox.hidden = true; lockBox.hidden = false;
+      document.getElementById('sealedAt').textContent = '封于 ' + new Date(c.created).toLocaleString();
+      count.textContent = fmt(left);
+      setTimeout(paint, 30000);
+    } else {
+      writeBox.hidden = true; lockBox.hidden = true; openBox.hidden = false;
+      document.getElementById('sealed').textContent = c.text;
+      document.getElementById('openedAt').textContent = '封于 ' + new Date(c.created).toLocaleDateString() + ' · 今日打开';
+      if (window.EggKit) window.EggKit.bump('capsule');
+    }
+  }
+
+  document.getElementById('sealBtn').addEventListener('click', function () {
+    const body = (txt.value || '').trim();
+    if (body.length < 5) { alert('写长一点，至少五个字。'); return; }
+    const day = when.value;
+    if (!day) { alert('选一个日子。'); return; }
+    const unlock = new Date(day + 'T00:00:00').getTime();
+    if (unlock <= Date.now()) { alert('那个日子已经过了。'); return; }
+    save({ text: body, created: Date.now(), unlock: unlock });
+    paint();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (!confirm('真要毁掉吗？里面的话就没了。')) return;
+    try { localStorage.removeItem(KEY); } catch (e) { }
+    paint();
+  });
+
+  document.getElementById('againBtn').addEventListener('click', function () {
+    try { localStorage.removeItem(KEY); } catch (e) { }
+    txt.value = '';
+    paint();
+  });
+
+  const d = new Date();
+  d.setFullYear(d.getFullYear() + 1);
+  when.value = d.toISOString().slice(0, 10);
+
+  paint();
+})();
+</script>
+</body>
+</html>

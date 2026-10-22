@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="magenta" data-family="vivid" data-style="soft" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>记忆翻牌 · 拾趣</title>
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+<script src="js/look.js?vixqxy5"></script>
+<link rel="stylesheet" href="css/style.css?vixqxy5" />
+<link rel="stylesheet" href="css/main.css?vixqxy5" />
+<link rel="stylesheet" href="css/pages.css?vixqxy5" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .wrap { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; padding: clamp(88px,9vw,120px) clamp(16px,4vw,28px) 60px; }
+  h1 { font-family: var(--font-display); font-size: clamp(26px,4vw,46px); font-weight: var(--display-w); letter-spacing: -.01em; }
+  h1 em { font-style: normal; color: var(--a1); }
+  .bar { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin: 14px 0 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; color: var(--fg-faint); }
+  .bar b { color: var(--fg); font-size: 14px; letter-spacing: 0; }
+  .g-btn { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line-strong); background: transparent; color: var(--fg); font-size: 12px; cursor: pointer; }
+  .g-btn:hover { border-color: var(--a1); color: var(--a1-t); }
+  .g-btn.primary { background: var(--a1); color: var(--on-accent); border-color: var(--a1); }
+
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .card { position: relative; aspect-ratio: 3 / 4; perspective: 800px; cursor: pointer; }
+  .inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .45s var(--ease-out); }
+  .card.on .inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0; border-radius: 10px; overflow: hidden;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 1px solid var(--line-strong);
+  }
+  .back {
+    display: grid; place-items: center; background: color-mix(in srgb, var(--fg) 8%, transparent);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: var(--fg-faint);
+  }
+  .front { transform: rotateY(180deg); }
+  .front img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card.got .front { outline: 2px solid var(--a1); outline-offset: -2px; }
+  .msg { margin-top: 14px; font-size: 13px; color: var(--fg-dim); min-height: 22px; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="mesh"><span class="blob b1"></span><span class="blob b2"></span></div><div class="motif"><div class="m-glow"></div></div><div class="vignette"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html"><span class="brand-mark"></span><span class="brand-word">范连璟</span><sup class="brand-sup">°</sup></a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">品红</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none"><g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="24" y1="3.5" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="44.5"/><line x1="3.5" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="44.5" y2="24"/><line x1="9.5" y1="9.5" x2="13.4" y2="13.4"/><line x1="34.6" y1="34.6" x2="38.5" y2="38.5"/><line x1="9.5" y1="38.5" x2="13.4" y2="34.6"/><line x1="34.6" y1="13.4" x2="38.5" y2="9.5"/></g><circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/><circle class="sun-dot" cx="24" cy="24" r="3"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>翻出<em>同一张照片</em></h1>
+  <div class="bar">
+    <span>次数 <b id="moves">0</b></span>
+    <span>配对 <b id="pairs">0/8</b></span>
+    <span>时间 <b id="time">0:00</b></span>
+    <button class="g-btn primary" id="newBtn" type="button">重新洗牌</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="msg" id="msg">十六张牌，八对。翻到一样的就留在那儿。</p>
+  <p class="bar" style="margin-top:14px"><span>露水 <b id="dew">0</b></span><a class="g-btn" href="works.html">← 回拾趣</a></p>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js?vixqxy5"></script>
+<script src="js/i18n.js?vixqxy5"></script>
+<script src="js/settings.js?vixqxy5"></script>
+<script src="js/music.js?vixqxy5"></script>
+<script src="js/fx.js?vixqxy5"></script>
+<script src="js/main.js?vixqxy5"></script>
+<script src="js/eggs.js?vixqxy5"></script>
+<script src="js/photos.js?vixqxy5"></script>
+<script src="js/arcade.js?vixqxy5"></script>
+<script>
+(function () {
+  'use strict';
+  const PAIRS = 8;
+  const grid = document.getElementById('grid');
+  const movesEl = document.getElementById('moves');
+  const pairsEl = document.getElementById('pairs');
+  const timeEl = document.getElementById('time');
+  const msg = document.getElementById('msg');
+  const dewEl = document.getElementById('dew');
+
+  let deck = [], open = [], busy = false, moves = 0, got = 0, t0 = 0, timer = 0;
+
+  const photos = (window.PHOTOS || []).map(function (p) { return p.src; });
+  const fallback = ['assets/scene/fjord.jpg', 'assets/scene/snow.jpg', 'assets/scene/falls.jpg', 'assets/scene/ridge.jpg', 'assets/scene/canyon.jpg'];
+
+  function build() {
+    const bank = photos.length >= PAIRS ? photos : fallback;
+    const use = [];
+    while (use.length < PAIRS) {
+      const src = bank[Math.floor(Math.random() * bank.length)];
+      use.push(src);
+    }
+    deck = use.concat(use).map(function (src, i) { return { src: src, i: i }; });
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+    }
+  }
+
+  function render() {
+    grid.innerHTML = '';
+    deck.forEach(function (c, i) {
+      const el = document.createElement('div');
+      el.className = 'card' + (c.on ? ' on' : '') + (c.got ? ' got' : '');
+      el.innerHTML = '<div class="inner">' +
+        '<div class="face back">✦</div>' +
+        '<div class="face front"><img alt="" src="' + c.src + '" loading="lazy" /></div>' +
+        '</div>';
+      el.addEventListener('click', function () { tap(i); });
+      grid.appendChild(el);
+    });
+  }
+
+  function tap(i) {
+    if (busy) return;
+    const c = deck[i];
+    if (c.got || c.on) return;
+    c.on = true;
+    moves++;
+    movesEl.textContent = moves;
+    open.push(i);
+    render();
+    if (open.length === 2) {
+      busy = true;
+      const a = deck[open[0]], b = deck[open[1]];
+      if (a.src === b.src) {
+        a.got = b.got = true;
+        got++;
+        pairsEl.textContent = got + '/' + PAIRS;
+        open = [];
+        busy = false;
+        render();
+        if (got === PAIRS) win();
+      } else {
+        setTimeout(function () {
+          a.on = b.on = false;
+          open = [];
+          busy = false;
+          render();
+        }, 620);
+      }
+    }
+  }
+
+  function win() {
+    clearInterval(timer);
+    const secs = Math.round((Date.now() - t0) / 1000);
+    const dew = Math.max(2, Math.round(20 - moves / 2));
+    Arcade.add(dew);
+    dewEl.textContent = Arcade.coins();
+    Arcade.setBest('memory', Math.max(0, 2000 - moves * 20 - secs));
+    msg.innerHTML = '全翻出来了 —— <b>' + moves + ' 次</b>，' + secs + ' 秒，露水 +' + dew + '。';
+    setTimeout(function () {
+      if (confirm('要一张证书吗？')) {
+        Arcade.certificate({ title: '记忆翻牌', lines: [moves + ' 次翻开 · ' + secs + ' 秒', '露水 +' + dew] });
+      }
+    }, 400);
+  }
+
+  function start() {
+    build();
+    open = []; busy = false; moves = 0; got = 0;
+    movesEl.textContent = '0';
+    pairsEl.textContent = '0/' + PAIRS;
+    msg.textContent = '十六张牌，八对。翻到一样的就留在那儿。';
+    t0 = Date.now();
+    clearInterval(timer);
+    timer = setInterval(function () {
+      const s = Math.floor((Date.now() - t0) / 1000);
+      timeEl.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }, 500);
+    render();
+  }
+
+  document.getElementById('newBtn').addEventListener('click', start);
+  dewEl.textContent = Arcade.coins();
+  start();
+})();
+</script>
+</body>
+</html>

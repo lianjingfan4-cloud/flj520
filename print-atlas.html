@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="xuan" data-family="oriental" data-style="print" data-mode="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>打印版画册 · 拾趣</title>
+<meta name="color-scheme" content="light dark" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="js/look.js?vixqxy5"></script>
+<link rel="stylesheet" href="css/style.css?vixqxy5" />
+<link rel="stylesheet" href="css/main.css?vixqxy5" />
+<link rel="stylesheet" href="css/pages.css?vixqxy5" />
+<style>
+  body { background: #f4f1ea; }
+  .bar {
+    position: sticky; top: 0; z-index: 5; display: flex; gap: 10px; justify-content: center;
+    padding: 12px; background: rgba(244,241,234,.94); backdrop-filter: blur(8px);
+    border-bottom: 1px solid #ddd6c8;
+  }
+  .bar button, .bar a {
+    padding: 9px 18px; border-radius: 999px; border: 1px solid #c9c3b6; background: transparent;
+    color: #17171a; font-size: 12px; cursor: pointer; text-decoration: none;
+  }
+  .bar button:hover, .bar a:hover { border-color: #17171a; }
+
+  .plate {
+    max-width: 720px; margin: 0 auto; padding: 36px 40px 48px;
+    page-break-after: always; break-after: page;
+  }
+  .plate:last-child { page-break-after: auto; break-after: auto; }
+  .plate img { width: 100%; height: auto; display: block; box-shadow: 0 12px 40px -24px rgba(0,0,0,.5); }
+  .cap { margin-top: 18px; border-top: 1px solid #17171a; padding-top: 12px; }
+  .cap .k { font-family: "JetBrains Mono", monospace; font-size: 9px; letter-spacing: .24em; color: #8a8478; }
+  .cap h2 { font-family: "Noto Serif SC", serif; font-size: 26px; font-weight: 600; margin: 6px 0 8px; color: #17171a; }
+  .cap p { font-family: "Noto Serif SC", serif; font-size: 13.5px; line-height: 2; color: #3c3a34; }
+  .cap .w { font-style: italic; color: #5c574c; }
+  .cover { display: grid; place-items: center; height: 92vh; text-align: center; }
+  .cover h1 { font-family: "Noto Serif SC", serif; font-size: 56px; letter-spacing: .1em; color: #17171a; }
+  .cover p { margin-top: 14px; font-family: "Instrument Serif", serif; font-style: italic; font-size: 18px; color: #6b6558; }
+
+  @media print {
+    .bar { display: none; }
+    body { background: #fff; }
+    .plate { padding: 0 0 24px; max-width: none; }
+    .cover { height: 100vh; }
+    @page { margin: 14mm; }
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <button type="button" onclick="window.print()">打印 / 存成 PDF</button>
+  <a href="atlas.html">← 回画册</a>
+</div>
+
+<div class="cover">
+  <div>
+    <h1>九幅画</h1>
+    <p>范连璟 · 二〇二六</p>
+  </div>
+</div>
+
+<div id="plates"></div>
+
+<script>
+(function () {
+  const PLATES = [
+    ['assets/art/m437980.jpg', '柏树', '梵高 · 1889', '这些树看起来像在往上烧。'],
+    ['assets/art/m436532.jpg', '自画像', '梵高 · 1887', '他画自己的时候，比画麦田还狠。'],
+    ['assets/art/m436105.jpg', '苏格拉底之死', '大卫 · 1787', '死之前，他还在跟人辩论。'],
+    ['assets/art/m45434.jpg', '神奈川冲浪里', '葛饰北斋 · 1831', '浪要落下来了，船上的人还在划。'],
+    ['assets/art/m437394.jpg', '亚里士多德', '伦勃朗 · 1653', '他摸的不是石头，是一个人。'],
+    ['assets/art/m437881.jpg', '倒水的女人', '维米尔 · 1664', '光从左边来，屋子就会安静。'],
+    ['assets/art/m436528.jpg', '鸢尾花', '梵高 · 1890', '花是刚剪的，叶子还立着。'],
+    ['assets/art/m438817.jpg', '舞蹈课', '德加 · 1874', '排练的时候，没人看她们。'],
+    ['assets/art/m436535.jpg', '麦田与柏树', '梵高 · 1889', '天空在转，树却一动不动。']
+  ];
+  const host = document.getElementById('plates');
+  host.innerHTML = PLATES.map(function (p, i) {
+    return '<section class="plate">' +
+      '<img src="' + p[0] + '" alt="' + p[1] + '" />' +
+      '<div class="cap">' +
+      '<p class="k">PLATE ' + String(i + 1).padStart(2, '0') + ' / 09</p>' +
+      '<h2>' + p[1] + '</h2>' +
+      '<p>' + p[2] + '</p>' +
+      '<p class="w">' + p[3] + '</p>' +
+      '</div></section>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

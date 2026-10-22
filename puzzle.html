@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="cyber" data-family="vivid" data-style="cyber" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>拼图 · 拾趣</title>
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="js/look.js?vixqxy5"></script>
+<link rel="stylesheet" href="css/style.css?vixqxy5" />
+<link rel="stylesheet" href="css/main.css?vixqxy5" />
+<link rel="stylesheet" href="css/pages.css?vixqxy5" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .wrap { position: relative; z-index: 2; max-width: 860px; margin: 0 auto; padding: clamp(88px,9vw,120px) clamp(16px,4vw,28px) 60px; }
+  h1 { font-family: var(--font-display); font-size: clamp(26px,4vw,46px); font-weight: var(--display-w); letter-spacing: -.02em; text-transform: var(--display-case); }
+  h1 em { font-style: normal; color: var(--a1); }
+  .bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 14px 0 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; color: var(--fg-faint); }
+  .bar b { color: var(--fg); font-size: 14px; letter-spacing: 0; }
+  .g-btn { padding: 9px 16px; border-radius: 3px; border: 1px solid var(--line-strong); background: transparent; color: var(--fg); font-size: 12px; cursor: pointer; }
+  .g-btn:hover { border-color: var(--a1); color: var(--a1-t); }
+  .g-btn.primary { background: var(--a1); color: var(--on-accent); border-color: var(--a1); }
+  .board {
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
+    gap: 3px; aspect-ratio: 4 / 3; border: 1px solid var(--line-strong); background: #05060a;
+  }
+  .tile {
+    position: relative; border: 0; padding: 0; cursor: pointer; overflow: hidden;
+    background-repeat: no-repeat; background-size: 400% 300%;
+    transition: transform .18s var(--ease), box-shadow .18s;
+  }
+  .tile.sel { outline: 2px solid var(--a1); outline-offset: -2px; z-index: 2; }
+  .tile.done { cursor: default; }
+  .tile span { position: absolute; right: 3px; bottom: 2px; font-family: var(--font-mono); font-size: 8px; color: #fff; opacity: .45; }
+  .msg { margin-top: 14px; font-size: 13px; color: var(--fg-dim); min-height: 22px; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="motif"><div class="m-grid"></div><div class="m-glow"></div></div><div class="vignette"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html"><span class="brand-mark"></span><span class="brand-word">范连璟</span><sup class="brand-sup">°</sup></a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">赛博</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none"><g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="24" y1="3.5" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="44.5"/><line x1="3.5" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="44.5" y2="24"/><line x1="9.5" y1="9.5" x2="13.4" y2="13.4"/><line x1="34.6" y1="34.6" x2="38.5" y2="38.5"/><line x1="9.5" y1="38.5" x2="13.4" y2="34.6"/><line x1="34.6" y1="13.4" x2="38.5" y2="9.5"/></g><circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/><circle class="sun-dot" cx="24" cy="24" r="3"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>拼回<em>一张照片</em></h1>
+  <div class="bar">
+    <span>步 <b id="moves">0</b></span>
+    <span>时间 <b id="time">0:00</b></span>
+    <span>完成 <b id="prog">0/12</b></span>
+    <button class="g-btn primary" id="newBtn" type="button">换一张</button>
+    <button class="g-btn" id="hintBtn" type="button">看一眼原图</button>
+  </div>
+
+  <div class="board" id="board"></div>
+  <p class="msg" id="msg">点两块交换位置。拼好了给一滴露水。</p>
+  <p class="bar" style="margin-top:14px"><span>露水 <b id="dew">0</b></span><a class="g-btn" href="works.html">← 回拾趣</a></p>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/nav.js?vixqxy5"></script>
+<script src="js/i18n.js?vixqxy5"></script>
+<script src="js/settings.js?vixqxy5"></script>
+<script src="js/music.js?vixqxy5"></script>
+<script src="js/fx.js?vixqxy5"></script>
+<script src="js/main.js?vixqxy5"></script>
+<script src="js/eggs.js?vixqxy5"></script>
+<script src="js/photos.js?vixqxy5"></script>
+<script src="js/arcade.js?vixqxy5"></script>
+<script>
+(function () {
+  'use strict';
+  const COLS = 4, ROWS = 3, N = COLS * ROWS;
+  const board = document.getElementById('board');
+  const msg = document.getElementById('msg');
+  const movesEl = document.getElementById('moves');
+  const timeEl = document.getElementById('time');
+  const progEl = document.getElementById('prog');
+  const dewEl = document.getElementById('dew');
+
+  const photos = (window.PHOTOS || []).map(function (p) { return p.src; });
+  const fallback = ['assets/scene/fjord.jpg', 'assets/scene/snow.jpg', 'assets/scene/falls.jpg'];
+  let order = [], sel = -1, moves = 0, t0 = 0, timer = 0, src = '', solved = false;
+
+  function pickSrc() {
+    const bank = photos.length ? photos : fallback;
+    return bank[Math.floor(Math.random() * bank.length)];
+  }
+
+  function shuffle() {
+    order = [];
+    for (let i = 0; i < N; i++) order.push(i);
+    for (let i = N - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = order[i]; order[i] = order[j]; order[j] = t;
+    }
+  }
+
+  function posOf(idx) {
+    const x = (idx % COLS) * (100 / (COLS - 1));
+    const y = Math.floor(idx / COLS) * (100 / (ROWS - 1));
+    return x + '% ' + y + '%';
+  }
+
+  function render() {
+    board.innerHTML = '';
+    order.forEach(function (piece, slot) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tile' + (slot === sel ? ' sel' : '') + (piece === slot ? ' done' : '');
+      b.style.backgroundImage = 'url("' + src + '")';
+      b.style.backgroundPosition = posOf(piece);
+      b.innerHTML = '<span>' + (piece + 1) + '</span>';
+      b.addEventListener('click', function () { tap(slot); });
+      board.appendChild(b);
+    });
+    const done = order.filter(function (p, i) { return p === i; }).length;
+    progEl.textContent = done + '/' + N;
+  }
+
+  function tap(slot) {
+    if (solved) return;
+    if (sel < 0) { sel = slot; render(); return; }
+    if (sel === slot) { sel = -1; render(); return; }
+    const t = order[sel]; order[sel] = order[slot]; order[slot] = t;
+    moves++;
+    movesEl.textContent = moves;
+    sel = -1;
+    render();
+    check();
+  }
+
+  function check() {
+    const ok = order.every(function (p, i) { return p === i; });
+    if (!ok) return;
+    solved = true;
+    clearInterval(timer);
+    const secs = Math.round((Date.now() - t0) / 1000);
+    const dew = Math.max(1, Math.round(12 - secs / 10));
+    Arcade.add(dew);
+    dewEl.textContent = Arcade.coins();
+    Arcade.setBest('puzzle', Math.max(0, 1000 - secs * 2));
+    msg.innerHTML = '拼好了 —— <b>' + secs + ' 秒</b>，' + moves + ' 步，露水 +' + dew + '。';
+    setTimeout(function () {
+      if (confirm('拼好了。要一张证书吗？')) {
+        Arcade.certificate({ title: '拼图', lines: [secs + ' 秒 · ' + moves + ' 步', '露水 +' + dew] });
+      }
+    }, 400);
+  }
+
+  function start() {
+    src = pickSrc();
+    shuffle();
+    sel = -1; moves = 0; solved = false;
+    movesEl.textContent = '0';
+    msg.textContent = '点两块交换位置。拼好了给一滴露水。';
+    t0 = Date.now();
+    clearInterval(timer);
+    timer = setInterval(function () {
+      const s = Math.floor((Date.now() - t0) / 1000);
+      timeEl.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }, 500);
+    render();
+  }
+
+  document.getElementById('newBtn').addEventListener('click', start);
+  document.getElementById('hintBtn').addEventListener('click', function () {
+    const w = window.open('', '_blank');
+    if (w) w.document.write('<img src="' + src + '" style="max-width:100%">');
+  });
+
+  dewEl.textContent = Arcade.coins();
+  start();
+})();
+</script>
+</body>
+</html>
