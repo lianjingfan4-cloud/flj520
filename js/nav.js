@@ -7,16 +7,16 @@
   'use strict';
 
   const ITEMS = [
-    { zh: '我', en: 'ME', href: 'index.html#about' },
-    { zh: '履历', en: 'RECORD', href: 'index.html#record' },
+    { zh: '我', en: 'MYSELF', href: 'index.html#about' },
+    { zh: '履历', en: 'LEDGER', href: 'index.html#record' },
     { zh: '画册', en: 'ATLAS', href: 'atlas.html' },
-    { zh: '拾趣', en: 'WORKS', href: 'works.html' },
-    { zh: '创意', en: 'IDEAS', href: 'ideas.html' },
-    { zh: '写作', en: 'WRITING', href: 'writing.html' },
+    { zh: '拾趣', en: 'TRIFLES', href: 'works.html' },
+    { zh: '创意', en: 'DEVICES', href: 'ideas.html' },
+    { zh: '写作', en: 'WRITINGS', href: 'writing.html' },
     { zh: '图寻', en: 'GEO', href: 'guess.html' },
-    { zh: '幼稚园', en: 'DOODLE', href: 'doodle.html' },
+    { zh: '幼稚园', en: 'SCRIBBLES', href: 'doodle.html' },
     { zh: '一盆花', en: 'GARDEN', href: 'garden.html' },
-    { zh: '联系', en: 'CONTACT', href: 'index.html#contact' }
+    { zh: '联系', en: 'PARLEY', href: 'index.html#contact' }
   ];
 
   const here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
