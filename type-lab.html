@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vj4ketn"></script>
-<link rel="stylesheet" href="css/style.css?vj4ketn" />
-<link rel="stylesheet" href="css/main.css?vj4ketn" />
-<link rel="stylesheet" href="css/pages.css?vj4ketn" />
+<script src="js/look.js?vmfzffi"></script>
+<link rel="stylesheet" href="css/style.css?vmfzffi" />
+<link rel="stylesheet" href="css/main.css?vmfzffi" />
+<link rel="stylesheet" href="css/pages.css?vmfzffi" />
 <script>document.documentElement.classList.add('js');</script>
 <style>
   .lab { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(90px,10vw,130px) clamp(16px,4vw,32px) 70px; }
@@ -90,18 +90,27 @@
   </div>
 
   <div id="rows"></div>
+
+  <h2 style="margin-top:42px;font-family:var(--font-display);font-size:clamp(20px,2.6vw,30px)">左右分屏对比</h2>
+  <p class="sub" style="margin:8px 0 14px">同一段话，两个风格并排看。</p>
+  <div id="splitBox" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div><select id="selA" style="margin-bottom:8px;padding:7px 10px;border-radius:4px;border:1px solid var(--line-strong);background:transparent;color:var(--fg)"></select>
+      <div id="paneA" style="padding:22px;border:1px solid var(--line);border-radius:6px;min-height:170px"></div></div>
+    <div><select id="selB" style="margin-bottom:8px;padding:7px 10px;border-radius:4px;border:1px solid var(--line-strong);background:transparent;color:var(--fg)"></select>
+      <div id="paneB" style="padding:22px;border:1px solid var(--line);border-radius:6px;min-height:170px"></div></div>
+  </div>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="js/nav.js?vj4ketn"></script>
-<script src="js/i18n.js?vj4ketn"></script>
-<script src="js/settings.js?vj4ketn"></script>
-<script src="js/music.js?vj4ketn"></script>
-<script src="js/fx.js?vj4ketn"></script>
-<script src="js/main.js?vj4ketn"></script>
-<script src="js/eggs.js?vj4ketn"></script>
-<script src="js/audio.js?vj4ketn"></script>
+<script src="js/nav.js?vmfzffi"></script>
+<script src="js/i18n.js?vmfzffi"></script>
+<script src="js/settings.js?vmfzffi"></script>
+<script src="js/music.js?vmfzffi"></script>
+<script src="js/fx.js?vmfzffi"></script>
+<script src="js/main.js?vmfzffi"></script>
+<script src="js/eggs.js?vmfzffi"></script>
+<script src="js/audio.js?vmfzffi"></script>
 <script>
 (function () {
   'use strict';
@@ -135,6 +144,24 @@
   txt.addEventListener('input', paint);
   size.addEventListener('input', paint);
   paint();
+
+  (function () {
+    const SAMPLES = { minimal: 'f-min', print: 'f-song', cinematic: 'f-cine', cyber: 'f-mono', soft: 'f-cute', ink: 'f-brush', hand: 'f-hand', poster: 'f-black' };
+    const TEXT = '往事越千年，魏武挥鞭，东临碣石有遗篇。萧瑟秋风今又是，换了人间。';
+    const A = document.getElementById('selA'), B = document.getElementById('selB');
+    const pa = document.getElementById('paneA'), pb = document.getElementById('paneB');
+    Object.keys(SAMPLES).forEach(function (k) {
+      A.insertAdjacentHTML('beforeend', '<option value="' + k + '">' + k + '</option>');
+      B.insertAdjacentHTML('beforeend', '<option value="' + k + '">' + k + '</option>');
+    });
+    A.value = 'minimal'; B.value = 'ink';
+    function paintPane(pane, key) {
+      pane.innerHTML = '<div class="' + SAMPLES[key] + '" style="font-size:26px;line-height:1.5">' + TEXT + '</div>';
+    }
+    A.addEventListener('change', function () { paintPane(pa, A.value); });
+    B.addEventListener('change', function () { paintPane(pb, B.value); });
+    paintPane(pa, A.value); paintPane(pb, B.value);
+  })();
 })();
 </script>
 </body>

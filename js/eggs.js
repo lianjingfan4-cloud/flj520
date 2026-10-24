@@ -155,9 +155,13 @@
     const today = ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
     if (today !== bd) return;
     bump('birthday');
+    let bYears = [];
+    try { bYears = JSON.parse(localStorage.getItem('nova-bday-years') || '[]'); } catch (e) { bYears = []; }
+    const thisYear = d.getFullYear();
+    if (bYears.indexOf(thisYear) < 0) { bYears.push(thisYear); try { localStorage.setItem('nova-bday-years', JSON.stringify(bYears)); } catch (e) { } }
     const el = document.createElement('div');
     el.className = 'egg-birthday';
-    el.textContent = '今天是你生日。这一页记得。';
+    el.textContent = '今天是你生日。这一页记得 —— 第 ' + bYears.length + ' 次。';
     document.body.appendChild(el);
     setTimeout(function () { el.remove(); }, 9000);
   })();

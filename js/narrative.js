@@ -153,12 +153,29 @@
     });
   }
 
+  /* C20 倾斜手机，星图跟着偏 */
+  function initTilt() {
+    if (!window.DeviceOrientationEvent) return;
+    let raf = 0;
+    window.addEventListener('deviceorientation', function (e) {
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0;
+        const g = Math.max(-1, Math.min(1, (e.gamma || 0) / 45));
+        const b = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 45));
+        document.documentElement.style.setProperty('--tiltx', g.toFixed(3));
+        document.documentElement.style.setProperty('--tilty', b.toFixed(3));
+      });
+    }, { passive: true });
+  }
+
   function boot() {
     try { nowCard(); } catch (e) { }
     if (!document.documentElement.classList.contains('off-altruler')) { try { altitude(); } catch (e) { } }
     if (!document.documentElement.classList.contains('off-contours')) { try { contours(); } catch (e) { } }
     try { idleStars(); } catch (e) { }
     try { keyWords(); } catch (e) { }
+    try { initTilt(); } catch (e) { }
     try { autoPalette(); } catch (e) { }
   }
 

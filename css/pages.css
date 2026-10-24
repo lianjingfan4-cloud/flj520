@@ -1267,3 +1267,13 @@ a.bk:hover { border-color: var(--a3); transform: translateY(-2px); }
   margin: 4px 2px 2px; font-size: 11px; line-height: 1.7; color: var(--fg-dim);
 }
 .term-bubble { width: 210px; }
+
+/* C20 倾斜视差 */
+.contours { transform: translate3d(calc(var(--tiltx, 0) * 18px), calc(var(--tilty, 0) * 12px), 0); transition: transform .4s linear; }
+
+/* C17 时间轴拖动条 */
+.journey-scrub { display: flex; align-items: center; gap: 14px; margin: 6px 0 14px; }
+.journey-scrub .js-k { font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; color: var(--fg-faint); }
+.journey-scrub input { flex: 1; accent-color: var(--a1); height: 3px; cursor: ew-resize; }
+.journey-scrub b { font-family: var(--font-mono); font-size: 13px; color: var(--a1-t); }
+.journey li.hi { background: color-mix(in srgb, var(--a1) 8%, transparent); }

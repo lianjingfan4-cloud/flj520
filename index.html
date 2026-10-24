@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vj4ketn"></script>
-<link rel="stylesheet" href="css/style.css?vj4ketn" />
-<link rel="stylesheet" href="css/main.css?vj4ketn" />
-<link rel="stylesheet" href="css/pages.css?vj4ketn" />
-<link rel="stylesheet" href="css/scene.css?vj4ketn" />
+<script src="js/look.js?vmfzffi"></script>
+<link rel="stylesheet" href="css/style.css?vmfzffi" />
+<link rel="stylesheet" href="css/main.css?vmfzffi" />
+<link rel="stylesheet" href="css/pages.css?vmfzffi" />
+<link rel="stylesheet" href="css/scene.css?vmfzffi" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%234b6bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23b9c7ff'/%3E%3C/svg%3E" />
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -320,6 +320,12 @@
       </header>
       <div class="shelf" id="shelf" data-reveal></div>
     </section>
+    <div class="journey-scrub" id="journeyScrub">
+      <span class="js-k">拖动这条线</span>
+      <input type="range" id="jsRange" min="0" max="3" step="1" value="0" aria-label="时间轴" />
+      <b id="jsOut">2022</b>
+    </div>
+
     <ol class="journey" aria-label="时间线">
       <li data-reveal style="--i:0">
         <span class="yr">2022</span>
@@ -391,20 +397,21 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 
-<script src="js/scenes.js?vj4ketn"></script>
-<script src="js/scene.js?vj4ketn"></script>
-<script src="js/art.js?vj4ketn"></script>
-<script src="js/nav.js?vj4ketn"></script>
-<script src="js/i18n.js?vj4ketn"></script>
-<script src="js/settings.js?vj4ketn"></script>
-<script src="js/music.js?vj4ketn"></script>
-<script src="js/fx.js?vj4ketn"></script>
-<script src="js/particles.js?vj4ketn"></script>
-<script src="js/main.js?vj4ketn"></script>
-<script src="js/eggs.js?vj4ketn"></script>
-<script src="js/audio.js?vj4ketn"></script>
-<script src="js/interact.js?vj4ketn"></script>
-<script src="js/narrative.js?vj4ketn"></script>
-<script src="js/shelf.js?vj4ketn"></script>
+<script src="js/scenes.js?vmfzffi"></script>
+<script src="js/scene.js?vmfzffi"></script>
+<script src="js/art.js?vmfzffi"></script>
+<script src="js/nav.js?vmfzffi"></script>
+<script src="js/i18n.js?vmfzffi"></script>
+<script src="js/settings.js?vmfzffi"></script>
+<script src="js/music.js?vmfzffi"></script>
+<script src="js/fx.js?vmfzffi"></script>
+<script src="js/particles.js?vmfzffi"></script>
+<script src="js/main.js?vmfzffi"></script>
+<script src="js/eggs.js?vmfzffi"></script>
+<script src="js/audio.js?vmfzffi"></script>
+<script src="js/interact.js?vmfzffi"></script>
+<script src="js/narrative.js?vmfzffi"></script>
+<script src="js/timeline.js?vmfzffi"></script>
+<script src="js/shelf.js?vmfzffi"></script>
 </body>
 </html>
