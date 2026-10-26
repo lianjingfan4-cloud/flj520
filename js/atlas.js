@@ -90,7 +90,7 @@
       '<h2>' + p.title + '</h2>' +
       '<p class="pt-n">' + p.note + '</p>' +
       (p.whisper ? '<button type="button" class="pt-w">你可能会想的一句话<i>+</i></button>' +
-        '<p class="pt-whisper">' + p.whisper + '</p>' : '') +
+        '<p class="pt-whisper">' + ((window.Pool && Pool.all('atlasNotes').length) ? Pool.pick('atlasNotes', 1)[0] : p.whisper) + '</p>' : '') +
       '<button type="button" class="pt-fav" data-fav="' + p.id + '">' +
         (isFav(p.id) ? '♥ 已收藏' : '♡ 收藏') + '</button>' +
       swatches(p) +

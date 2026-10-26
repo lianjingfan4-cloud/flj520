@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vpfdp5c"></script>
-<link rel="stylesheet" href="css/style.css?vpfdp5c" />
-<link rel="stylesheet" href="css/main.css?vpfdp5c" />
-<link rel="stylesheet" href="css/pages.css?vpfdp5c" />
-<link rel="stylesheet" href="css/scene.css?vpfdp5c" />
+<script src="js/look.js?vpflvar"></script>
+<link rel="stylesheet" href="css/style.css?vpflvar" />
+<link rel="stylesheet" href="css/main.css?vpflvar" />
+<link rel="stylesheet" href="css/pages.css?vpflvar" />
+<link rel="stylesheet" href="css/scene.css?vpflvar" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%234b6bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23b9c7ff'/%3E%3C/svg%3E" />
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -236,7 +236,7 @@
         <button class="mail-copy" id="copyMail" data-mail="flj520@sjtu.edu.cn">
           <span>flj520@sjtu.edu.cn</span><i>复制</i>
         </button>
-        <p class="c-note">想聊聊山、火箭，或者让我帮你定位一张照片。</p>
+        <p class="c-note" id="greetLine">想聊聊山、火箭，或者让我帮你定位一张照片。</p>
       </article>
     </div>
   </section>
@@ -283,26 +283,7 @@
         <p class="section-note">成功清单谁都会写。这一页写的是没考好的。</p>
       </header>
 
-      <ul class="fail-list">
-        <li data-reveal style="--i:0">
-          <span class="fl-x">✗</span>
-          <span class="fl-k">大学物理（一）</span>
-          <b class="fl-s">期末 30</b>
-          <p>刚体转动那一章，我从头到尾没转过来。</p>
-        </li>
-        <li data-reveal style="--i:1">
-          <span class="fl-x">✗</span>
-          <span class="fl-k">C++ 程序设计</span>
-          <b class="fl-s">期末 33</b>
-          <p>指针。当时是真不懂，现在也是边写边查。</p>
-        </li>
-        <li data-reveal style="--i:2">
-          <span class="fl-x">✗</span>
-          <span class="fl-k">概率论</span>
-          <b class="fl-s">期末 25</b>
-          <p>最低的一次。后来做结构可靠性，才算补回来一点。</p>
-        </li>
-      </ul>
+      <ul class="fail-list" id="failList"></ul>
       <p class="fail-note">这三门后来都用上了 —— 物理在结构里，C++ 在这页网站里，概率在每次做实验的误差里。</p>
     </section>
 
@@ -392,26 +373,26 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 
-<script src="js/scenes.js?vpfdp5c"></script>
-<script src="js/scene.js?vpfdp5c"></script>
-<script src="js/art.js?vpfdp5c"></script>
-<script src="js/pool.js?vpfdp5c"></script>
-<script src="js/content.js?vpfdp5c"></script>
-<script src="js/kernel.js?vpfdp5c"></script>
-<script src="js/nav.js?vpfdp5c"></script>
-<script src="js/i18n.js?vpfdp5c"></script>
-<script src="js/settings.js?vpfdp5c"></script>
-<script src="js/music.js?vpfdp5c"></script>
-<script src="js/fx.js?vpfdp5c"></script>
-<script src="js/particles.js?vpfdp5c"></script>
-<script src="js/main.js?vpfdp5c"></script>
-<script src="js/eggs.js?vpfdp5c"></script>
-<script src="js/audio.js?vpfdp5c"></script>
-<script src="js/interact.js?vpfdp5c"></script>
-<script src="js/narrative.js?vpfdp5c"></script>
-<script src="js/timeline.js?vpfdp5c"></script>
-<script src="js/shelf.js?vpfdp5c"></script>
-<script src="js/polish.js?vpfdp5c"></script>
+<script src="js/scenes.js?vpflvar"></script>
+<script src="js/scene.js?vpflvar"></script>
+<script src="js/art.js?vpflvar"></script>
+<script src="js/pool.js?vpflvar"></script>
+<script src="js/content.js?vpflvar"></script>
+<script src="js/kernel.js?vpflvar"></script>
+<script src="js/nav.js?vpflvar"></script>
+<script src="js/i18n.js?vpflvar"></script>
+<script src="js/settings.js?vpflvar"></script>
+<script src="js/music.js?vpflvar"></script>
+<script src="js/fx.js?vpflvar"></script>
+<script src="js/particles.js?vpflvar"></script>
+<script src="js/main.js?vpflvar"></script>
+<script src="js/eggs.js?vpflvar"></script>
+<script src="js/audio.js?vpflvar"></script>
+<script src="js/interact.js?vpflvar"></script>
+<script src="js/narrative.js?vpflvar"></script>
+<script src="js/timeline.js?vpflvar"></script>
+<script src="js/shelf.js?vpflvar"></script>
+<script src="js/polish.js?vpflvar"></script>
 
 <script>
 (function () {
@@ -494,6 +475,66 @@
 
   pair();
   poemTimer = setInterval(function () { if (!document.hidden) pair(); }, 13000);
+})();
+</script>
+
+
+<script>
+(function () {
+  'use strict';
+  if (!window.Pool) return;
+
+  /* ---- 履历三张卡：每次抽三件不同类别的事 ---- */
+  var cards = [document.getElementById('research'), document.getElementById('serve'), document.getElementById('practice')];
+  var all = Pool.all('career');
+
+  function paintCareer() {
+    if (!all.length || cards.some(function (c) { return !c; })) return;
+
+    var byKind = {};
+    all.forEach(function (x) { (byKind[x.k] = byKind[x.k] || []).push(x); });
+    var kinds = Object.keys(byKind);
+    for (var i = kinds.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = kinds[i]; kinds[i] = kinds[j]; kinds[j] = tmp;
+    }
+
+    cards.forEach(function (card, idx) {
+      var kind = kinds[idx % kinds.length];
+      var pool = byKind[kind];
+      var item = pool[Math.floor(Math.random() * pool.length)];
+      card.innerHTML =
+        '<p class="r-kicker">' + item.k + '</p>' +
+        '<h3>' + item.t + '</h3>' +
+        '<p class="r-story">' + item.s1 + '</p>' +
+        '<p class="r-story">' + item.s2 + '</p>' +
+        '<p class="r-small">' + item.small + '</p>';
+      card.classList.remove('pool-in');
+      void card.offsetWidth;
+      card.classList.add('pool-in');
+    });
+  }
+
+  paintCareer();
+  setInterval(function () { if (!document.hidden) paintCareer(); }, 24000);
+
+  /* ---- 失败清单：抽三条 ---- */
+  var failList = document.getElementById('failList');
+  function paintFailures() {
+    if (!failList) return;
+    var items = Pool.pick('failures', 3);
+    failList.innerHTML = items.map(function (f) {
+      return '<li><span class="fl-x">✗</span>' +
+        '<span class="fl-k">' + f.k + '</span>' +
+        '<b class="fl-s">' + f.s + '</b>' +
+        '<p>' + f.note + '</p></li>';
+    }).join('');
+  }
+  paintFailures();
+  setInterval(function () { if (!document.hidden) paintFailures(); }, 28000);
+
+  /* ---- 联系区招呼 ---- */
+  Pool.rotate(document.getElementById('greetLine'), 'greetings', { n: 1, ms: 19000, mode: 'lines' });
 })();
 </script>
 
