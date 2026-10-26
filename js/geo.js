@@ -1,5 +1,5 @@
-/* geo.js - 图寻题库（99 座城市，Esri World Imagery 卫星图） */
-window.GEO = [
+/* geo.js - 卫星题库（备选）（99 座城市，Esri World Imagery 卫星图） */
+window.GEO_SAT = [
   { src: 'assets/geo/g001.jpg', name: '莫斯科' },
   { src: 'assets/geo/g002.jpg', name: '圣彼得堡' },
   { src: 'assets/geo/g003.jpg', name: '上海' },

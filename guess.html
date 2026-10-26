@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vpb5ljr"></script>
-<link rel="stylesheet" href="css/style.css?vpb5ljr" />
-<link rel="stylesheet" href="css/main.css?vpb5ljr" />
-<link rel="stylesheet" href="css/pages.css?vpb5ljr" />
-<link rel="stylesheet" href="css/scene.css?vpb5ljr" />
+<script src="js/look.js?vpcatol"></script>
+<link rel="stylesheet" href="css/style.css?vpcatol" />
+<link rel="stylesheet" href="css/main.css?vpcatol" />
+<link rel="stylesheet" href="css/pages.css?vpcatol" />
+<link rel="stylesheet" href="css/scene.css?vpcatol" />
 <style>
   .guess-wrap { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(96px, 11vw, 140px) clamp(16px, 4vw, 32px) 70px; }
   .g-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
@@ -135,27 +135,41 @@
   </div>
 
   <p class="note">题库 100 座城市的卫星图，每局随机抽 5 题，四选一。真正的图寻是一张路边的照片，能说出它在中国哪条路 —— 那个本事，我留着。</p>
+  <section class="tuxun-cta">
+    <p class="tc-k">还想玩真的？</p>
+    <h2 class="tc-t">去「图寻」<em>自己玩</em></h2>
+    <p class="tc-s">上面这些是照片题库，一道一道猜。真正的图寻是一张街头照片，你要说出它在中国哪条路 —— 那个本事，我还在练。</p>
+    <a class="tc-btn" href="https://tuxun.fun/" target="_blank" rel="noopener">
+      <span>打开 tuxun.fun</span>
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <p class="tc-n">题库还能加 —— <a href="label.html">标一张照片</a>，标完导出就能变成新的题。</p>
+  </section>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 
-<script src="js/geo.js?vpb5ljr"></script>
-<script src="js/scenes.js?vpb5ljr"></script>
-<script src="js/kernel.js?vpb5ljr"></script>
-<script src="js/nav.js?vpb5ljr"></script>
-<script src="js/i18n.js?vpb5ljr"></script>
-<script src="js/settings.js?vpb5ljr"></script>
-<script src="js/music.js?vpb5ljr"></script>
-<script src="js/fx.js?vpb5ljr"></script>
-<script src="js/main.js?vpb5ljr"></script>
-<script src="js/eggs.js?vpb5ljr"></script>
-<script src="js/audio.js?vpb5ljr"></script>
+<script src="js/geo.js?vpcatol"></script>
+<script src="js/scenes.js?vpcatol"></script>
+<script src="js/kernel.js?vpcatol"></script>
+<script src="js/nav.js?vpcatol"></script>
+<script src="js/i18n.js?vpcatol"></script>
+<script src="js/settings.js?vpcatol"></script>
+<script src="js/music.js?vpcatol"></script>
+<script src="js/fx.js?vpcatol"></script>
+<script src="js/main.js?vpcatol"></script>
+<script src="js/eggs.js?vpcatol"></script>
+<script src="js/audio.js?vpcatol"></script>
 <script>
 (function () {
   'use strict';
 
-  const BANK = (window.GEO || []).map(function (g) { return g.name; });
+  const PHOTO_BANK = (window.GEO || []).map(function (g) {
+    return { img: g.src, answer: g.place, opts: g.opts };
+  });
+  const BANK = (window.GEO || []).map(function (g) { return g.place; });
+  const SAT_BANK = (window.GEO_SAT || []).map(function (g) { return { img: g.src, answer: g.name }; });
   const PER_ROUND = 5;
 
   function shuffle(a) {
@@ -167,18 +181,24 @@
     return a;
   }
 
-  function makeRound(city) {
+  function makeRound(item, bank) {
+    const names = bank.map(function (x) { return x.answer; });
     const others = [];
-    while (others.length < 3 && BANK.length > 3) {
-      const n = BANK[Math.floor(Math.random() * BANK.length)];
-      if (n !== city.name && others.indexOf(n) < 0) others.push(n);
+    if (item.opts && item.opts.length === 4) {
+      return { img: item.img, answer: item.answer, opts: item.opts.slice() };
     }
-    return { img: city.src, answer: city.name, opts: [city.name].concat(others) };
+    while (others.length < 3 && names.length > 3) {
+      const n = names[Math.floor(Math.random() * names.length)];
+      if (n !== item.answer && others.indexOf(n) < 0) others.push(n);
+    }
+    return { img: item.img, answer: item.answer, opts: [item.answer].concat(others) };
   }
 
   function pickRounds(n) {
-    const pool = shuffle((window.GEO || []).slice());
-    return pool.slice(0, Math.min(n, pool.length)).map(makeRound);
+    const usePhoto = PHOTO_BANK.length >= 4;
+    const pool = shuffle(usePhoto ? PHOTO_BANK.slice() : SAT_BANK.slice());
+    document.documentElement.classList.toggle('geo-sat', !usePhoto);
+    return pool.slice(0, Math.min(n, pool.length)).map(function (x) { return makeRound(x, pool); });
   }
 
   const ROUNDS = pickRounds(PER_ROUND);
@@ -258,6 +278,6 @@
   render();
 })();
 </script>
-<script src="js/polish.js?vpb5ljr"></script>
+<script src="js/polish.js?vpcatol"></script>
 </body>
 </html>
