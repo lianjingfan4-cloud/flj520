@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vpew2hw"></script>
-<link rel="stylesheet" href="css/style.css?vpew2hw" />
-<link rel="stylesheet" href="css/main.css?vpew2hw" />
-<link rel="stylesheet" href="css/pages.css?vpew2hw" />
-<link rel="stylesheet" href="css/scene.css?vpew2hw" />
+<script src="js/look.js?vpf0ma3"></script>
+<link rel="stylesheet" href="css/style.css?vpf0ma3" />
+<link rel="stylesheet" href="css/main.css?vpf0ma3" />
+<link rel="stylesheet" href="css/pages.css?vpf0ma3" />
+<link rel="stylesheet" href="css/scene.css?vpf0ma3" />
 <style>
   .guess-wrap { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(96px, 11vw, 140px) clamp(16px, 4vw, 32px) 70px; }
   .g-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
@@ -149,18 +149,17 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-
-<script src="js/geo.js?vpew2hw"></script>
-<script src="js/scenes.js?vpew2hw"></script>
-<script src="js/kernel.js?vpew2hw"></script>
-<script src="js/nav.js?vpew2hw"></script>
-<script src="js/i18n.js?vpew2hw"></script>
-<script src="js/settings.js?vpew2hw"></script>
-<script src="js/music.js?vpew2hw"></script>
-<script src="js/fx.js?vpew2hw"></script>
-<script src="js/main.js?vpew2hw"></script>
-<script src="js/eggs.js?vpew2hw"></script>
-<script src="js/audio.js?vpew2hw"></script>
+<script src="js/geo-bank.js?vpf0ma3"></script>
+<script src="js/scenes.js?vpf0ma3"></script>
+<script src="js/kernel.js?vpf0ma3"></script>
+<script src="js/nav.js?vpf0ma3"></script>
+<script src="js/i18n.js?vpf0ma3"></script>
+<script src="js/settings.js?vpf0ma3"></script>
+<script src="js/music.js?vpf0ma3"></script>
+<script src="js/fx.js?vpf0ma3"></script>
+<script src="js/main.js?vpf0ma3"></script>
+<script src="js/eggs.js?vpf0ma3"></script>
+<script src="js/audio.js?vpf0ma3"></script>
 <script>
 (function () {
   'use strict';
@@ -169,7 +168,7 @@
     return { img: g.src, answer: g.place, opts: g.opts };
   });
   const BANK = (window.GEO || []).map(function (g) { return g.place; });
-  const SAT_BANK = (window.GEO_SAT || []).map(function (g) { return { img: g.src, answer: g.name }; });
+  const SAT_BANK = [];   // 卫星题库已删除，不留兜底
   const PER_ROUND = 5;
 
   function shuffle(a) {
@@ -196,10 +195,20 @@
 
   function pickRounds(n) {
     const usePhoto = PHOTO_BANK.length >= 4;
-    const pool = shuffle(usePhoto ? PHOTO_BANK.slice() : SAT_BANK.slice());
-    document.documentElement.classList.toggle('geo-sat', !usePhoto);
+    if (!usePhoto) {
+      const board = document.getElementById('board') || document.querySelector('.guess-board');
+      if (board) board.innerHTML = '<p style="padding:40px;text-align:center;color:var(--fg-dim)">题库还没接上照片 —— 去 <a href="label.html" style="color:var(--a1-t)">标几张</a>，或者直接去 tuxun.fun 玩。</p>';
+      return [];
+    }
+    const pool = shuffle(PHOTO_BANK.slice());
+    document.documentElement.classList.remove('geo-sat');
     return pool.slice(0, Math.min(n, pool.length)).map(function (x) { return makeRound(x, pool); });
   }
+
+  (function bankCount() {
+    const el = document.getElementById('bankCount');
+    if (el) el.textContent = (window.GEO ? window.GEO.length : 0) + ' 题 · ' + new Set((window.GEO || []).map(function (g) { return g.place; })).size + ' 城';
+  })();
 
   const ROUNDS = pickRounds(PER_ROUND);
 
@@ -278,6 +287,6 @@
   render();
 })();
 </script>
-<script src="js/polish.js?vpew2hw"></script>
+<script src="js/polish.js?vpf0ma3"></script>
 </body>
 </html>
