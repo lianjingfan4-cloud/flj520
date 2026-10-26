@@ -1277,3 +1277,196 @@ a.bk:hover { border-color: var(--a3); transform: translateY(-2px); }
 .journey-scrub input { flex: 1; accent-color: var(--a1); height: 3px; cursor: ew-resize; }
 .journey-scrub b { font-family: var(--font-mono); font-size: 13px; color: var(--a1-t); }
 .journey li.hi { background: color-mix(in srgb, var(--a1) 8%, transparent); }
+
+/* ============================================================
+   polish — 交互层的样式（kernel / polish.js 配套）
+   ============================================================ */
+
+/* 选中与滚动条 */
+::selection { background: color-mix(in srgb, var(--a1) 45%, transparent); color: var(--fg); }
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--fg) 24%, transparent) transparent; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--fg) 20%, transparent);
+  border-radius: 99px; border: 2px solid transparent; background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--fg) 34%, transparent); background-clip: padding-box; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* 键盘焦点：只在键盘上出现 */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--a1);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* 阅读进度 */
+#siteProgress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 9600;
+  transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--a1), var(--a3));
+  opacity: 0; transition: opacity .4s var(--ease);
+  pointer-events: none;
+}
+#siteProgress.on { opacity: .9; }
+
+/* 回到顶部 */
+#siteTop {
+  position: fixed; right: 22px; bottom: 22px; z-index: 8800;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 70%, transparent);
+  color: var(--fg); font-size: 15px; cursor: pointer;
+  backdrop-filter: blur(10px);
+  opacity: 0; transform: translateY(10px) scale(.94); pointer-events: none;
+  transition: opacity .32s var(--ease), transform .32s var(--ease-out), border-color .2s;
+}
+#siteTop.on { opacity: 1; transform: none; pointer-events: auto; }
+#siteTop:hover { border-color: var(--a1); color: var(--a1-t); }
+
+/* 图片淡入 */
+.img-fade { opacity: 0; transition: opacity .5s var(--ease); }
+.img-fade.img-in { opacity: 1; }
+.img-failed {
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  position: relative;
+}
+.img-failed::after {
+  content: '图片没加载'; position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; color: var(--fg-faint);
+}
+
+/* 导航当前分区 */
+.nav-links a.is-active { color: var(--fg); }
+.nav-links a.is-active::after { transform: scaleX(1); }
+
+/* 按下反馈 */
+button.is-press, .wk.is-press, .bk.is-press, .idea.is-press, .spine.is-press {
+  transform: scale(.985);
+  transition: transform .12s var(--ease);
+}
+
+/* 跳到正文（只在键盘聚焦时出现） */
+.skip-link {
+  position: fixed; left: 12px; top: -60px; z-index: 9700;
+  padding: 10px 16px; border-radius: 3px;
+  background: var(--a1); color: var(--on-accent); font-size: 12px; text-decoration: none;
+  transition: top .2s var(--ease);
+}
+.skip-link:focus { top: 12px; }
+
+/* 通用的对话框 */
+.site-modal {
+  position: fixed; inset: 0; z-index: 9000;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity .22s var(--ease);
+}
+.site-modal.on { opacity: 1; }
+.site-modal .sm-panel {
+  position: relative; width: min(480px, 100%);
+  padding: 26px 24px 20px; border-radius: 6px;
+  background: var(--bg); border: 1px solid var(--line-strong);
+  box-shadow: 0 40px 90px -50px #000;
+  transform: translateY(10px); transition: transform .26s var(--ease-out);
+}
+.site-modal.on .sm-panel { transform: none; }
+.site-modal .sm-t { font-family: var(--font-display); font-size: 20px; margin-bottom: 10px; }
+.site-modal .sm-b { font-size: 13.5px; line-height: 1.9; color: var(--fg-dim); }
+.site-modal .sm-a { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.site-modal .sm-bt {
+  padding: 9px 18px; border-radius: 3px; font-size: 12.5px; cursor: pointer;
+  border: 1px solid var(--line-strong); background: transparent; color: var(--fg);
+}
+.site-modal .sm-bt.primary { background: var(--a1); border-color: var(--a1); color: var(--on-accent); }
+.site-modal .sm-x {
+  position: absolute; top: 10px; right: 12px; width: 28px; height: 28px;
+  border: 0; border-radius: 50%; background: transparent; color: var(--fg-faint);
+  cursor: pointer; font-size: 12px;
+}
+.site-modal .sm-x:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+
+/* 页脚链接的下划线扫过 */
+.f-c a { position: relative; }
+.f-c a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .32s var(--ease-out);
+}
+.f-c a:hover::after { transform: scaleX(1); }
+
+/* 减少动效时，全部收掉 */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
+  animation-duration: .001ms !important;
+  transition-duration: .001ms !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 触屏：点按区域至少 44px */
+@media (pointer: coarse) {
+  button, .wk, .bk, .idea, .spine, .f-c a { min-height: 44px; }
+}
+
+/* ---------- 打磨：移动端修补 ---------- */
+.brand { flex: 0 0 auto; }
+.brand-word { white-space: nowrap; }
+.nav-right { flex: 0 0 auto; }
+
+@media (max-width: 760px) {
+  .alt-ruler, .only-stars .alt-ruler { display: none !important; }
+  .hero-title { word-break: keep-all; }
+  .kicker { letter-spacing: .18em; }
+  /* 手机上少一点装饰，多一点内容 */
+  .grain { opacity: .5; }
+  h1, h2 { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+}
+
+@media (max-width: 420px) {
+  .hero-sub br { display: none; }
+}
+
+.g-btn.disabled, a.disabled { opacity: .45; cursor: not-allowed; }
+
+/* 移动端：装饰性的侧边元素一律收掉（用 !important 压过后注入的样式） */
+@media (max-width: 760px) {
+  .alt-ruler, aside.nc, .nc { display: none !important; }
+  .eyebrow { font-size: 10.5px !important; letter-spacing: .1em !important; text-wrap: pretty; }
+}
+
+/* 设置面板里的「还没接上的」清单 */
+.sf-future { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.sf-title {
+  font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .22em;
+  color: var(--fg-faint); margin-bottom: 8px;
+}
+.sf-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  width: 100%; padding: 8px 0; border: 0; border-bottom: 1px dashed var(--line);
+  background: transparent; color: var(--fg-dim); font-size: 11.5px; text-align: left; cursor: pointer;
+}
+.sf-row:hover { color: var(--fg); }
+.sf-row em { font-style: normal; font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .1em; color: var(--fg-faint); }
+.sf-row.ready em { color: var(--a1-t); }
+.sf-note { margin-top: 10px; font-size: 10.5px; line-height: 1.8; color: var(--fg-faint); }
+
+/* 所有浮层面板：一律不许超出视口 */
+.theme-panel,
+.settings-panel,
+.music-panel {
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.theme-panel::-webkit-scrollbar,
+.music-panel::-webkit-scrollbar { width: 6px; }
+.theme-panel::-webkit-scrollbar-thumb,
+.music-panel::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }

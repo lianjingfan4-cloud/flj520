@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-<script src="js/look.js?vmg300h"></script>
-<link rel="stylesheet" href="css/style.css?vmg300h" />
-<link rel="stylesheet" href="css/main.css?vmg300h" />
-<link rel="stylesheet" href="css/pages.css?vmg300h" />
+<script src="js/look.js?vpb5ljr"></script>
+<link rel="stylesheet" href="css/style.css?vpb5ljr" />
+<link rel="stylesheet" href="css/main.css?vpb5ljr" />
+<link rel="stylesheet" href="css/pages.css?vpb5ljr" />
 <script>document.documentElement.classList.add('js');</script>
 <style>
   .wrap { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(88px,9vw,120px) clamp(16px,4vw,28px) 70px; }
@@ -84,15 +84,16 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="js/nav.js?vmg300h"></script>
-<script src="js/i18n.js?vmg300h"></script>
-<script src="js/settings.js?vmg300h"></script>
-<script src="js/music.js?vmg300h"></script>
-<script src="js/fx.js?vmg300h"></script>
-<script src="js/main.js?vmg300h"></script>
-<script src="js/eggs.js?vmg300h"></script>
-<script src="js/audio.js?vmg300h"></script>
-<script src="js/photos.js?vmg300h"></script>
+<script src="js/kernel.js?vpb5ljr"></script>
+<script src="js/nav.js?vpb5ljr"></script>
+<script src="js/i18n.js?vpb5ljr"></script>
+<script src="js/settings.js?vpb5ljr"></script>
+<script src="js/music.js?vpb5ljr"></script>
+<script src="js/fx.js?vpb5ljr"></script>
+<script src="js/main.js?vpb5ljr"></script>
+<script src="js/eggs.js?vpb5ljr"></script>
+<script src="js/audio.js?vpb5ljr"></script>
+<script src="js/photos.js?vpb5ljr"></script>
 <script>
 (function () {
   'use strict';
@@ -177,9 +178,26 @@
     ctx.font = '400 22px "JetBrains Mono", monospace';
     ctx.fillText(signEl.value || '', 64, H - 72);
 
-    saveLink.href = cv.toDataURL('image/png');
+    try {
+      saveLink.href = cv.toDataURL('image/png');
+      saveLink.classList.remove('disabled');
+      saveLink.removeAttribute('aria-disabled');
+      window.canvasTainted = false;
+    } catch (e) {
+      window.canvasTainted = true;
+      saveLink.href = '#';
+      saveLink.classList.add('disabled');
+      saveLink.setAttribute('aria-disabled', 'true');
+      if (window.Site) Site.toast('本地打开时浏览器不允许导出图片，线上版可以');
+    }
   }
 
+  saveLink.addEventListener('click', function (e) {
+    if (window.canvasTainted) {
+      e.preventDefault();
+      if (window.Site) Site.toast('本地导出被浏览器拦了，部署后就能存');
+    }
+  });
   document.getElementById('makeBtn').addEventListener('click', draw);
   document.getElementById('shuffleBtn').addEventListener('click', function () { refresh(); draw(); });
   lineEl.addEventListener('input', draw);
@@ -189,5 +207,6 @@
   draw();
 })();
 </script>
+<script src="js/polish.js?vpb5ljr"></script>
 </body>
 </html>

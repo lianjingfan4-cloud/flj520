@@ -334,7 +334,7 @@
       document.body.appendChild(box);
       box.addEventListener('click', function (e) { if (e.target === box) box.classList.remove('on'); });
     }
-    const url = c.toDataURL('image/png');
+    const url = safeDataURL(c);
     box.innerHTML = '<div class="sb-in"><img src="' + url + '" alt="分享卡" style="width:min(300px,70vw);height:auto" />' +
       '<p>存下来，发给别人。</p>' +
       '<a class="g-btn" download="fanlianjing-card.png" href="' + url + '">保存这张卡</a>' +
