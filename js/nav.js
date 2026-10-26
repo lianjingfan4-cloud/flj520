@@ -14,8 +14,7 @@
     { zh: '创意', en: 'DEVICES', href: 'ideas.html' },
     { zh: '写作', en: 'WRITINGS', href: 'writing.html' },
     { zh: '图寻', en: 'GEO', href: 'guess.html' },
-    { zh: '幼稚园', en: 'SCRIBBLES', href: 'doodle.html' },
-    { zh: '一盆花', en: 'GARDEN', href: 'garden.html' },
+    { zh: '玩', en: 'PLAY', href: 'play.html' },
     { zh: '联系', en: 'PARLEY', href: 'index.html#contact' }
   ];
 
