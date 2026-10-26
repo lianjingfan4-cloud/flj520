@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vpf0ma3"></script>
-<link rel="stylesheet" href="css/style.css?vpf0ma3" />
-<link rel="stylesheet" href="css/main.css?vpf0ma3" />
-<link rel="stylesheet" href="css/pages.css?vpf0ma3" />
-<link rel="stylesheet" href="css/scene.css?vpf0ma3" />
+<script src="js/look.js?vpf9aah"></script>
+<link rel="stylesheet" href="css/style.css?vpf9aah" />
+<link rel="stylesheet" href="css/main.css?vpf9aah" />
+<link rel="stylesheet" href="css/pages.css?vpf9aah" />
+<link rel="stylesheet" href="css/scene.css?vpf9aah" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%234b6bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23b9c7ff'/%3E%3C/svg%3E" />
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -136,10 +136,7 @@
         <span class="ln ln3" data-reveal style="--i:3"><em id="typewriter">一个学航空的山东人</em><b class="caret" aria-hidden="true"></b></span>
       </h1>
 
-      <p class="hero-sub" data-reveal style="--i:4">
-        山东高密人。本科最后一年半在莫斯科航空学院（2025.3–2026.7），现在在上海交大读飞行器设计。<br class="br-desk" />
-        喜欢陡峭的山、极光、星空，和那些蛮不讲理的苏联老海报。
-      </p>
+      <p class="hero-sub" id="heroSub" data-reveal style="--i:4">山东高密人。现在在上海算飞行器，一年半以前在莫斯科看雪。</p>
 
       <div class="hero-actions" data-reveal style="--i:5">
         <a class="btn btn-primary" href="#about" data-magnetic><span>走进来</span><i aria-hidden="true">↓</i></a>
@@ -156,11 +153,12 @@
         <span class="orbit-core">璟</span>
       </div>
 
-      <dl class="meta">
+      <dl class="meta" id="heroMeta">
         <div><dt>坐标</dt><dd>莫斯科 <span class="faint">55.75°N</span></dd></div>
         <div><dt>此刻</dt><dd>在算蜂窝夹层的等效</dd></div>
         <div><dt>眼睛</dt><dd>棕色 <span class="faint">想是红的、蓝的、紫的</span></dd></div>
       </dl>
+      <p class="meta-hint" id="metaHint">每次打开都换一批</p>
     </aside>
 
     <div class="scroll-cue" aria-hidden="true"><span></span>SCROLL</div>
@@ -168,23 +166,21 @@
 
   <!-- ============ 跑马灯 ============ -->
   <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span>航空航天</span><b>✦</b><span>山</span><b>✦</b><span>极光</span><b>✦</b><span>苏联海报</span><b>✦</b>
-      <span>图寻</span><b>✦</b><span>乒乓球</span><b>✦</b><span>不抽烟不喝酒</span><b>✦</b>
-      <span>航空航天</span><b>✦</b><span>山</span><b>✦</b><span>极光</span><b>✦</b><span>苏联海报</span><b>✦</b>
-      <span>图寻</span><b>✦</b><span>乒乓球</span><b>✦</b><span>不抽烟不喝酒</span><b>✦</b>
+    <div class="ticker-track" id="tickerTrack">
+      <span>航空航天</span><b>✦</b><span>陡峭的山</span><b>✦</b><span>极光</span><b>✦</b><span>苏联海报</span><b>✦</b>
+      <span>航空航天</span><b>✦</b><span>陡峭的山</span><b>✦</b><span>极光</span><b>✦</b><span>苏联海报</span><b>✦</b>
     </div>
   </div>
 
   <!-- ============ 题记 ============ -->
   <section class="quote-block" id="quote">
     <p class="q-mark" aria-hidden="true">“</p>
-    <blockquote data-reveal>
-      往事越千年，魏武挥鞭，<br />东临碣石有遗篇。<br />
-      <em>萧瑟秋风今又是，换了人间。</em>
+    <blockquote data-reveal id="coupletBox">
+      <span class="cq-line" id="cqA">长风卷雪过边城</span><br />
+      <em class="cq-line" id="cqB">铁马冰河入梦声</em>
     </blockquote>
-    <p class="q-by" data-reveal style="--i:1">—— 毛泽东《浪淘沙 · 北戴河》</p>
-    <p class="q-note" data-reveal style="--i:2">有人问我怎么一句话介绍自己，我想到的就是这几句。</p>
+    <p class="q-by" id="cqBy" data-reveal style="--i:1">—— 拟古 · 每访一换</p>
+    <p class="q-note" id="cqNote" data-reveal style="--i:2">有人问我怎么一句话介绍自己，我想到的就是这些句子。</p>
   </section>
 
   <!-- ============ 关于 ============ -->
@@ -230,9 +226,8 @@
 
       <article class="card c-tags" data-reveal style="--i:4">
         <p class="c-label">手里有什么</p>
-        <ul class="chips">
-          <li>航空结构</li><li>有限元</li><li>SolidWorks</li><li>ABAQUS</li>
-          <li>CATIA</li><li>MATLAB</li><li>Python</li><li>图寻</li>
+        <ul class="chips" id="likeChips">
+          <li>航空结构</li><li>有限元</li><li>陡峭的山</li><li>极光</li>
         </ul>
       </article>
 
@@ -397,23 +392,110 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 
-<script src="js/scenes.js?vpf0ma3"></script>
-<script src="js/scene.js?vpf0ma3"></script>
-<script src="js/art.js?vpf0ma3"></script>
-<script src="js/kernel.js?vpf0ma3"></script>
-<script src="js/nav.js?vpf0ma3"></script>
-<script src="js/i18n.js?vpf0ma3"></script>
-<script src="js/settings.js?vpf0ma3"></script>
-<script src="js/music.js?vpf0ma3"></script>
-<script src="js/fx.js?vpf0ma3"></script>
-<script src="js/particles.js?vpf0ma3"></script>
-<script src="js/main.js?vpf0ma3"></script>
-<script src="js/eggs.js?vpf0ma3"></script>
-<script src="js/audio.js?vpf0ma3"></script>
-<script src="js/interact.js?vpf0ma3"></script>
-<script src="js/narrative.js?vpf0ma3"></script>
-<script src="js/timeline.js?vpf0ma3"></script>
-<script src="js/shelf.js?vpf0ma3"></script>
-<script src="js/polish.js?vpf0ma3"></script>
+<script src="js/scenes.js?vpf9aah"></script>
+<script src="js/scene.js?vpf9aah"></script>
+<script src="js/art.js?vpf9aah"></script>
+<script src="js/pool.js?vpf9aah"></script>
+<script src="js/content.js?vpf9aah"></script>
+<script src="js/kernel.js?vpf9aah"></script>
+<script src="js/nav.js?vpf9aah"></script>
+<script src="js/i18n.js?vpf9aah"></script>
+<script src="js/settings.js?vpf9aah"></script>
+<script src="js/music.js?vpf9aah"></script>
+<script src="js/fx.js?vpf9aah"></script>
+<script src="js/particles.js?vpf9aah"></script>
+<script src="js/main.js?vpf9aah"></script>
+<script src="js/eggs.js?vpf9aah"></script>
+<script src="js/audio.js?vpf9aah"></script>
+<script src="js/interact.js?vpf9aah"></script>
+<script src="js/narrative.js?vpf9aah"></script>
+<script src="js/timeline.js?vpf9aah"></script>
+<script src="js/shelf.js?vpf9aah"></script>
+<script src="js/polish.js?vpf9aah"></script>
+
+<script>
+(function () {
+  'use strict';
+  if (!window.Pool) return;
+
+  /* 首屏一句话：每次不同，二十秒换一次 */
+  Pool.rotate(document.getElementById('heroSub'), 'intro', { n: 1, ms: 17000, mode: 'lines' });
+
+  /* 右侧卡片：三个不同角度的信息，互不重复 */
+  var metaEl = document.getElementById('heroMeta');
+  var hint = document.getElementById('metaHint');
+  var metaTimer = 0;
+
+  function paintMeta() {
+    var all = Pool.all('metaItems');
+    if (!all.length || !metaEl) return;
+    var byKind = {};
+    all.forEach(function (m) { (byKind[m.k] = byKind[m.k] || []).push(m); });
+    var kinds = Object.keys(byKind);
+    for (var i = kinds.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = kinds[i]; kinds[i] = kinds[j]; kinds[j] = t;
+    }
+    var picked = kinds.slice(0, 3).map(function (k) {
+      var arr = byKind[k];
+      return arr[Math.floor(Math.random() * arr.length)];
+    });
+    metaEl.innerHTML = picked.map(function (m) {
+      return '<div><dt>' + m.k + '</dt><dd>' + m.v + (m.sub ? ' <span class="faint">' + m.sub + '</span>' : '') + '</dd></div>';
+    }).join('');
+  }
+  paintMeta();
+  metaTimer = setInterval(function () { if (!document.hidden) paintMeta(); }, 15000);
+
+  /* 手里有什么：从四十多个标签里抽八个 */
+  var chips = document.getElementById('likeChips');
+  function paintChips() {
+    if (!chips) return;
+    var items = Pool.pick('likes', 8);
+    chips.innerHTML = items.map(function (x) { return '<li>' + x + '</li>'; }).join('');
+  }
+  paintChips();
+  setInterval(function () { if (!document.hidden) paintChips(); }, 21000);
+
+  /* 顶部滚动条：从池子里抽，重复一遍保证无缝 */
+  var tk = document.getElementById('tickerTrack');
+  if (tk) {
+    var words = Pool.pick('ticker', 7);
+    var line = words.map(function (w) { return '<span>' + w + '</span><b>✦</b>'; }).join('');
+    tk.innerHTML = line + line;
+    setInterval(function () {
+      if (document.hidden) return;
+      var w2 = Pool.pick('ticker', 7);
+      var l2 = w2.map(function (w) { return '<span>' + w + '</span><b>✦</b>'; }).join('');
+      tk.innerHTML = l2 + l2;
+    }, 26000);
+  }
+
+  /* 题记：一句一句出现，然后两句一起换 */
+  var a = document.getElementById('cqA');
+  var b = document.getElementById('cqB');
+  var by = document.getElementById('cqBy');
+  var poemTimer = 0;
+
+  function pair() {
+    var p = Pool.pick('poems', 1)[0];
+    if (!p || !a || !b) return;
+    a.textContent = p[0];
+    b.textContent = '';
+    a.classList.add('cq-in');
+    setTimeout(function () {
+      b.textContent = p[1];
+      a.classList.remove('cq-in');
+      b.classList.add('cq-in');
+      setTimeout(function () { b.classList.remove('cq-in'); }, 700);
+    }, 1100);
+    if (by) by.textContent = '—— 拟古 · 每访一换';
+  }
+
+  pair();
+  poemTimer = setInterval(function () { if (!document.hidden) pair(); }, 13000);
+})();
+</script>
+
 </body>
 </html>

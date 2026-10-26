@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const BOOKS = [
+  const FALLBACK = [
     { t: '大师和玛格丽特', a: '布尔加科夫', l: '手稿是烧不毁的。', y: '1940' },
     { t: '局外人', a: '加缪', l: '今天，妈妈死了。也许是昨天，我不知道。', y: '1942' },
     { t: '三体', a: '刘慈欣', l: '给岁月以文明，而不是给文明以岁月。', y: '2008' },
@@ -20,6 +20,15 @@
     { t: '查令十字街 84 号', a: '海莲·汉芙', l: '你们若恰好路经查令十字街 84 号。', y: '1970' }
   ];
 
+  /* 优先用 content.js 里的 books 池子，抽三本轮着换 */
+  function booksNow() {
+    if (window.Pool && Pool.all('books').length) {
+      var picked = Pool.pick('books', Math.min(4, Pool.all('books').length));
+      return picked.map(function (b) { return { t: b.t, a: b.a, l: b.l, y: '' }; });
+    }
+    return FALLBACK.slice(0, 4);
+  }
+
   function build() {
     const host = document.getElementById('shelf');
     if (!host || host.dataset.built) return;
@@ -28,6 +37,7 @@
     const row = document.createElement('div');
     row.className = 'shelf-row';
 
+    var BOOKS = booksNow();
     BOOKS.forEach(function (b, i) {
       const el = document.createElement('button');
       el.type = 'button';

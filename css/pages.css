@@ -1494,3 +1494,28 @@ button.is-press, .wk.is-press, .bk.is-press, .idea.is-press, .spine.is-press {
 .tc-n { margin-top: 14px; font-size: 11.5px; color: var(--fg-faint); }
 .tc-n a { color: var(--a1-t); }
 html.geo-sat .tc-s::after { content: '（现在是卫星兜底题库）'; color: var(--fg-faint); }
+
+/* ============================================================
+   随机内容：轮换时的淡入淡出
+   ============================================================ */
+.pool-out { opacity: 0; transform: translateY(-4px); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+.pool-in { animation: poolIn .55s var(--ease-out) both; }
+@keyframes poolIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.hero-sub, .meta, .chips, .ticker-track { transition: opacity .3s var(--ease); }
+
+.meta-hint {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: .2em; color: var(--fg-faint); opacity: .7;
+}
+
+/* 题记：一句一句出现 */
+.cq-line { display: inline-block; transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.cq-line.cq-in { animation: cqIn .9s var(--ease-out) both; }
+@keyframes cqIn {
+  from { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* 书架卡片出现 */
+.shelf-row .spine { animation: poolIn .5s var(--ease-out) both; }
