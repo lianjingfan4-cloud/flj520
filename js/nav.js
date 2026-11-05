@@ -13,6 +13,7 @@
     { zh: '拾趣', en: 'TRIFLES', href: 'works.html' },
     { zh: '创意', en: 'DEVICES', href: 'ideas.html' },
     { zh: '写作', en: 'WRITINGS', href: 'writing.html' },
+    { zh: '故事', en: 'STORIES', href: 'stories.html' },
     { zh: '图寻', en: 'GEO', href: 'guess.html' },
     { zh: '玩', en: 'PLAY', href: 'play.html' },
     { zh: '联系', en: 'PARLEY', href: 'index.html#contact' }

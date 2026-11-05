@@ -1,0 +1,170 @@
+[
+ {
+  "slug": "baseline",
+  "zh": "基线",
+  "note": "所有参数取中间值",
+  "file": "replay-baseline.html",
+  "kb": 793
+ },
+ {
+  "slug": "resource_abundant",
+  "zh": "资源丰沛",
+  "note": "什么都不缺",
+  "file": "replay-resource_abundant.html",
+  "kb": 1117
+ },
+ {
+  "slug": "resource_rich",
+  "zh": "资源富足",
+  "note": "略有盈余",
+  "file": "replay-resource_rich.html",
+  "kb": 893
+ },
+ {
+  "slug": "resource_low",
+  "zh": "资源偏少",
+  "note": "够用，但不宽裕",
+  "file": "replay-resource_low.html",
+  "kb": 808
+ },
+ {
+  "slug": "resource_scarce",
+  "zh": "资源匮乏",
+  "note": "一切都紧缺",
+  "file": "replay-resource_scarce.html",
+  "kb": 705
+ },
+ {
+  "slug": "tech_rush",
+  "zh": "技术狂飙",
+  "note": "几乎失控地快",
+  "file": "replay-tech_rush.html",
+  "kb": 697
+ },
+ {
+  "slug": "tech_fast",
+  "zh": "技术飞快",
+  "note": "进步很快",
+  "file": "replay-tech_fast.html",
+  "kb": 1001
+ },
+ {
+  "slug": "tech_slow",
+  "zh": "技术缓慢",
+  "note": "进展艰难",
+  "file": "replay-tech_slow.html",
+  "kb": 1001
+ },
+ {
+  "slug": "tech_low",
+  "zh": "技术低迷",
+  "note": "长期停滞",
+  "file": "replay-tech_low.html",
+  "kb": 1061
+ },
+ {
+  "slug": "coop_high",
+  "zh": "高度合作",
+  "note": "大家愿意搭伙",
+  "file": "replay-coop_high.html",
+  "kb": 996
+ },
+ {
+  "slug": "coop_altruist",
+  "zh": "利他",
+  "note": "先帮别人",
+  "file": "replay-coop_altruist.html",
+  "kb": 865
+ },
+ {
+  "slug": "coop_low",
+  "zh": "低度合作",
+  "note": "各干各的",
+  "file": "replay-coop_low.html",
+  "kb": 974
+ },
+ {
+  "slug": "coop_selfish",
+  "zh": "自利",
+  "note": "先顾自己",
+  "file": "replay-coop_selfish.html",
+  "kb": 822
+ },
+ {
+  "slug": "disaster_verylow",
+  "zh": "灾害极少",
+  "note": "几乎风平浪静",
+  "file": "replay-disaster_verylow.html",
+  "kb": 936
+ },
+ {
+  "slug": "disaster_low",
+  "zh": "灾害少",
+  "note": "偶尔来一次",
+  "file": "replay-disaster_low.html",
+  "kb": 953
+ },
+ {
+  "slug": "disaster_high",
+  "zh": "灾害多",
+  "note": "一波接着一波",
+  "file": "replay-disaster_high.html",
+  "kb": 883
+ },
+ {
+  "slug": "disaster_extreme",
+  "zh": "灾害极端",
+  "note": "毁灭性的",
+  "file": "replay-disaster_extreme.html",
+  "kb": 1044
+ },
+ {
+  "slug": "trade_hyper",
+  "zh": "贸易狂热",
+  "note": "所有人都做买卖",
+  "file": "replay-trade_hyper.html",
+  "kb": 878
+ },
+ {
+  "slug": "trade_open",
+  "zh": "贸易开放",
+  "note": "互相做生意",
+  "file": "replay-trade_open.html",
+  "kb": 977
+ },
+ {
+  "slug": "trade_closed",
+  "zh": "贸易封闭",
+  "note": "关起门来",
+  "file": "replay-trade_closed.html",
+  "kb": 1017
+ },
+ {
+  "slug": "aggr_pacifist",
+  "zh": "和平",
+  "note": "从不主动出手",
+  "file": "replay-aggr_pacifist.html",
+  "kb": 939
+ },
+ {
+  "slug": "aggr_mild",
+  "zh": "温和扩张",
+  "note": "能不打就不打",
+  "file": "replay-aggr_mild.html",
+  "kb": 936
+ },
+ {
+  "slug": "aggr_warlike",
+  "zh": "好战",
+  "note": "先动手再谈",
+  "file": "replay-aggr_warlike.html",
+  "kb": 917
+ },
+ {
+  "slug": "aggr_brutal",
+  "zh": "残酷",
+  "note": "不留余地",
+  "file": "replay-aggr_brutal.html",
+  "kb": 531
+ }
+]

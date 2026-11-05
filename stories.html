@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="midnight" data-family="nocturne" data-style="cinematic" data-mode="dark" data-fxbg="dotgrid">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>瀚海撷星 · 范连璟</title>
+<meta name="description" content="三四百个小故事，挂在一条星链上。抽一颗，或者自己找。" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="js/look.js?v3ka8wn"></script>
+<link rel="stylesheet" href="css/style.css?v3ka8wn" />
+<link rel="stylesheet" href="css/main.css?v3ka8wn" />
+<link rel="stylesheet" href="css/pages.css?v3ka8wn" />
+<link rel="stylesheet" href="css/fx.css?v3ka8wn" />
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  .st-wrap { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; padding: clamp(84px,8vw,110px) clamp(14px,3.4vw,28px) 60px; }
+  .st-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .st-head h1 { font-family: var(--font-display); font-size: clamp(30px,5.4vw,64px); font-weight: var(--display-w); letter-spacing: -.03em; }
+  .st-head h1 em { font-style: normal; color: var(--a1); }
+  .st-sub { margin-top: 8px; font-size: 13px; line-height: 1.95; color: var(--fg-dim); max-width: 560px; }
+  .st-count { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .2em; color: var(--fg-faint); }
+
+  .st-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+  .st-draw {
+    display: inline-flex; align-items: center; gap: 9px; padding: 13px 26px; border-radius: 999px;
+    border: 0; cursor: pointer; font-size: 14px; font-weight: 500;
+    background: var(--a1); color: var(--on-accent);
+    box-shadow: 0 14px 40px -20px var(--a1);
+    transition: transform .3s var(--ease-out), box-shadow .3s var(--ease);
+  }
+  .st-draw:hover { transform: translateY(-2px); box-shadow: 0 20px 50px -18px var(--a1); }
+  .st-search {
+    flex: 1; min-width: 200px; max-width: 320px; padding: 12px 16px; border-radius: 999px;
+    border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--bg) 55%, transparent);
+    color: var(--fg); font-size: 13px;
+  }
+  .st-search:focus { outline: none; border-color: var(--a1); }
+  .st-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .st-tag {
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
+    background: transparent; color: var(--fg-dim); font-size: 11.5px; cursor: pointer;
+  }
+  .st-tag.on, .st-tag:hover { border-color: var(--a1); color: var(--fg); }
+
+  .st-stage { display: grid; grid-template-columns: 1fr 380px; gap: 22px; margin-top: 22px; align-items: start; }
+  @media (max-width: 940px) { .st-stage { grid-template-columns: 1fr; } }
+
+  .st-sky {
+    position: relative; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--a1) 8%, transparent), transparent 60%), #05060c;
+    aspect-ratio: 16 / 11;
+  }
+  canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+
+  .st-panel {
+    border: 1px solid var(--line-strong); border-radius: 6px; padding: 22px;
+    background: color-mix(in srgb, var(--bg) 72%, transparent); min-height: 300px;
+  }
+  .st-kicker { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .22em; color: var(--fg-faint); }
+  .st-t { margin: 10px 0 12px; font-family: var(--font-song); font-size: 24px; line-height: 1.35; }
+  .st-b { font-family: var(--font-serif); font-size: 15px; line-height: 2.05; color: var(--fg-dim); }
+  .st-meta { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; color: var(--fg-faint); display: flex; gap: 12px; flex-wrap: wrap; }
+  .st-empty { color: var(--fg-faint); font-size: 13px; line-height: 2; }
+
+  .st-list { margin-top: 26px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .st-item {
+    text-align: left; padding: 12px 14px; border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--fg-dim);
+    font-size: 12.5px; line-height: 1.5; transition: border-color .25s, color .25s, background .25s;
+  }
+  .st-item:hover { border-color: var(--a1); color: var(--fg); background: color-mix(in srgb, var(--a1) 6%, transparent); }
+  .st-item b { display: block; font-weight: 400; font-size: 13.5px; color: var(--fg); margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="motif"><div class="m-glow"></div></div><div class="vignette"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html"><span class="brand-mark"></span><span class="brand-word">范连璟</span><sup class="brand-sup">°</sup></a>
+  <nav class="nav-links" aria-label="主导航"></nav>
+  <div class="nav-right">
+    <span class="theme-label" id="themeLabel">午夜</span>
+    <button class="sun" id="themeBtn" type="button" aria-label="外观设置">
+      <svg viewBox="0 0 48 48" fill="none"><g class="sun-rays" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="24" y1="3.5" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="44.5"/><line x1="3.5" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="44.5" y2="24"/><line x1="9.5" y1="9.5" x2="13.4" y2="13.4"/><line x1="34.6" y1="34.6" x2="38.5" y2="38.5"/><line x1="9.5" y1="38.5" x2="13.4" y2="34.6"/><line x1="34.6" y1="13.4" x2="38.5" y2="9.5"/></g><circle class="sun-core" cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/><circle class="sun-dot" cx="24" cy="24" r="3"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="st-wrap">
+  <div class="st-head">
+    <div>
+      <p class="kicker">故事 · 瀚海撷星</p>
+      <h1>从海里<em>捞一颗星</em></h1>
+      <p class="st-sub">每一个小故事都是一颗星，挂在同一条链上。抽一颗，或者自己在星链上找。<br />目标是四百到五百颗 —— 现在还只是开头。</p>
+    </div>
+    <p class="st-count" id="stCount">— 颗星</p>
+  </div>
+
+  <div class="st-bar">
+    <button class="st-draw" id="drawBtn" type="button">抽一颗 ✦</button>
+    <input class="st-search" id="search" type="search" placeholder="找一句话、一个词…" />
+    <div class="st-tags" id="tagBar"></div>
+  </div>
+
+  <div class="st-stage">
+    <div class="st-sky"><canvas id="sky"></canvas></div>
+    <aside class="st-panel" id="panel">
+      <p class="st-kicker">还没有选中</p>
+      <p class="st-empty">点星链上的任意一颗星，或者按「抽一颗」。<br /><br />鼠标划过星链，会有微光跟过去 —— 那是我在写的时候心里那点光。</p>
+    </aside>
+  </div>
+
+  <div class="st-list" id="list"></div>
+
+  <footer class="footer" style="margin-top:48px">
+    <span>© 2026 范连璟 · 瀚海撷星</span>
+    <span class="f-c"><a href="writing.html">写作</a><a href="index.html">← 回主页</a></span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/kernel.js?v3ka8wn"></script>
+<script src="js/pool.js?v3ka8wn"></script>
+<script src="js/content.js?v3ka8wn"></script>
+<script src="js/stories.js?v3ka8wn"></script>
+<script src="js/scenes.js?v3ka8wn"></script>
+<script src="js/scene.js?v3ka8wn"></script>
+<script src="js/nav.js?v3ka8wn"></script>
+<script src="js/i18n.js?v3ka8wn"></script>
+<script src="js/settings.js?v3ka8wn"></script>
+<script src="js/music.js?v3ka8wn"></script>
+<script src="js/fx.js?v3ka8wn"></script>
+<script src="js/main.js?v3ka8wn"></script>
+<script src="js/eggs.js?v3ka8wn"></script>
+<script src="js/audio.js?v3ka8wn"></script>
+<script src="js/polish.js?v3ka8wn"></script>
+<script src="js/fxkit.js?v3ka8wn"></script>
+<script>
+(function () {
+  'use strict';
+
+  const STORIES = window.STORIES || [];
+  const cv = document.getElementById('sky');
+  const ctx = cv.getContext('2d');
+  const panel = document.getElementById('panel');
+  const listEl = document.getElementById('list');
+  const searchEl = document.getElementById('search');
+  const tagBar = document.getElementById('tagBar');
+  const countEl = document.getElementById('stCount');
+
+  let W = 0, H = 0, dpr = 1;
+  let stars = [];
+  let hover = -1, active = -1, focusPulse = 0;
+  let filter = '';
+  let activeTag = '';
+  let mx = 0, my = 0;
+
+  /* ---------- 布局：把故事排成一条弯曲的星链 ---------- */
+  function layout() {
+    const rect = cv.getBoundingClientRect();
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = rect.width; H = rect.height;
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const n = STORIES.length || 1;
+    const cx = W / 2, cy = H / 2;
+    stars = STORIES.map(function (s, i) {
+      /* 螺旋 + 轻微扰动，像一条被拉长的星链 */
+      const t = i / Math.max(1, n - 1);
+      const ang = t * Math.PI * 2.1 - Math.PI / 2;
+      const r = (0.14 + t * 0.34) * Math.min(W, H) * 1.05;
+      const jitter = 0.035 * Math.min(W, H);
+      const rx = (Math.sin(i * 12.9898) * 43758.5453) % 1;
+      const ry = (Math.sin(i * 78.233) * 12543.123) % 1;
+      return {
+        i: i,
+        x: cx + Math.cos(ang) * r + (rx - 0.5) * jitter,
+        y: cy + Math.sin(ang) * r * 0.78 + (ry - 0.5) * jitter,
+        r: 1.6 + ((i * 37) % 9) * 0.32,
+        tw: (i * 0.7) % (Math.PI * 2)
+      };
+    });
+  }
+
+  function css(name, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+
+  const COL = { a1: '#7cf3ff', fg: '#ffffff', dim: '#8899aa' };
+
+  function refreshColors() {
+    COL.a1 = css('--a1', '#7cf3ff');
+    COL.fg = css('--fg', '#ffffff');
+    COL.dim = css('--fg-faint', '#8899aa');
+  }
+
+  function matches(s) {
+    if (activeTag && (s.tags || []).indexOf(activeTag) < 0) return false;
+    if (!filter) return true;
+    const hay = (s.t + ' ' + s.b + ' ' + (s.tags || []).join(' ')).toLowerCase();
+    return hay.indexOf(filter) >= 0;
+  }
+
+  function draw(t) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+
+    /* 星链：细线 */
+    ctx.lineWidth = 0.6;
+    for (let i = 1; i < stars.length; i++) {
+      const a = stars[i - 1], b = stars[i];
+      const on = matches(STORIES[a.i]) && matches(STORIES[b.i]);
+      ctx.strokeStyle = on
+        ? 'rgba(124,243,255,' + (0.10 + (i === active ? 0.22 : 0)) + ')'
+        : 'rgba(255,255,255,0.03)';
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    /* 光标附近的微光 */
+    const g = ctx.createRadialGradient(mx, my, 0, mx, my, 130);
+    g.addColorStop(0, 'rgba(124,243,255,0.09)');
+    g.addColorStop(1, 'rgba(124,243,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(mx - 130, my - 130, 260, 260);
+
+    stars.forEach(function (s) {
+      const on = matches(STORIES[s.i]);
+      const isHover = s.i === hover;
+      const isActive = s.i === active;
+      const tw = 0.62 + 0.38 * Math.sin(t / 900 + s.tw);
+
+      let rad = s.r * (isHover ? 2.1 : isActive ? 2.6 : 1) * (on ? 1 : 0.5);
+      if (isActive) rad *= 1 + 0.12 * Math.sin(t / 260);
+
+      /* 光晕 */
+      const halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, rad * 9);
+      halo.addColorStop(0, on ? 'rgba(124,243,255,' + (0.22 * tw + (isHover ? 0.2 : 0)) + ')' : 'rgba(255,255,255,0.03)');
+      halo.addColorStop(1, 'rgba(124,243,255,0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, rad * 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      /* 星体 */
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, rad, 0, Math.PI * 2);
+      ctx.fillStyle = on ? COL.a1 : COL.dim;
+      ctx.globalAlpha = on ? (0.55 + 0.45 * tw) : 0.22;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  /* ---------- 交互 ---------- */
+  function hit(x, y) {
+    let best = -1, bd = 22 * 22;
+    stars.forEach(function (s) {
+      const d = (s.x - x) * (s.x - x) + (s.y - y) * (s.y - y);
+      if (d < bd) { bd = d; best = s.i; }
+    });
+    return best;
+  }
+
+  cv.addEventListener('pointermove', function (e) {
+    const r = cv.getBoundingClientRect();
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+    hover = hit(mx, my);
+    cv.style.cursor = hover >= 0 ? 'pointer' : 'crosshair';
+  });
+  cv.addEventListener('pointerleave', function () { hover = -1; });
+  cv.addEventListener('click', function (e) {
+    const r = cv.getBoundingClientRect();
+    const i = hit(e.clientX - r.left, e.clientY - r.top);
+    if (i >= 0) open(i);
+  });
+
+  function open(i) {
+    active = i;
+    const s = STORIES[i];
+    if (!s) return;
+    panel.innerHTML =
+      '<p class="st-kicker">第 ' + String(i + 1).padStart(3, '0') + ' 颗 · ' + (s.y || '') + '</p>' +
+      '<h2 class="st-t">' + s.t + '</h2>' +
+      '<p class="st-b">' + s.b + '</p>' +
+      '<p class="st-meta">' + (s.tags || []).map(function (x) { return '#' + x; }).join('  ') + '</p>';
+    panel.classList.remove('pool-in');
+    void panel.offsetWidth;
+    panel.classList.add('pool-in');
+    if (window.Site) Site.track('story:open', s.id);
+    if (window.Arcade) Arcade.setBest('story', 1);
+  }
+
+  function drawRandom() {
+    const pool = STORIES.map(function (s, i) { return i; }).filter(function (i) { return matches(STORIES[i]); });
+    if (!pool.length) { if (window.Site) Site.toast('这个筛选下没有故事'); return; }
+    let n = 0;
+    const target = pool[Math.floor(Math.random() * pool.length)];
+    const spin = setInterval(function () {
+      active = pool[Math.floor(Math.random() * pool.length)];
+      n++;
+      if (n > 14) {
+        clearInterval(spin);
+        open(target);
+      }
+    }, 90);
+  }
+
+  document.getElementById('drawBtn').addEventListener('click', drawRandom);
+
+  searchEl.addEventListener('input', function () {
+    filter = searchEl.value.trim().toLowerCase();
+    paintList();
+  });
+
+  /* ---------- 标签与列表 ---------- */
+  function paintTags() {
+    const tags = {};
+    STORIES.forEach(function (s) { (s.tags || []).forEach(function (t) { tags[t] = (tags[t] || 0) + 1; }); });
+    const top = Object.keys(tags).sort(function (a, b) { return tags[b] - tags[a]; }).slice(0, 8);
+    tagBar.innerHTML = top.map(function (t) {
+      return '<button class="st-tag' + (t === activeTag ? ' on' : '') + '" type="button" data-tag="' + t + '">' + t + ' <span style="opacity:.5">' + tags[t] + '</span></button>';
+    }).join('');
+  }
+
+  tagBar.addEventListener('click', function (e) {
+    const b = e.target.closest('.st-tag');
+    if (!b) return;
+    const t = b.getAttribute('data-tag');
+    activeTag = activeTag === t ? '' : t;
+    paintTags();
+    paintList();
+  });
+
+  function paintList() {
+    const hits = STORIES.map(function (s, i) { return { s: s, i: i }; }).filter(function (o) { return matches(o.s); });
+    listEl.innerHTML = hits.map(function (o) {
+      return '<button class="st-item" type="button" data-i="' + o.i + '"><b>' + o.s.t + '</b>' +
+        (o.s.tags || []).slice(0, 2).map(function (t) { return '#' + t; }).join(' ') + '</button>';
+    }).join('') || '<p class="st-empty">没有匹配的故事。</p>';
+  }
+
+  listEl.addEventListener('click', function (e) {
+    const b = e.target.closest('.st-item');
+    if (!b) return;
+    open(parseInt(b.getAttribute('data-i'), 10));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ---------- 启动 ---------- */
+  function boot() {
+    countEl.textContent = STORIES.length + ' 颗星';
+    layout();
+    refreshColors();
+    paintTags();
+    paintList();
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', function () { layout(); });
+  document.addEventListener('langchange', refreshColors);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+</body>
+</html>
