@@ -1531,3 +1531,53 @@ html.geo-sat .tc-s::after { content: '（现在是卫星兜底题库）'; color:
 a.bk.dl { cursor: pointer; }
 a.bk.dl:hover { border-color: var(--a1); background: color-mix(in srgb, var(--a1) 6%, transparent); }
 a.bk.dl .go { color: var(--a1-t); }
+
+/* ============================================================
+   书架：密排网格（替换原来的竖排书脊）
+   ============================================================ */
+.shelf { margin-top: 20px; }
+.shelf-row, .shelf-board, .spine { display: none !important; }
+
+.shelf-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 900px) { .shelf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .shelf-grid { grid-template-columns: 1fr; } }
+
+.shelf-item {
+  position: relative; display: grid; grid-template-columns: 26px 1fr;
+  gap: 10px; padding: 16px 18px 16px 4px; cursor: pointer;
+  border-bottom: 1px solid var(--line);
+  transition: background .3s var(--ease);
+}
+.shelf-item:hover, .shelf-item.open { background: color-mix(in srgb, var(--a1) 6%, transparent); }
+
+.si-n {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
+  color: var(--fg-faint); padding-top: 3px;
+}
+.si-t {
+  font-family: var(--font-song); font-size: 15px; font-weight: 400;
+  line-height: 1.45; color: var(--fg);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.si-a {
+  margin-top: 3px; font-family: var(--font-mono); font-size: 8.5px;
+  letter-spacing: .14em; color: var(--fg-faint);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.si-l {
+  margin-top: 6px; font-family: var(--font-serif); font-style: italic;
+  font-size: 12px; line-height: 1.7; color: var(--fg-dim);
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+  overflow: hidden; transition: color .3s;
+}
+.shelf-item:hover .si-l, .shelf-item.open .si-l { color: var(--a1-t); -webkit-line-clamp: 4; }
+
+.shelf-more {
+  margin-top: 12px; font-family: var(--font-mono); font-size: 8.5px;
+  letter-spacing: .16em; color: var(--fg-faint);
+}

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-palette="midnight" data-family="nocturne" data-style="minimal" data-mode="dark">
+<html lang="zh-CN" data-palette="midnight" data-family="nocturne" data-style="minimal" data-mode="dark" data-fxbg="aurora">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,13 +9,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=ZCOOL+KuaiLe&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
-<script src="js/look.js?vpflvar"></script>
-<link rel="stylesheet" href="css/style.css?vpflvar" />
-<link rel="stylesheet" href="css/main.css?vpflvar" />
-<link rel="stylesheet" href="css/pages.css?vpflvar" />
-<link rel="stylesheet" href="css/scene.css?vpflvar" />
+<script src="js/look.js?v3jnj4k"></script>
+<link rel="stylesheet" href="css/style.css?v3jnj4k" />
+<link rel="stylesheet" href="css/main.css?v3jnj4k" />
+<link rel="stylesheet" href="css/pages.css?v3jnj4k" />
+<link rel="stylesheet" href="css/scene.css?v3jnj4k" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%234b6bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23b9c7ff'/%3E%3C/svg%3E" />
 <script>document.documentElement.classList.add('js');</script>
+<link rel="stylesheet" href="css/fx.css?v3jnj4k" />
 </head>
 <body>
 <a class="skip" href="#main">跳到正文</a>
@@ -126,7 +127,7 @@
     </div>
 
     <div class="hero-copy">
-      <p class="eyebrow" data-reveal style="--i:0">
+      <p class="eyebrow fx-shine" data-reveal style="--i:0">
         <span class="pulse"></span>上海交大 · 飞行器设计 · 2025.3–2026.7 在莫斯科
       </p>
 
@@ -373,26 +374,27 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 
-<script src="js/scenes.js?vpflvar"></script>
-<script src="js/scene.js?vpflvar"></script>
-<script src="js/art.js?vpflvar"></script>
-<script src="js/pool.js?vpflvar"></script>
-<script src="js/content.js?vpflvar"></script>
-<script src="js/kernel.js?vpflvar"></script>
-<script src="js/nav.js?vpflvar"></script>
-<script src="js/i18n.js?vpflvar"></script>
-<script src="js/settings.js?vpflvar"></script>
-<script src="js/music.js?vpflvar"></script>
-<script src="js/fx.js?vpflvar"></script>
-<script src="js/particles.js?vpflvar"></script>
-<script src="js/main.js?vpflvar"></script>
-<script src="js/eggs.js?vpflvar"></script>
-<script src="js/audio.js?vpflvar"></script>
-<script src="js/interact.js?vpflvar"></script>
-<script src="js/narrative.js?vpflvar"></script>
-<script src="js/timeline.js?vpflvar"></script>
-<script src="js/shelf.js?vpflvar"></script>
-<script src="js/polish.js?vpflvar"></script>
+<script src="js/scenes.js?v3jnj4k"></script>
+<script src="js/scene.js?v3jnj4k"></script>
+<script src="js/art.js?v3jnj4k"></script>
+<script src="js/pool.js?v3jnj4k"></script>
+<script src="js/content.js?v3jnj4k"></script>
+<script src="js/kernel.js?v3jnj4k"></script>
+<script src="js/nav.js?v3jnj4k"></script>
+<script src="js/i18n.js?v3jnj4k"></script>
+<script src="js/settings.js?v3jnj4k"></script>
+<script src="js/music.js?v3jnj4k"></script>
+<script src="js/fx.js?v3jnj4k"></script>
+<script src="js/particles.js?v3jnj4k"></script>
+<script src="js/main.js?v3jnj4k"></script>
+<script src="js/eggs.js?v3jnj4k"></script>
+<script src="js/audio.js?v3jnj4k"></script>
+<script src="js/interact.js?v3jnj4k"></script>
+<script src="js/narrative.js?v3jnj4k"></script>
+<script src="js/timeline.js?v3jnj4k"></script>
+<script src="js/shelf.js?v3jnj4k"></script>
+<script src="js/polish.js?v3jnj4k"></script>
+<script src="js/fxkit.js?v3jnj4k"></script>
 
 <script>
 (function () {
@@ -526,7 +528,7 @@
     failList.innerHTML = items.map(function (f) {
       return '<li><span class="fl-x">✗</span>' +
         '<span class="fl-k">' + f.k + '</span>' +
-        '<b class="fl-s">' + f.s + '</b>' +
+        '<b class="fl-s fx-decrypt">' + f.s + '</b>' +
         '<p>' + f.note + '</p></li>';
     }).join('');
   }

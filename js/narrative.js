@@ -116,7 +116,7 @@
       clearTimeout(timer);
       timer = setTimeout(function () {
         document.documentElement.classList.add('only-stars');
-      }, 4000);
+      }, 60000);
     }
     ['pointermove', 'pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function (ev) {
       window.addEventListener(ev, function () { armed = true; reset(); }, { passive: true });

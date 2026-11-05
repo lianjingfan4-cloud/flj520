@@ -1,0 +1,135 @@
+/* ============================================================
+   fx.css — fxkit.js 的样式（原生化 React Bits 效果）
+   ============================================================ */
+
+/* ---------- SplitText / BlurText ---------- */
+.fx-ch {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(.42em) rotate(3deg);
+  filter: blur(6px);
+  transition: opacity .7s var(--ease-out), transform .8s var(--ease-out), filter .7s var(--ease-out);
+  transition-delay: calc(var(--k, 0) * 26ms);
+  will-change: transform, opacity;
+}
+.fx-split-ready.fx-in .fx-ch { opacity: 1; transform: none; filter: none; }
+
+/* ---------- ShinyText ---------- */
+.fx-shine-on {
+  background-image: linear-gradient(100deg,
+    currentColor 0%, currentColor 38%,
+    color-mix(in srgb, var(--a1) 92%, white) 50%,
+    currentColor 62%, currentColor 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fxShine 3.6s linear infinite;
+}
+@keyframes fxShine { 0% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+
+/* ---------- GradientText ---------- */
+.fx-grad-on {
+  background-image: linear-gradient(92deg, var(--a1), var(--a3), var(--a2), var(--a1));
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fxGrad 7s ease-in-out infinite;
+}
+@keyframes fxGrad { 0%,100% { background-position: 0 0; } 50% { background-position: 100% 0; } }
+
+/* ---------- SpotlightCard ---------- */
+.fx-spot { position: relative; isolation: isolate; }
+.fx-spot::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--a1) 22%, transparent), transparent 62%);
+  opacity: 0; transition: opacity .35s var(--ease); z-index: 0;
+}
+.fx-spot:hover::before { opacity: 1; }
+
+/* ---------- GlareHover ---------- */
+.fx-glare { position: relative; overflow: hidden; }
+.fx-glare::after {
+  content: ''; position: absolute; top: -60%; left: -80%;
+  width: 55%; height: 220%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.16), transparent);
+  transform: rotate(16deg); transition: left .65s var(--ease-out); z-index: 2;
+}
+.fx-glare:hover::after { left: 130%; }
+
+/* ---------- TiltedCard ---------- */
+.fx-tilt { transition: transform .35s var(--ease-out), box-shadow .35s var(--ease); will-change: transform; }
+.fx-tilt:hover { box-shadow: 0 26px 60px -34px rgba(0,0,0,.85); }
+
+/* ---------- StarBorder ---------- */
+.fx-star { position: relative; }
+.fx-star::before {
+  content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--ang, 0deg),
+    transparent 0 62%, var(--a1) 74%, var(--a3) 82%, transparent 92%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: fxStar 4.2s linear infinite; pointer-events: none; opacity: .85;
+}
+@property --ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes fxStar { to { --ang: 360deg; } }
+
+/* ---------- ClickSpark ---------- */
+.fx-spark {
+  position: fixed; z-index: 9800; pointer-events: none; width: 0; height: 0;
+}
+.fx-spark i {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--a1);
+  animation: fxSpark .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes fxSpark {
+  from { transform: translate(0,0) scale(1); opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; }
+}
+
+/* ---------- Aurora 背景 ---------- */
+.fx-aurora {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  opacity: .55; filter: blur(70px) saturate(130%);
+}
+.fx-aurora i {
+  position: absolute; display: block; width: 58vw; height: 58vw; border-radius: 50%;
+  mix-blend-mode: screen;
+}
+.fx-aurora i:nth-child(1) {
+  left: -12vw; top: -18vw;
+  background: radial-gradient(circle at 40% 40%, color-mix(in srgb, var(--a1) 70%, transparent), transparent 68%);
+  animation: fxDrift1 26s ease-in-out infinite alternate;
+}
+.fx-aurora i:nth-child(2) {
+  right: -16vw; top: 8vh;
+  background: radial-gradient(circle at 60% 40%, color-mix(in srgb, var(--a3) 62%, transparent), transparent 66%);
+  animation: fxDrift2 32s ease-in-out infinite alternate;
+}
+.fx-aurora i:nth-child(3) {
+  left: 22vw; bottom: -26vw;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--a2) 52%, transparent), transparent 70%);
+  animation: fxDrift3 38s ease-in-out infinite alternate;
+}
+@keyframes fxDrift1 { to { transform: translate3d(9vw, 7vh, 0) scale(1.18); } }
+@keyframes fxDrift2 { to { transform: translate3d(-8vw, 10vh, 0) scale(1.12); } }
+@keyframes fxDrift3 { to { transform: translate3d(6vw, -9vh, 0) scale(1.22); } }
+
+/* ---------- DotGrid 交互背景 ---------- */
+.fx-dotgrid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--fg) 22%, transparent) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(280px circle at var(--gx, 50%) var(--gy, 50%), #000 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(280px circle at var(--gx, 50%) var(--gy, 50%), #000 0%, transparent 72%);
+  opacity: .5; transition: opacity .4s;
+}
+
+/* ---------- 降级 ---------- */
+.reduce-motion .fx-ch { opacity: 1 !important; transform: none !important; filter: none !important; }
+.reduce-motion .fx-aurora i { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .fx-ch { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .fx-shine-on, .fx-grad-on, .fx-star::before, .fx-aurora i { animation: none !important; }
+}
